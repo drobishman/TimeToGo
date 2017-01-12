@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">TimeToGo</string>
     <string name="title_activity_main">TimeToGo</string>
+
+    <string name="button_message">Set Start Position</string>
+
+    <string-array name="categories_name">
+        <item>categoria1</item>
+        <item>categoria2</item>
+        <item>categoria3</item>
+        <item>categoria4</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
