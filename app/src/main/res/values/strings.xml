@@ -1,8 +1,17 @@
 <resources>
     <string name="app_name">TimeToGo</string>
     <string name="title_activity_main">TimeToGo</string>
-
-    <string name="button_message">Set Start Position</string>
+    <string name="origin_button_message">Set Origin</string>
+    <string name="destination_button_message">Set Destination</string>
+    <string name="direction_button_message">Get Direction</string>
+    <string name="get_device_position_first">Get Device Position First</string>
+    <string name="my_location">My Location</string>
+    <string name="permission_necessary">Permission Necessary</string>
+    <string name="location_permission_is_necessary">"Location permission is necessary"</string>
+    <string name="loading_route_wait">Loading route. Please wait...</string>
+    <string name="internet_necessary">Internet is necessary</string>
+    <string name="message_internet_is_necessary">Internet is necessary, click retry to restart</string>
+    <string name="retry">Retry</string>
 
     <string-array name="categories_name">
         <item>categoria1</item>
@@ -10,7 +19,4 @@
         <item>categoria3</item>
         <item>categoria4</item>
     </string-array>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

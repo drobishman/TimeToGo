@@ -10,7 +10,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        tools:context="it.curdrome.timetogo.MainActivity">
+        tools:context="it.curdrome.timetogo.activity.MainActivity">
         <fragment
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -23,11 +23,35 @@
             android:padding="1dp">
 
             <Button
-                android:id="@+id/set_start_button"
+                android:visibility="gone"
+                android:onClick="gone"
+                android:id="@+id/origin_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|bottom"
-                android:text="@string/button_message"
+                android:text="@string/origin_button_message"
+                android:padding="10dp"
+                android:layout_marginTop="20dp"
+                android:paddingRight="10dp"/>
+
+            <Button
+                android:visibility="gone"
+                android:id="@+id/destination_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|bottom"
+                android:text="@string/destination_button_message"
+                android:padding="10dp"
+                android:layout_marginTop="20dp"
+                android:paddingRight="10dp"/>
+
+            <Button
+                android:visibility="gone"
+                android:id="@+id/direction_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|bottom"
+                android:text="@string/direction_button_message"
                 android:padding="10dp"
                 android:layout_marginTop="20dp"
                 android:paddingRight="10dp"/>
