@@ -9,6 +9,7 @@
     <string name="permission_necessary">Permission Necessary</string>
     <string name="location_permission_is_necessary">"Location permission is necessary"</string>
     <string name="loading_route_wait">Loading route. Please wait...</string>
+    <string name="loading_categories_wait">Loading categories. Please wait...</string>
     <string name="internet_necessary">Internet is necessary</string>
     <string name="message_internet_is_necessary">Internet is necessary, click retry to restart</string>
     <string name="retry">Retry</string>

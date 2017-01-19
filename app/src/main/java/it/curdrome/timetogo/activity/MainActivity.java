@@ -3,6 +3,7 @@ package it.curdrome.timetogo.activity;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -34,18 +35,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.ArrayList;
-
 import it.curdrome.timetogo.R;
 
-import it.curdrome.timetogo.connection.AsyncResponse;
+import it.curdrome.timetogo.connection.server.GetCategoriesResponse;
 import it.curdrome.timetogo.connection.google.*;
 import it.curdrome.timetogo.connection.server.GetCategories;
-import it.curdrome.timetogo.model.Category;
+import it.curdrome.timetogo.connection.server.GetPoisByCategory;
 
 /**
  This class is the main class of the "TimeToGo" application.
@@ -58,7 +56,7 @@ import it.curdrome.timetogo.model.Category;
 
 public class MainActivity extends FragmentActivity  implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        LocationListener, AsyncResponse {
+        LocationListener, GetCategoriesResponse {
 
     public static final String TAG = "MainActivity";
 
@@ -69,7 +67,6 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
     // drawer variables
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
-    private String[] categoryList;
 
     // map variables
     private GoogleMap mMap;
@@ -83,6 +80,11 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
 
     //origin and destination to generate direction
     private LatLng mOrigin;
+
+    public void setmDestination(LatLng mDestination) {
+        this.mDestination = mDestination;
+    }
+
     private LatLng mDestination = new LatLng(41.8426285, 12.5864169);
 
     private MainActivity activity = (MainActivity) this;
@@ -90,6 +92,9 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
     private Button originButton;
     private Button destinationButton;
     private Button directionButton;
+
+    public ProgressDialog pDialog; // to show when direction create
+    private boolean wait = true;
 
     /*
     Method that creates the main activity and the drawer with its listeners
@@ -132,32 +137,37 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
             alert.show();
         }
 
+        pDialog = new ProgressDialog(activity);
+        pDialog.setMessage(activity.getString(R.string.loading_categories_wait));
+        pDialog.setIndeterminate(false);
+        pDialog.setCancelable(false);
+        pDialog.show();
+
+
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         GetCategories getCategories = new GetCategories(this); //get categories
         getCategories.response = this;
         getCategories.execute();
 
         // get categories statically
-        if(categoryList ==null) {
-            categoryList = getResources().getStringArray(R.array.categories_name);
-        }
+        // categoryList = getResources().getStringArray(R.array.categories_name);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
-
-        // Set the adapter for the list view
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawer_list_item, categoryList));
-
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
     }
 
     /*
    Method used by drawer to set a function for each chosed category
     */
     private void selectItem(int position) {
+
+        mMap.setOnMapClickListener(null);
+
         //fragment = null;
-        CharSequence title = "Categories";
-        Toast.makeText(getApplicationContext(), "categoria"+position+"",Toast.LENGTH_SHORT).show();
+        CharSequence title = null;
+
+        Toast.makeText(getApplicationContext(), "categoria: "+(position+1)+"",Toast.LENGTH_SHORT).show();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+        new GetPoisByCategory(this, mMap, position+1, destinationButton).execute(); //get categories
 
         mDrawerList.setItemChecked(position, true);
         try {
@@ -168,11 +178,24 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
-    // risults of getCategories AsyncTask
+    // risults of getCategories AsyncTask and set the category list on drawer
     @Override
     public void taskResult(String[] output) {
-        categoryList = output;
-        Log.d("MainActivity",output[1]);
+        if(output != null) {
+            // Set the adapter for the list view
+            mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+                    R.layout.drawer_list_item, output));
+        }else{
+            String[] mStringArray = getResources().getStringArray(R.array.categories_name);
+
+            mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+                    R.layout.drawer_list_item, mStringArray));
+        }
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+
+
+
+        pDialog.dismiss();
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
@@ -269,38 +292,62 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
     /*
     method that set the destination
      */
-    private void setDestination(){
+    private void setDestination() {
 
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(final LatLng latLng) {
+        if (mDestination != null) {
 
-                mDestination = latLng;
-                destinationMarker = mMap.addMarker(new MarkerOptions().position(mDestination)
-                        .title(getString(R.string.my_location)).icon(BitmapDescriptorFactory
-                                .defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
+            destinationButton = (Button) findViewById(R.id.destination_button);
+            destinationButton.setVisibility(View.VISIBLE);
+            destinationButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-                destinationButton = (Button) findViewById(R.id.destination_button);
-                destinationButton.setVisibility(View.VISIBLE);
-                destinationButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        if (destinationMarker != null){
-                            destinationMarker.remove();
-                        }
-                        mDestination = latLng;
-                        destinationMarker = mMap.addMarker(new MarkerOptions().position(mDestination)
-                                .title(getString(R.string.my_location)).icon(BitmapDescriptorFactory
-                                        .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDestination, zoomLevel));
-                        mMap.setOnMapClickListener(null);
-                        destinationButton.setVisibility(Button.INVISIBLE);
-                        directionButton.setVisibility(View.VISIBLE);
+                    if (destinationMarker != null) {
+                        destinationMarker.remove();
                     }
-                });
-            }
-        });
+                    destinationMarker = mMap.addMarker(new MarkerOptions().position(mDestination)
+                            .title(getString(R.string.my_location)).icon(BitmapDescriptorFactory
+                                    .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDestination, zoomLevel));
+                    mMap.setOnMapClickListener(null);
+                    destinationButton.setVisibility(Button.INVISIBLE);
+                    directionButton.setVisibility(View.VISIBLE);
+                }
+            });
+
+        } else {
+
+            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(final LatLng latLng) {
+
+                    mDestination = latLng;
+                    destinationMarker = mMap.addMarker(new MarkerOptions().position(mDestination)
+                            .title(getString(R.string.my_location)).icon(BitmapDescriptorFactory
+                                    .defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
+
+                    destinationButton = (Button) findViewById(R.id.destination_button);
+                    destinationButton.setVisibility(View.VISIBLE);
+                    destinationButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            if (destinationMarker != null) {
+                                destinationMarker.remove();
+                            }
+                            mDestination = latLng;
+                            destinationMarker = mMap.addMarker(new MarkerOptions().position(mDestination)
+                                    .title(getString(R.string.my_location)).icon(BitmapDescriptorFactory
+                                            .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDestination, zoomLevel));
+                            mMap.setOnMapClickListener(null);
+                            destinationButton.setVisibility(Button.INVISIBLE);
+                            directionButton.setVisibility(View.VISIBLE);
+                        }
+                    });
+                }
+            });
+        }
     }
 
     /*
