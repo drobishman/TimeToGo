@@ -27,6 +27,7 @@ import java.util.List;
 
 import it.curdrome.timetogo.R;
 import it.curdrome.timetogo.activity.MainActivity;
+import it.curdrome.timetogo.connection.atac.GetRTI;
 
 /*
    class that generates a route direction using google maps api and print it on map
@@ -95,8 +96,6 @@ public class GetDirection extends AsyncTask<String, String, String> {
 
             String jsonOutput = response.toString();
 
-            Log.d("ATAC", jsonOutput);
-
             JSONObject jsonObject = new JSONObject(jsonOutput);
 
             // routesArray contains ALL routes
@@ -129,6 +128,9 @@ public class GetDirection extends AsyncTask<String, String, String> {
     }
 
     protected void onPostExecute(String file_url) {
+
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+        new GetRTI().execute();
 
         for (int i = 0; i < polyz.size() - 1; i++) {
             LatLng src = polyz.get(i);

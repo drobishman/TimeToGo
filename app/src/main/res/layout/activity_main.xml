@@ -20,7 +20,8 @@
             android:layout_marginRight="15dip"
             android:layout_marginTop="15dip"
             android:layout_marginBottom="15dip"
-            android:padding="1dp">
+            android:padding="1dp"
+            tools:layout="@layout/place_autocomplete_fragment">
 
             <Button
                 android:visibility="gone"
@@ -39,7 +40,7 @@
                 android:id="@+id/destination_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center|bottom"
+                android:layout_gravity="left|bottom"
                 android:text="@string/destination_button_message"
                 android:padding="10dp"
                 android:layout_marginTop="20dp"
@@ -50,7 +51,7 @@
                 android:id="@+id/direction_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center|bottom"
+                android:layout_gravity="right|bottom"
                 android:text="@string/direction_button_message"
                 android:padding="10dp"
                 android:layout_marginTop="20dp"

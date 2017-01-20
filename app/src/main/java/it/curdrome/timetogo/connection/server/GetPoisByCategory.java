@@ -38,14 +38,12 @@ public class GetPoisByCategory  extends AsyncTask<String, String, String> {
     private GoogleMap mMap;
     private List<Marker> markerList = new ArrayList<>();
     private int categoryId;
-    private Button destinationButton;
 
-    public GetPoisByCategory(MainActivity activity, GoogleMap mMap, int categoryId, Button destinationButton){
+    public GetPoisByCategory(MainActivity activity, GoogleMap mMap, int categoryId){
 
         this.activity = activity;
         this.mMap = mMap;
         this.categoryId = categoryId;
-        this.destinationButton = destinationButton;
     }
 
 
@@ -100,7 +98,9 @@ public class GetPoisByCategory  extends AsyncTask<String, String, String> {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
                     activity.setmDestination(marker.getPosition());
-                    Log.d("MarkerListner", marker.getTitle());
+                    marker.setIcon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+                    marker.showInfoWindow();
                     return true;
                 }
             });

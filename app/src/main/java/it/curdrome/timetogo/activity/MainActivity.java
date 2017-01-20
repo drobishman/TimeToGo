@@ -11,6 +11,7 @@ import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -76,7 +77,7 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private LatLng romeLatLng = new LatLng (41.902783, 12.496366); //rome position
-    private float zoomLevel = 16; // default zoom level
+    private float zoomLevel = 11; // default zoom level
 
     //origin and destination to generate direction
     private LatLng mOrigin;
@@ -85,12 +86,11 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
         this.mDestination = mDestination;
     }
 
-    private LatLng mDestination = new LatLng(41.8426285, 12.5864169);
+    private LatLng mDestination;
 
     private MainActivity activity = (MainActivity) this;
 
     private Button originButton;
-    private Button destinationButton;
     private Button directionButton;
 
     public ProgressDialog pDialog; // to show when direction create
@@ -105,50 +105,23 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // check if internet connection is available
-        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        if (activeNetwork != null) { // connected to the internet
-            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
-                // connected to wifi
-                Toast.makeText(getApplicationContext(), activeNetwork.getTypeName(), Toast.LENGTH_SHORT).show();
-            } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
-                // connected to the mobile provider's data plan
-                Toast.makeText(getApplicationContext(), activeNetwork.getTypeName(), Toast.LENGTH_SHORT).show();
-            }
-        } else {
-
-            // no inernet connection
-            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
-            alertBuilder.setCancelable(true);
-            alertBuilder.setTitle(getString(R.string.internet_necessary));
-            alertBuilder.setMessage(getString(R.string.message_internet_is_necessary));
-            alertBuilder.setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface dialog, int which) {
-                    // restart application
-                    finish();
-                    startActivity(getIntent());
-                }
-            });
-
-            //create and shoew alert dialog
-            AlertDialog alert = alertBuilder.create();
-            alert.show();
+        if(!isNetworkAvailable(this)) {
+            noInternetMessage();
         }
 
-        pDialog = new ProgressDialog(activity);
-        pDialog.setMessage(activity.getString(R.string.loading_categories_wait));
-        pDialog.setIndeterminate(false);
-        pDialog.setCancelable(false);
-        pDialog.show();
+        if(isNetworkAvailable(this)) {
+            pDialog = new ProgressDialog(activity);
+            pDialog.setMessage(activity.getString(R.string.loading_categories_wait));
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(false);
+            pDialog.show();
 
 
-        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-        GetCategories getCategories = new GetCategories(this); //get categories
-        getCategories.response = this;
-        getCategories.execute();
-
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            GetCategories getCategories = new GetCategories(this); //get categories
+            getCategories.response = this;
+            getCategories.execute();
+        }else noInternetMessage();
         // get categories statically
         // categoryList = getResources().getStringArray(R.array.categories_name);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -164,10 +137,15 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
 
         //fragment = null;
         CharSequence title = null;
+        mDestination = null;
+        mMap.clear();
 
-        Toast.makeText(getApplicationContext(), "categoria: "+(position+1)+"",Toast.LENGTH_SHORT).show();
-        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-        new GetPoisByCategory(this, mMap, position+1, destinationButton).execute(); //get categories
+        if(isNetworkAvailable(getApplicationContext())){
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            new GetPoisByCategory(this, mMap, position+1).execute(); //get pois by category
+        }else
+            noInternetMessage();
+
 
         mDrawerList.setItemChecked(position, true);
         try {
@@ -186,6 +164,8 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
             mDrawerList.setAdapter(new ArrayAdapter<String>(this,
                     R.layout.drawer_list_item, output));
         }else{
+
+            Toast.makeText(getApplicationContext(),R.string.no_categories_loaded,Toast.LENGTH_SHORT).show();
             String[] mStringArray = getResources().getStringArray(R.array.categories_name);
 
             mDrawerList.setAdapter(new ArrayAdapter<String>(this,
@@ -257,6 +237,25 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
     @Override
     public void onConnected(Bundle bundle) {
 
+        directionButton = (Button) findViewById(R.id.direction_button);
+        directionButton.setVisibility(View.VISIBLE);
+        directionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mOrigin != null && mDestination != null){
+                    if(isNetworkAvailable(getApplicationContext())){
+                        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+                        new GetDirection(mOrigin, mDestination, mMap, activity).execute(); //calcola il percorso
+                    }else
+                        noInternetMessage();
+
+                } else {
+                    Toast.makeText(getApplicationContext(),"Origin or destination not set",Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(1000);
         mLocationRequest.setFastestInterval(1000);
@@ -272,21 +271,8 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
             mMap.setMyLocationEnabled(true);
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-            positionPermissionGranted();
+            setDestination();
         }
-
-        setDestination();
-
-        directionButton = (Button) findViewById(R.id.direction_button);
-        directionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                new GetDirection(mOrigin, mDestination, mMap, activity).execute(); //calcola il percorso
-            }
-        });
-
     }
 
     /*
@@ -294,90 +280,19 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
      */
     private void setDestination() {
 
-        if (mDestination != null) {
-
-            destinationButton = (Button) findViewById(R.id.destination_button);
-            destinationButton.setVisibility(View.VISIBLE);
-            destinationButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    if (destinationMarker != null) {
-                        destinationMarker.remove();
-                    }
-                    destinationMarker = mMap.addMarker(new MarkerOptions().position(mDestination)
-                            .title(getString(R.string.my_location)).icon(BitmapDescriptorFactory
-                                    .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDestination, zoomLevel));
-                    mMap.setOnMapClickListener(null);
-                    destinationButton.setVisibility(Button.INVISIBLE);
-                    directionButton.setVisibility(View.VISIBLE);
-                }
-            });
-
-        } else {
-
-            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                @Override
-                public void onMapClick(final LatLng latLng) {
-
-                    mDestination = latLng;
-                    destinationMarker = mMap.addMarker(new MarkerOptions().position(mDestination)
-                            .title(getString(R.string.my_location)).icon(BitmapDescriptorFactory
-                                    .defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
-
-                    destinationButton = (Button) findViewById(R.id.destination_button);
-                    destinationButton.setVisibility(View.VISIBLE);
-                    destinationButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-
-                            if (destinationMarker != null) {
-                                destinationMarker.remove();
-                            }
-                            mDestination = latLng;
-                            destinationMarker = mMap.addMarker(new MarkerOptions().position(mDestination)
-                                    .title(getString(R.string.my_location)).icon(BitmapDescriptorFactory
-                                            .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDestination, zoomLevel));
-                            mMap.setOnMapClickListener(null);
-                            destinationButton.setVisibility(Button.INVISIBLE);
-                            directionButton.setVisibility(View.VISIBLE);
-                        }
-                    });
-                }
-            });
-        }
-    }
-
-    /*
-    listner for location permission granted
-     */
-    private void positionPermissionGranted(){
-
-        originButton = (Button) findViewById(R.id.origin_button);
-        originButton.setVisibility(View.VISIBLE);
-        originButton.setOnClickListener(new View.OnClickListener() {
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
-            public void onClick(View view) {
-                //remove previous current location Marker
-                if (originMarker != null){
-                    originMarker.remove();
-                }
-                if(mLastLocation == null)
-                    Toast.makeText(getApplicationContext(),R.string.get_device_position_first,Toast.LENGTH_SHORT);
-                else {
-                    mOrigin = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                    originMarker = mMap.addMarker(new MarkerOptions().position(mOrigin)
-                            .title(getString(R.string.my_location)).icon(BitmapDescriptorFactory
-                                    .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigin, zoomLevel));
-                }
-                originButton.setVisibility(Button.INVISIBLE);
+            public void onMapClick(final LatLng latLng) {
+
+                mDestination = latLng;
+                destinationMarker = mMap.addMarker(new MarkerOptions().position(mDestination)
+                        .title(getString(R.string.my_destination)).icon(BitmapDescriptorFactory
+                                .defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDestination, zoomLevel));
+                mMap.setOnMapClickListener(null);
             }
         });
     }
-
 
     /*
     Listner for location permission denied
@@ -411,6 +326,8 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigin, zoomLevel));
                         mMap.setOnMapClickListener(null);
                         originButton.setVisibility(Button.INVISIBLE);
+                        setDestination();
+                        Log.d("origin Listner", latLng.toString());
                     }
                 });
             }
@@ -504,7 +421,53 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
      */
     @Override
     public void onLocationChanged(Location location) {
-        mLastLocation = location;
+        mLastLocation = location;mOrigin = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+        if (originMarker != null) {
+            originMarker.remove();
+        }
+        originMarker = mMap.addMarker(new MarkerOptions().position(mOrigin)
+                .title(getString(R.string.my_location)).icon(BitmapDescriptorFactory
+                        .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+
+
+    }
+
+    /**
+     * This method check mobile is connected to network.
+     * @param context
+     * @return true if connected otherwise false.
+     */
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager conMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(conMan.getActiveNetworkInfo() != null && conMan.getActiveNetworkInfo().isConnected())
+            return true;
+        else
+            return false;
+    }
+
+    private void noInternetMessage(){
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
+        alertBuilder.setCancelable(true);
+        alertBuilder.setTitle(getString(R.string.internet_necessary));
+        alertBuilder.setMessage(getString(R.string.message_internet_is_necessary));
+        alertBuilder.setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                // restart application
+                finish();
+                startActivity(getIntent());
+            }
+        });
+
+        alertBuilder.setNegativeButton(R.string.quit, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                System.exit(0);
+            }
+        });
+        //create and show alert dialog
+        AlertDialog alert = alertBuilder.create();
+        alert.show();
     }
 
 }

@@ -6,6 +6,7 @@
     <string name="direction_button_message">Get Direction</string>
     <string name="get_device_position_first">Get Device Position First</string>
     <string name="my_location">My Location</string>
+    <string name="my_destination">My destination</string>
     <string name="permission_necessary">Permission Necessary</string>
     <string name="location_permission_is_necessary">"Location permission is necessary"</string>
     <string name="loading_route_wait">Loading route. Please wait...</string>
@@ -13,11 +14,13 @@
     <string name="internet_necessary">Internet is necessary</string>
     <string name="message_internet_is_necessary">Internet is necessary, click retry to restart</string>
     <string name="retry">Retry</string>
+    <string name="no_categories_loaded">No categories loaded..</string>
+    <string name="quit">quit</string>
 
     <string-array name="categories_name">
-        <item>categoria1</item>
-        <item>categoria2</item>
-        <item>categoria3</item>
-        <item>categoria4</item>
+        <item>none</item>
+        <item>none</item>
+        <item>none</item>
+        <item>none</item>
     </string-array>
 </resources>
