@@ -17,6 +17,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -27,7 +29,8 @@ import java.util.List;
 
 import it.curdrome.timetogo.R;
 import it.curdrome.timetogo.activity.MainActivity;
-import it.curdrome.timetogo.connection.atac.GetRTI;
+import it.curdrome.timetogo.model.Route;
+import it.curdrome.timetogo.model.Transit;
 
 /*
    class that generates a route direction using google maps api and print it on map
@@ -42,6 +45,8 @@ public class GetDirection extends AsyncTask<String, String, String> {
     private LatLng mDestination;
     private LatLng northeast;
     private LatLng southwest;
+    private List<Transit> transitList = new ArrayList<Transit>();
+    private Route route;
 
     private GoogleMap mMap;
 
@@ -105,6 +110,10 @@ public class GetDirection extends AsyncTask<String, String, String> {
 
             getBounds(route);
 
+            getTransit(route);
+
+            getRoute(route);
+
             JSONObject poly = route.getJSONObject("overview_polyline");
             String polyline = poly.getString("points");
             polyz = decodePoly(polyline);
@@ -128,9 +137,6 @@ public class GetDirection extends AsyncTask<String, String, String> {
     }
 
     protected void onPostExecute(String file_url) {
-
-        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-        new GetRTI().execute();
 
         for (int i = 0; i < polyz.size() - 1; i++) {
             LatLng src = polyz.get(i);
@@ -179,5 +185,62 @@ public class GetDirection extends AsyncTask<String, String, String> {
         }
 
         return poly;
+    }
+
+    private void getRoute(JSONObject route) throws JSONException {
+
+        JSONArray arrayLegs = route.getJSONArray("legs");
+        JSONObject legs = arrayLegs.getJSONObject(0);
+        JSONObject arrivalTime = legs.getJSONObject("arrival_time");
+        String arrivalTimeText = arrivalTime.getString("text");
+
+        JSONObject departureTime = legs.getJSONObject("departure_time");
+        String departureTimeText = departureTime.getString("text");
+
+        JSONObject distance = legs.getJSONObject("distance");
+        String distanceText = distance.getString("text");
+
+        JSONObject duration = legs.getJSONObject("duration");
+        String durationText = duration.getString("text");
+
+        JSONObject poly = route.getJSONObject("overview_polyline");
+        String points = poly.getString("points");
+
+        this.route = new Route(points,
+                arrivalTimeText,
+                departureTimeText,
+                distanceText,
+                durationText,
+                transitList);
+    }
+
+    private void getTransit(JSONObject route) throws JSONException {
+
+        JSONArray arrayLegs = route.getJSONArray("legs");
+        JSONObject legs = arrayLegs.getJSONObject(0);
+        JSONArray stepsArray = legs.getJSONArray("steps");
+        for(int i=0; i<stepsArray.length();i++){
+            JSONObject steps = stepsArray.getJSONObject(i);
+            String travelmode = steps.getString("travel_mode");
+            if(travelmode.matches("TRANSIT")){
+                JSONObject transitDetails = steps.getJSONObject("transit_details");
+                int numStops = transitDetails.getInt("num_stops");
+                JSONObject departureStop = transitDetails.getJSONObject("departure_stop");
+                String departureStopName = departureStop.getString("name");
+                String headsign = transitDetails.getString("headsign");
+                JSONObject line = transitDetails.getJSONObject("line");
+                String shortName = line.getString("short_name");
+                JSONObject vehicle = line.getJSONObject("vehicle");
+                String vehicleType = vehicle.getString("type");
+                JSONObject departureTime = transitDetails.getJSONObject("departure_time");
+                String departureTimeText = departureTime.getString("text");
+                transitList.add(new Transit(numStops,
+                        departureStopName,
+                        headsign,
+                        vehicleType,
+                        shortName,
+                        departureTimeText));
+            }
+        }
     }
 }
