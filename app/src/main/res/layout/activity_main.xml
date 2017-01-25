@@ -8,20 +8,22 @@
     android:fitsSystemWindows="true">
 
     <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        tools:context="it.curdrome.timetogo.activity.MainActivity">
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        tools:context="it.curdrome.timetogo.activity.MainActivity"
+        android:weightSum="100"
+        android:orientation="vertical"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true">
+
         <fragment
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="15dip"
-            android:layout_marginRight="15dip"
-            android:layout_marginTop="15dip"
-            android:layout_marginBottom="15dip"
-            android:padding="1dp"
-            tools:layout="@layout/place_autocomplete_fragment">
+            android:layout_height="0dp"
+            android:layout_weight="75"
+            tools:layout="@layout/place_autocomplete_fragment"
+            android:layout_gravity="top">
 
             <Button
                 android:visibility="gone"
@@ -37,17 +39,6 @@
 
             <Button
                 android:visibility="gone"
-                android:id="@+id/destination_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left|bottom"
-                android:text="@string/destination_button_message"
-                android:padding="10dp"
-                android:layout_marginTop="20dp"
-                android:paddingRight="10dp"/>
-
-            <Button
-                android:visibility="gone"
                 android:id="@+id/direction_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -57,6 +48,17 @@
                 android:layout_marginTop="20dp"
                 android:paddingRight="10dp"/>
         </fragment>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="25"
+            android:id="@+id/frame_main"
+            android:layout_gravity="bottom"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:background="@color/colorPrimary"/>
     </LinearLayout>
 
     <ListView

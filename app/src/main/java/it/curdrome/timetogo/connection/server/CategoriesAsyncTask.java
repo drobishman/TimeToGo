@@ -1,11 +1,9 @@
 package it.curdrome.timetogo.connection.server;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -18,17 +16,11 @@ import it.curdrome.timetogo.activity.MainActivity;
  * Created by adrian on 16/01/2017.
  */
 
-public class GetCategories extends AsyncTask<String, String, String> {
+public class CategoriesAsyncTask extends AsyncTask<String, String, String> {
 
-    public GetCategoriesResponse response = null;
+    public CategoriesResponse response = null;
 
     private String[] stringArray;
-
-    private MainActivity activity;
-
-    public GetCategories(MainActivity activity){
-        this.activity = activity;
-    }
 
     @Override
     protected String doInBackground(String... strings) {

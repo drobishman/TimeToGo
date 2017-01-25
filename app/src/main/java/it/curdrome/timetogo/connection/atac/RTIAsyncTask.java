@@ -18,12 +18,13 @@ import it.curdrome.timetogo.xmlrpc.XMLRPCException;
  * Created by adrian on 23/01/2017.
  */
 
-public class GetRTI extends AsyncTask<String, String, String> {
+public class RTIAsyncTask extends AsyncTask<String, String, String> {
 
+    private final android.os.Handler handler = new android.os.Handler();
     private Transit transit;
 
-    public GetRTI(Transit transit){
-        this.transit= transit;
+    public RTIAsyncTask(Transit transit){
+        this.transit = transit;
     }
 
     @Override
@@ -35,11 +36,13 @@ public class GetRTI extends AsyncTask<String, String, String> {
         String query = transit.getIdPalina();
 
 
+        Log.d("id palina", transit.getIdPalina());
+
+
         try {
             // token request
             XMLRPCClient authClient = new XMLRPCClient(new URL(stringUrlAuth));
-            String token = null;
-            token = (String) authClient.call("autenticazione.Accedi", key, "");
+            String token = (String) authClient.call("autenticazione.Accedi", key, "");
             Log.i("token for ATAC: ", token);
 
             //get palina using the name of the bus stop or part of it
@@ -48,7 +51,7 @@ public class GetRTI extends AsyncTask<String, String, String> {
             JSONObject jsonResult = new JSONObject(result);
             JSONObject risposta = jsonResult.getJSONObject("risposta");
 
-            Log.d("GetRTI", risposta.toString());
+            Log.d("RTIAsyncTask", risposta.toString());
 
         } catch (XMLRPCException e) {
             e.printStackTrace();
@@ -57,8 +60,19 @@ public class GetRTI extends AsyncTask<String, String, String> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+        super.onPostExecute(s);
+
+        handler.postDelayed(new Runnable() {
+
+            public void run() {
+                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+                new RTIAsyncTask(transit).execute();
+            }
+        }, 30000);
     }
 }

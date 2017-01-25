@@ -13,6 +13,19 @@ public class Poi {
     private Category category;
     private String name;
     private double lat;
+    private double lng;
+    private String description;
+
+    public Poi (int id, String placeId, Category category, String name, double lat, double lng, String description ){
+
+        this.id = id;
+        this.placeId = placeId;
+        this.category = category;
+        this.name = name;
+        this.lat = lat;
+        this.lng =lng;
+        this.description = description;
+    }
 
     public double getLat() {
         return lat;
@@ -29,9 +42,6 @@ public class Poi {
     public void setLng(double lng) {
         this.lng = lng;
     }
-
-    private double lng;
-    private String description;
 
     public int getId() {
         return id;
@@ -65,13 +75,16 @@ public class Poi {
         this.name = name;
     }
 
-
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public String toString(){
+        return "id: "+id+", placeId: "+placeId+", name: "+name+", lat: "+lat+", lng: "+ lng+", description: "+description+"";
     }
 }

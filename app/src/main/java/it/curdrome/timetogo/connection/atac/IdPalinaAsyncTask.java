@@ -20,11 +20,12 @@ import java.util.List;
  * Created by adrian on 20/01/2017.
  */
 
-public class GetIdPalina extends AsyncTask<String, String, String> {
+public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
 
     private Transit transit;
+    private List<String> paline = new ArrayList<>();
 
-    public GetIdPalina(Transit transit){
+    public IdPalinaAsyncTask(Transit transit){
         this.transit = transit;
     }
 
@@ -41,7 +42,7 @@ public class GetIdPalina extends AsyncTask<String, String, String> {
             String splitted[] = query.split("-");
             query = splitted[1];
         }
-        JSONObject jsonResult =  null;//new JSONObject();
+        JSONObject jsonResult;//new JSONObject();
 
         try {
 
@@ -61,8 +62,9 @@ public class GetIdPalina extends AsyncTask<String, String, String> {
             for (int i =0; i< palineExtra.length(); i++) {
                 JSONObject palina = palineExtra.getJSONObject(i);
                 JSONArray lineeInfo = palina.getJSONArray("linee_info");
+                paline.add(palina.getString("id_palina"));
 
-                // cycle to get infos of the line and if headsign matches check if our line pass it in cas of multiple answers
+                // cycle to get infos of the line and if headsign matches check if our line pass it in case of multiple answers
                 for (int j = 0; j < lineeInfo.length(); j++) {
                     JSONObject info = lineeInfo.getJSONObject(j);
 
@@ -77,10 +79,9 @@ public class GetIdPalina extends AsyncTask<String, String, String> {
                         // check for every stop if our line pass there
                         for(int k =0;k<linee.length();k++){
                             JSONObject linea = linee.getJSONObject(k);
-
                             // if yes assign the id to our transit
                             if(linea.getString("linea").equals(transit.getLine()))
-                                transit.setIdPalina(palina.getString("id_palina"));
+                                transit.setIdPalina(paline.get(i));
                         }
                     }
                 }
@@ -100,6 +101,6 @@ public class GetIdPalina extends AsyncTask<String, String, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        Log.d("onPostExecute", s);
+        //Log.d("onPostExecute", s);
     }
 }

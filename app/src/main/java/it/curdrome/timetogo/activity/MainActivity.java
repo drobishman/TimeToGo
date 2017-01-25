@@ -9,13 +9,13 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
@@ -39,12 +39,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import it.curdrome.timetogo.R;
 
-import it.curdrome.timetogo.connection.server.GetCategoriesResponse;
+import it.curdrome.timetogo.connection.server.CategoriesResponse;
 import it.curdrome.timetogo.connection.google.*;
-import it.curdrome.timetogo.connection.server.GetCategories;
-import it.curdrome.timetogo.connection.server.GetPoisByCategory;
+import it.curdrome.timetogo.connection.server.CategoriesAsyncTask;
+import it.curdrome.timetogo.connection.server.PoisByCategoryAsyncTask;
+import it.curdrome.timetogo.connection.server.PoisByCategoryResponse;
+import it.curdrome.timetogo.fragment.PoiFragment;
+import it.curdrome.timetogo.model.Poi;
+import it.curdrome.timetogo.model.Route;
 
 /**
  This class is the main class of the "TimeToGo" application.
@@ -55,15 +62,28 @@ import it.curdrome.timetogo.connection.server.GetPoisByCategory;
  @version 13/01/2017
  */
 
-public class MainActivity extends FragmentActivity  implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        LocationListener, GetCategoriesResponse {
+public class MainActivity extends FragmentActivity  implements
+        OnMapReadyCallback,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener,
+        CategoriesResponse,
+        DirectionResponse ,
+        PoisByCategoryResponse{
+
+    private SupportMapFragment mapFragment;
+    private FragmentManager mFragmentManager;
+
+    private List<Route> routes = new ArrayList<>();
+
+    public List<Poi> getPois() {
+        return pois;
+    }
+
+    private List<Poi> pois = new ArrayList<>();
 
     public static final String TAG = "MainActivity";
-
     private static final int MY_REQUEST_POSITION = 0;
-
-    private boolean connected = false;
 
     // drawer variables
     private DrawerLayout mDrawerLayout;
@@ -118,14 +138,20 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
 
 
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            GetCategories getCategories = new GetCategories(this); //get categories
-            getCategories.response = this;
-            getCategories.execute();
+            CategoriesAsyncTask categoriesAsyncTask = new CategoriesAsyncTask(); //get categories
+            categoriesAsyncTask.response = this;
+            categoriesAsyncTask.execute();
         }else noInternetMessage();
+
         // get categories statically
         // categoryList = getResources().getStringArray(R.array.categories_name);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
+
+        mFragmentManager = getSupportFragmentManager();
+        SupportMapFragment mapFragment = (SupportMapFragment) mFragmentManager
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
     }
 
     /*
@@ -142,7 +168,9 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
 
         if(isNetworkAvailable(getApplicationContext())){
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            new GetPoisByCategory(this, mMap, position+1).execute(); //get pois by category
+            PoisByCategoryAsyncTask poisByCategoryAsyncTask= new PoisByCategoryAsyncTask(this, mMap, position+1); //get pois by category
+            poisByCategoryAsyncTask.response = this;
+            poisByCategoryAsyncTask.execute();
         }else
             noInternetMessage();
 
@@ -173,9 +201,27 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
         }
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
-
-
         pDialog.dismiss();
+    }
+
+    @Override
+    public void TaskResult(Route route) {
+        routes.add(route);
+        Log.d("mainActivity routes", routes.size()+"");
+        routes.get(0).draw();
+    }
+
+    @Override
+    public void taskResult(List<Poi> pois) {
+        this.pois = pois;
+        Log.d("pois",pois.toString());
+
+        FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
+        PoiFragment fragment = new PoiFragment();
+        fTransaction.add(R.id.frame_main, fragment);
+        fTransaction.addToBackStack(null);
+        fTransaction.commit();
+
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
@@ -203,7 +249,7 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
 
         if (mMap == null) {
             // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+            mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map);
             mapFragment.getMapAsync(this);
         }
@@ -245,7 +291,9 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
                 if(mOrigin != null && mDestination != null){
                     if(isNetworkAvailable(getApplicationContext())){
                         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                        new GetDirection(mOrigin, mDestination, mMap, activity).execute(); //calcola il percorso
+                        DirectionAsyncTask directionAsyncTask = new DirectionAsyncTask(mOrigin, mDestination, mMap, activity);//calcola il percorso
+                        directionAsyncTask.execute();
+                        directionAsyncTask.response = activity;
                     }else
                         noInternetMessage();
 
@@ -290,6 +338,8 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
                                 .defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDestination, zoomLevel));
                 mMap.setOnMapClickListener(null);
+
+
             }
         });
     }
@@ -411,6 +461,7 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
     @Override
     protected void onPause(){
         super.onPause();
+
         if (mGoogleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
@@ -469,5 +520,4 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
         AlertDialog alert = alertBuilder.create();
         alert.show();
     }
-
 }
