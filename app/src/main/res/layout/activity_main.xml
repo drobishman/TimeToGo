@@ -54,7 +54,7 @@
                 android:id="@+id/walking_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right|bottom"
+                android:layout_gravity="left|bottom"
                 android:text="@string/walking_button_message"
                 android:padding="10dp"
                 android:layout_marginTop="20dp"

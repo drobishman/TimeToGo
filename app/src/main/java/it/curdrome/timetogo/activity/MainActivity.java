@@ -220,7 +220,7 @@ public class MainActivity extends FragmentActivity  implements
             transitButton.setVisibility(View.VISIBLE);
             transitButton.setText("transit: "+routes.get(0).getDuration());
             walkingButton.setVisibility(View.VISIBLE);
-            transitButton.setText("walking: "+routes.get(1).getDuration());
+            walkingButton.setText("walking: "+routes.get(1).getDuration());
         }else if(routes.size() == 1){
             if(routes.get(0).getMode().matches("transit")) {
                 transitButton.setVisibility(View.VISIBLE);
@@ -228,7 +228,7 @@ public class MainActivity extends FragmentActivity  implements
             }
             else {
                 walkingButton.setVisibility(View.VISIBLE);
-                transitButton.setText("walking: " + routes.get(1).getDuration());
+                transitButton.setText("walking: " + routes.get(0).getDuration());
             }
         }
 
