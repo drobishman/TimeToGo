@@ -38,18 +38,20 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
     private LatLng mDestination;
     private List<Transit> transitList = new ArrayList<>();
     private Route route;
+    private String mode;
 
     private LatLng northeast;
     private LatLng southwest;
 
     private GoogleMap mMap;
 
-    public DirectionAsyncTask (LatLng mOrigin, LatLng mDestination, GoogleMap mMap, MainActivity activity){
+    public DirectionAsyncTask (LatLng mOrigin, LatLng mDestination, GoogleMap mMap, MainActivity activity, String mode){
 
         this.activity = activity;
         this.mOrigin = mOrigin;
         this.mDestination = mDestination;
         this.mMap = mMap;
+        this.mode = mode;
     }
 
     @Override
@@ -74,7 +76,7 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
                 + "&destination="
                 + mDestination.latitude
                 + ","
-                + mDestination.longitude + "&sensor=false&mode=transit";
+                + mDestination.longitude + "&sensor=false&mode="+mode;
 
         String output = null;
 
@@ -130,7 +132,7 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
 
         if(route == null){
             Snackbar snackbar = Snackbar
-                    .make(activity.findViewById(R.id.main), "Route not found", Snackbar.LENGTH_LONG);
+                    .make(activity.findViewById(R.id.main), mode+" route not found..", Snackbar.LENGTH_LONG);
 
             snackbar.show();
         }
@@ -143,11 +145,18 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
 
         JSONArray arrayLegs = route.getJSONArray("legs");
         JSONObject legs = arrayLegs.getJSONObject(0);
-        JSONObject arrivalTime = legs.getJSONObject("arrival_time");
-        String arrivalTimeText = arrivalTime.getString("text");
 
-        JSONObject departureTime = legs.getJSONObject("departure_time");
-        String departureTimeText = departureTime.getString("text");
+        String arrivalTimeText = null;
+        String departureTimeText = null;
+
+        if(!mode.matches("walking")) {
+            JSONObject arrivalTime = legs.getJSONObject("arrival_time");
+            arrivalTimeText = arrivalTime.getString("text");
+
+            JSONObject departureTime = legs.getJSONObject("departure_time");
+            departureTimeText = departureTime.getString("text");
+        }
+
 
         JSONObject distance = legs.getJSONObject("distance");
         String distanceText = distance.getString("text");

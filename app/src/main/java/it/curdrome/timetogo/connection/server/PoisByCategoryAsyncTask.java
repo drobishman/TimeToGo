@@ -95,7 +95,9 @@ public class PoisByCategoryAsyncTask extends AsyncTask<String, String, String> {
                         poi.getString("name"),
                         poi.getDouble("lat"),
                         poi.getDouble("lng"),
-                        poi.getString("description")
+                        poi.getString("description"),
+                        mMap,
+                        activity
                         ));
             }
         } catch (JSONException e) {
@@ -109,20 +111,11 @@ public class PoisByCategoryAsyncTask extends AsyncTask<String, String, String> {
         pois = gson.fromJson(result, type);
 */
         for (Poi poi : pois){
-            mMap.addMarker(new MarkerOptions().position(new LatLng(poi.getLat(),poi.getLng()))
-                    .title(poi.getName()).icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+
         }
 
 
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                activity.setmDestination(marker.getPosition());
-                marker.showInfoWindow();
-                return true;
-            }
-        });
+
 
 
         response.taskResult(pois);

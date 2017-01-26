@@ -32,8 +32,6 @@ public class Transit {
 
     private LatLng palinaLatLng;
 
-    // TODO da aggiungere LatLng per poter piazzare il marker sulla fermata
-
     public Transit(int numStops, String departureStop, String headsign, String type, String line, String departureTime, double lat, double lng){
 
         this.numStops = numStops;

@@ -35,8 +35,8 @@ public class RTIAsyncTask extends AsyncTask<String, String, String> {
         String key = "8T3U52HFT48N5GRnvImL4hF0rRChrKg9";
         String query = transit.getIdPalina();
 
-
-        Log.d("id palina", transit.getIdPalina());
+        Log.d("RTI nome palina", transit.getDepartureStop());
+        Log.d("RTI id palina", transit.getIdPalina());
 
 
         try {

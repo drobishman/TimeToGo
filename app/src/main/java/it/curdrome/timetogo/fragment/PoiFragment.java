@@ -11,6 +11,7 @@ import it.curdrome.timetogo.R;
 import it.curdrome.timetogo.activity.MainActivity;
 import it.curdrome.timetogo.model.Poi;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +19,7 @@ import java.util.List;
  */
 public class PoiFragment extends android.support.v4.app.Fragment {
 
+    private List<Poi> poi = new ArrayList<>();
     private MainActivity activity;
     //private BookmarkFragment adapter;
 
@@ -49,10 +51,10 @@ public class PoiFragment extends android.support.v4.app.Fragment {
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        List<Poi> pois = activity.getPois();
+        poi.add(activity.getSelectedPoi());
 
         final ListView mylist = (ListView) view.findViewById(R.id.pois);
-        final PoiAdapter adapter = new PoiAdapter(getActivity().getBaseContext(), R.layout.poi_row, pois, activity);
+        final PoiAdapter adapter = new PoiAdapter(getActivity().getBaseContext(), R.layout.poi_row, poi, activity);
         mylist.setAdapter(adapter);
 
     }

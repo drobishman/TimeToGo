@@ -13,8 +13,6 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.curdrome.timetogo.R;
-
 /**
  * Created by adrian on 21/01/2017.
  */
@@ -29,7 +27,7 @@ public class Route {
     private String departureTime;
     private String distance;
     private String duration;
-    private List<Transit> busStops;
+    private List<Transit> listTransit;
 
     private LatLng northeast;
     private LatLng southwest;
@@ -40,7 +38,7 @@ public class Route {
                   String departureTime,
                   String distance,
                   String duration,
-                  List<Transit> busStops,
+                  List<Transit> listTransit,
                   LatLng southwest,
                   LatLng northeast){
 
@@ -50,7 +48,7 @@ public class Route {
         this.departureTime = departureTime;
         this.distance = distance;
         this.duration = duration;
-        this.busStops = busStops;
+        this.listTransit = listTransit;
         this.southwest = southwest;
         this.northeast = northeast;
     }
@@ -111,7 +109,7 @@ public class Route {
                     .width(4).color(Color.RED));
 
         }
-        for(Transit transit:busStops){
+        for(Transit transit: listTransit){
             mMap.addMarker(new MarkerOptions().position(transit.getPalinaLatLng())
                     .title(transit.getDepartureStop()).icon(BitmapDescriptorFactory
                             .defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
@@ -127,6 +125,6 @@ public class Route {
                 " departureTime : " + departureTime +
                 " distance : " + distance +
                 " duration : " + duration +
-                " list of transits : \n" + busStops.toString();
+                " list of transits : \n" + listTransit.toString();
     }
 }

@@ -82,6 +82,8 @@ public class MainActivity extends FragmentActivity  implements
 
     private List<Poi> pois = new ArrayList<>();
 
+    private Poi selectedPoi;
+
     public static final String TAG = "MainActivity";
     private static final int MY_REQUEST_POSITION = 0;
 
@@ -100,13 +102,13 @@ public class MainActivity extends FragmentActivity  implements
     private float zoomLevel = 11; // default zoom level
 
     //origin and destination to generate direction
-    private LatLng mOrigin;
+    public LatLng mOrigin;
 
     public void setmDestination(LatLng mDestination) {
         this.mDestination = mDestination;
     }
 
-    private LatLng mDestination;
+    public LatLng mDestination;
 
     private MainActivity activity = (MainActivity) this;
 
@@ -167,6 +169,9 @@ public class MainActivity extends FragmentActivity  implements
         mMap.clear();
 
         if(isNetworkAvailable(getApplicationContext())){
+            if(!pois.isEmpty()){
+                pois.clear();
+            }
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             PoisByCategoryAsyncTask poisByCategoryAsyncTask= new PoisByCategoryAsyncTask(this, mMap, position+1); //get pois by category
             poisByCategoryAsyncTask.response = this;
@@ -208,7 +213,6 @@ public class MainActivity extends FragmentActivity  implements
     public void TaskResult(Route route) {
         routes.add(route);
         Log.d("mainActivity routes", routes.size()+"");
-        routes.get(0).draw();
     }
 
     @Override
@@ -216,11 +220,33 @@ public class MainActivity extends FragmentActivity  implements
         this.pois = pois;
         Log.d("pois",pois.toString());
 
-        FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
-        PoiFragment fragment = new PoiFragment();
-        fTransaction.add(R.id.frame_main, fragment);
-        fTransaction.addToBackStack(null);
-        fTransaction.commit();
+        for(Poi poi :pois){
+            poi.draw();
+        }
+
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+
+                for(Poi poi : getPois()){
+                    if(poi.getMarker().equals(marker)){
+                        Log.d("marker clicked", poi.toString());
+                        selectedPoi = poi;
+                        FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
+                        PoiFragment fragment = new PoiFragment();
+                        if(fTransaction.isEmpty())
+                            fTransaction.add(R.id.frame_main, fragment);
+                        else
+                            fTransaction.replace(R.id.frame_main, fragment);
+                        fTransaction.addToBackStack(null);
+                        fTransaction.commit();
+                    }
+                }
+
+            }
+        });
+
+
 
     }
 
@@ -289,14 +315,7 @@ public class MainActivity extends FragmentActivity  implements
             @Override
             public void onClick(View view) {
                 if(mOrigin != null && mDestination != null){
-                    if(isNetworkAvailable(getApplicationContext())){
-                        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                        DirectionAsyncTask directionAsyncTask = new DirectionAsyncTask(mOrigin, mDestination, mMap, activity);//calcola il percorso
-                        directionAsyncTask.execute();
-                        directionAsyncTask.response = activity;
-                    }else
-                        noInternetMessage();
-
+                   routes.get(0).draw();
                 } else {
                     Toast.makeText(getApplicationContext(),"Origin or destination not set",Toast.LENGTH_SHORT).show();
                 }
@@ -339,6 +358,17 @@ public class MainActivity extends FragmentActivity  implements
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDestination, zoomLevel));
                 mMap.setOnMapClickListener(null);
 
+                if(isNetworkAvailable(getApplicationContext())){
+                    Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+                    DirectionAsyncTask directionAsyncTaskTransit = new DirectionAsyncTask(mOrigin, mDestination, mMap, activity,"transit");//calcola il percorso
+                    directionAsyncTaskTransit.execute();
+                    directionAsyncTaskTransit.response = activity;
+                    Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+                    DirectionAsyncTask directionAsyncTaskWalking = new DirectionAsyncTask(mOrigin, mDestination, mMap, activity,"walking");//calcola il percorso
+                    directionAsyncTaskWalking.execute();
+                    directionAsyncTaskWalking.response = activity;
+                }else
+                    noInternetMessage();
 
             }
         });
@@ -496,7 +526,7 @@ public class MainActivity extends FragmentActivity  implements
             return false;
     }
 
-    private void noInternetMessage(){
+    public void noInternetMessage(){
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
         alertBuilder.setCancelable(true);
         alertBuilder.setTitle(getString(R.string.internet_necessary));
@@ -505,8 +535,13 @@ public class MainActivity extends FragmentActivity  implements
 
             public void onClick(DialogInterface dialog, int which) {
                 // restart application
+                /*
                 finish();
                 startActivity(getIntent());
+                */
+                if(!isNetworkAvailable(activity)){
+                    noInternetMessage();
+                }
             }
         });
 
@@ -519,5 +554,13 @@ public class MainActivity extends FragmentActivity  implements
         //create and show alert dialog
         AlertDialog alert = alertBuilder.create();
         alert.show();
+    }
+
+    public Poi getSelectedPoi() {
+        return selectedPoi;
+    }
+
+    public void setSelectedPoi(Poi selectedPoi) {
+        this.selectedPoi = selectedPoi;
     }
 }
