@@ -3,7 +3,8 @@
     <string name="title_activity_main">TimeToGo</string>
     <string name="origin_button_message">Set Origin</string>
     <string name="destination_button_message">Set Destination</string>
-    <string name="direction_button_message">Get Direction</string>
+    <string name="walking_button_message">Walking</string>
+    <string name="transit_button_message">Transit</string>
     <string name="get_device_position_first">Get Device Position First</string>
     <string name="my_location">My Location</string>
     <string name="my_destination">My destination</string>

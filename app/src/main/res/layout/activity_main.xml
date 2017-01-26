@@ -39,11 +39,23 @@
 
             <Button
                 android:visibility="gone"
-                android:id="@+id/direction_button"
+                android:id="@+id/transit_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right|bottom"
-                android:text="@string/direction_button_message"
+                android:text="@string/transit_button_message"
+                android:padding="10dp"
+                android:layout_marginTop="20dp"
+                android:paddingRight="10dp"/>
+
+
+            <Button
+                android:visibility="gone"
+                android:id="@+id/walking_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|bottom"
+                android:text="@string/walking_button_message"
                 android:padding="10dp"
                 android:layout_marginTop="20dp"
                 android:paddingRight="10dp"/>

@@ -32,6 +32,8 @@ public class Route {
     private LatLng northeast;
     private LatLng southwest;
 
+    private String mode;
+
     public Route (GoogleMap mMap,
                   String points,
                   String arrivalTime,
@@ -40,7 +42,8 @@ public class Route {
                   String duration,
                   List<Transit> listTransit,
                   LatLng southwest,
-                  LatLng northeast){
+                  LatLng northeast,
+                  String mode){
 
         this.mMap = mMap;
         this.points = points;
@@ -51,6 +54,7 @@ public class Route {
         this.listTransit = listTransit;
         this.southwest = southwest;
         this.northeast = northeast;
+        this.mode = mode;
     }
 
     public String getPoints() {
@@ -126,5 +130,13 @@ public class Route {
                 " distance : " + distance +
                 " duration : " + duration +
                 " list of transits : \n" + listTransit.toString();
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public String getMode() {
+        return mode;
     }
 }

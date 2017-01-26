@@ -113,7 +113,8 @@ public class MainActivity extends FragmentActivity  implements
     private MainActivity activity = (MainActivity) this;
 
     private Button originButton;
-    private Button directionButton;
+    private Button transitButton;
+    private Button walkingButton;
 
     public ProgressDialog pDialog; // to show when direction create
     private boolean wait = true;
@@ -213,6 +214,24 @@ public class MainActivity extends FragmentActivity  implements
     public void TaskResult(Route route) {
         routes.add(route);
         Log.d("mainActivity routes", routes.size()+"");
+        transitButton.setText(routes.get(0).getDuration());
+
+        if(routes.size() == 2){
+            transitButton.setVisibility(View.VISIBLE);
+            transitButton.setText("transit: "+routes.get(0).getDuration());
+            walkingButton.setVisibility(View.VISIBLE);
+            transitButton.setText("walking: "+routes.get(1).getDuration());
+        }else if(routes.size() == 1){
+            if(routes.get(0).getMode().matches("transit")) {
+                transitButton.setVisibility(View.VISIBLE);
+                transitButton.setText("transit: " + routes.get(0).getDuration());
+            }
+            else {
+                walkingButton.setVisibility(View.VISIBLE);
+                transitButton.setText("walking: " + routes.get(1).getDuration());
+            }
+        }
+
     }
 
     @Override
@@ -309,13 +328,25 @@ public class MainActivity extends FragmentActivity  implements
     @Override
     public void onConnected(Bundle bundle) {
 
-        directionButton = (Button) findViewById(R.id.direction_button);
-        directionButton.setVisibility(View.VISIBLE);
-        directionButton.setOnClickListener(new View.OnClickListener() {
+        transitButton = (Button) findViewById(R.id.transit_button);
+        transitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(mOrigin != null && mDestination != null){
-                   routes.get(0).draw();
+                    routes.get(0).draw();
+                } else {
+                    Toast.makeText(getApplicationContext(),"Origin or destination not set",Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+        walkingButton = (Button) findViewById(R.id.walking_button);
+        walkingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mOrigin != null && mDestination != null){
+                    routes.get(1).draw();
                 } else {
                     Toast.makeText(getApplicationContext(),"Origin or destination not set",Toast.LENGTH_SHORT).show();
                 }

@@ -176,7 +176,8 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
                 durationText,
                 transitList,
                 southwest,
-                northeast
+                northeast,
+                mode
         );
     }
 
