@@ -107,8 +107,6 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
 
     protected void onPostExecute(String output) {
 
-        Log.d("Route", output);
-
         JSONObject jsonObject;
         try {
             jsonObject = new JSONObject(output);

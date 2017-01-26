@@ -213,8 +213,7 @@ public class MainActivity extends FragmentActivity  implements
     @Override
     public void TaskResult(Route route) {
         routes.add(route);
-        Log.d("mainActivity routes", routes.size()+"");
-        transitButton.setText(routes.get(0).getDuration());
+        Log.d("mainActivity routes", routes.toString());
 
         if(routes.size() == 2){
             transitButton.setVisibility(View.VISIBLE);
@@ -236,6 +235,9 @@ public class MainActivity extends FragmentActivity  implements
 
     @Override
     public void taskResult(List<Poi> pois) {
+
+        routes.clear();
+
         this.pois = pois;
         Log.d("pois",pois.toString());
 
@@ -334,6 +336,10 @@ public class MainActivity extends FragmentActivity  implements
             public void onClick(View view) {
                 if(mOrigin != null && mDestination != null){
                     routes.get(0).draw();
+                    if(routes.size() == 2 && routes.get(1).draw){
+                        routes.get(1).erase();
+                    }
+                    mMap.setOnMarkerClickListener(null);
                 } else {
                     Toast.makeText(getApplicationContext(),"Origin or destination not set",Toast.LENGTH_SHORT).show();
                 }
@@ -346,7 +352,14 @@ public class MainActivity extends FragmentActivity  implements
             @Override
             public void onClick(View view) {
                 if(mOrigin != null && mDestination != null){
-                    routes.get(1).draw();
+                    if(routes.size()==1)
+                        routes.get(0).draw();
+                    else
+                        routes.get(1).draw();
+                    if(routes.size() == 2 && routes.get(0).draw){
+                        routes.get(0).erase();
+                    }
+                    mMap.setOnMarkerClickListener(null);
                 } else {
                     Toast.makeText(getApplicationContext(),"Origin or destination not set",Toast.LENGTH_SHORT).show();
                 }

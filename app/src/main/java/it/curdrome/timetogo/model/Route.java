@@ -7,7 +7,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
@@ -33,6 +35,11 @@ public class Route {
     private LatLng southwest;
 
     private String mode;
+
+    public boolean draw = false;
+
+    private List<Polyline> polylines = new ArrayList<>();
+    private List<Marker> markers = new ArrayList<>();
 
     public Route (GoogleMap mMap,
                   String points,
@@ -107,18 +114,33 @@ public class Route {
         for (int i = 0; i < poly.size() - 1; i++) {
             LatLng src = poly.get(i);
             LatLng dest = poly.get(i + 1);
-            mMap.addPolyline(new PolylineOptions()
+            polylines.add(mMap.addPolyline(new PolylineOptions()
                     .add(new LatLng(src.latitude, src.longitude),
                             new LatLng(dest.latitude, dest.longitude))
-                    .width(4).color(Color.RED));
+                    .width(4).color(Color.RED)));
 
         }
         for(Transit transit: listTransit){
-            mMap.addMarker(new MarkerOptions().position(transit.getPalinaLatLng())
+            markers.add(mMap.addMarker(new MarkerOptions().position(transit.getPalinaLatLng())
                     .title(transit.getDepartureStop()).icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                            .defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))));
         }
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(new LatLngBounds(southwest, northeast),100));
+        draw = true;
+    }
+
+    public void erase (){
+
+        for(Polyline polyline: polylines){
+            polyline.remove();
+        }
+
+        for(Marker marker: markers){
+            marker.remove();
+        }
+
+        markers.clear();
+        polylines.clear();
     }
 
     @Override
