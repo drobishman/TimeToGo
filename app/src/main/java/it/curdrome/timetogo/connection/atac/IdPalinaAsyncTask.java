@@ -58,6 +58,8 @@ public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
             JSONObject risposta = jsonResult.getJSONObject("risposta");
             JSONArray palineExtra = risposta.getJSONArray("paline_extra");
 
+            Log.d("idPalinaSmart", jsonResult.toString());
+
             // cycle to get palina id
             for (int i =0; i< palineExtra.length(); i++) {
                 JSONObject palina = palineExtra.getJSONObject(i);
@@ -68,6 +70,10 @@ public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
                 for (int j = 0; j < lineeInfo.length(); j++) {
                     JSONObject info = lineeInfo.getJSONObject(j);
 
+                    if(info.getString("id_linea").matches(transit.getLine()))
+
+
+
                     // check for our direction
                     if (info.getString("direzione").equalsIgnoreCase(transit.getHeadsign())){
 
@@ -75,6 +81,8 @@ public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
                         HashMap palinaLinee = (HashMap) getLinee.call("paline.PalinaLinee", token, palina.getString("id_palina"),"ITA");
                         JSONObject palinaLineeJson = new JSONObject(palinaLinee);
                         JSONArray linee = palinaLineeJson.getJSONArray("risposta");
+
+                        Log.d("palinaLinee", palinaLineeJson.toString());
 
                         // check for every stop if our line pass there
                         for(int k =0;k<linee.length();k++){

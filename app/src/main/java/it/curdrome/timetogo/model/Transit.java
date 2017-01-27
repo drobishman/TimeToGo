@@ -5,6 +5,7 @@ package it.curdrome.timetogo.model;
 import android.os.Handler;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 
 import it.curdrome.timetogo.connection.atac.IdPalinaAsyncTask;
 import it.curdrome.timetogo.connection.atac.RTIAsyncTask;
@@ -25,6 +26,7 @@ public class Transit {
     private String line;
     private String idPalina;
     private String departureTime;
+    private Marker marker;
 
     public LatLng getPalinaLatLng() {
         return palinaLatLng;
@@ -105,6 +107,14 @@ public class Transit {
 
     public void setDepartureTime(String departureTime) {
         this.departureTime = departureTime;
+    }
+
+    public Marker getMarker() {
+        return marker;
+    }
+
+    public void setMarker(Marker marker) {
+        this.marker = marker;
     }
 
     @Override

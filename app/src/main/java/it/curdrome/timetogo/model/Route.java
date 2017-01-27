@@ -39,7 +39,6 @@ public class Route {
     public boolean draw = false;
 
     private List<Polyline> polylines = new ArrayList<>();
-    private List<Marker> markers = new ArrayList<>();
 
     public Route (GoogleMap mMap,
                   String points,
@@ -121,7 +120,7 @@ public class Route {
 
         }
         for(Transit transit: listTransit){
-            markers.add(mMap.addMarker(new MarkerOptions().position(transit.getPalinaLatLng())
+            transit.setMarker(mMap.addMarker(new MarkerOptions().position(transit.getPalinaLatLng())
                     .title(transit.getDepartureStop()).icon(BitmapDescriptorFactory
                             .defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))));
         }
@@ -135,11 +134,9 @@ public class Route {
             polyline.remove();
         }
 
-        for(Marker marker: markers){
-            marker.remove();
+        for(Transit transit: listTransit){
+            transit.getMarker().remove();
         }
-
-        markers.clear();
         polylines.clear();
     }
 
@@ -160,5 +157,13 @@ public class Route {
 
     public String getMode() {
         return mode;
+    }
+
+    public List<Transit> getListTransit() {
+        return listTransit;
+    }
+
+    public void setListTransit(List<Transit> listTransit) {
+        this.listTransit = listTransit;
     }
 }

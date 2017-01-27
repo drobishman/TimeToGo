@@ -11,18 +11,23 @@ import android.location.Location;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
+import android.text.Layout;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -38,6 +43,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.plus.model.people.Person;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,8 +56,10 @@ import it.curdrome.timetogo.connection.server.CategoriesAsyncTask;
 import it.curdrome.timetogo.connection.server.PoisByCategoryAsyncTask;
 import it.curdrome.timetogo.connection.server.PoisByCategoryResponse;
 import it.curdrome.timetogo.fragment.PoiFragment;
+import it.curdrome.timetogo.fragment.TransitFragment;
 import it.curdrome.timetogo.model.Poi;
 import it.curdrome.timetogo.model.Route;
+import it.curdrome.timetogo.model.Transit;
 
 /**
  This class is the main class of the "TimeToGo" application.
@@ -84,6 +92,7 @@ public class MainActivity extends FragmentActivity  implements
     private List<Poi> pois = new ArrayList<>();
 
     private Poi selectedPoi;
+    private Transit selectedTransit;
 
     public static final String TAG = "MainActivity";
     private static final int MY_REQUEST_POSITION = 0;
@@ -153,9 +162,17 @@ public class MainActivity extends FragmentActivity  implements
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
         mFragmentManager = getSupportFragmentManager();
-        SupportMapFragment mapFragment = (SupportMapFragment) mFragmentManager
+        mapFragment = (SupportMapFragment) mFragmentManager
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
+        View mapView = mapFragment.getView();
+        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,0);
+        p.weight = 100;
+        mapView.setLayoutParams(p);
+        mapView.requestLayout();
+
     }
 
     /*
@@ -163,7 +180,12 @@ public class MainActivity extends FragmentActivity  implements
     */
     private void selectItem(int position) {
 
-        mMap.setOnMapClickListener(null);
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                resizeMap(100);
+            }
+        });
 
         //fragment = null;
         CharSequence title = null;
@@ -214,8 +236,6 @@ public class MainActivity extends FragmentActivity  implements
     @Override
     public void TaskResult(Route route) {
 
-
-
         if(route.getMode().matches("transit")) {
             transitRoute = route;
             Log.d("mainActivity routes", route.toString());
@@ -227,6 +247,13 @@ public class MainActivity extends FragmentActivity  implements
             walkingButton.setVisibility(View.VISIBLE);
             walkingButton.setText("walking: " + route.getDuration());
         }
+
+        if(transitRoute == null)
+            transitButton.setVisibility(View.INVISIBLE);
+        if(walkingRoute == null)
+            walkingButton.setVisibility(View.INVISIBLE);
+
+        setOnInfoWindowListener();
     }
 
     @Override
@@ -249,26 +276,10 @@ public class MainActivity extends FragmentActivity  implements
             poi.draw();
         }
 
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
+        transitRoute = null;
+        walkingRoute = null;
 
-                for(Poi poi : getPois()){
-                    if(poi.getMarker().equals(marker)){
-                        Log.d("marker clicked", poi.toString());
-                        selectedPoi = poi;
-                        FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
-                        PoiFragment fragment = new PoiFragment();
-                        if(fTransaction.isEmpty())
-                            fTransaction.add(R.id.frame_main, fragment);
-                        else
-                            fTransaction.replace(R.id.frame_main, fragment);
-                        fTransaction.addToBackStack(null);
-                        fTransaction.commit();
-                    }
-                }
-            }
-        });
+        setOnInfoWindowListener();
     }
 
 
@@ -399,17 +410,15 @@ public class MainActivity extends FragmentActivity  implements
                         .title(getString(R.string.my_destination)).icon(BitmapDescriptorFactory
                                 .defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDestination, zoomLevel));
-                mMap.setOnMapClickListener(null);
+                mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick(LatLng latLng) {
+                        resizeMap(100);
+                    }
+                });
 
                 if(isNetworkAvailable(getApplicationContext())){
-                    Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                    DirectionAsyncTask directionAsyncTaskTransit = new DirectionAsyncTask(mOrigin, mDestination, mMap, activity,"transit");//calcola il percorso
-                    directionAsyncTaskTransit.execute();
-                    directionAsyncTaskTransit.response = activity;
-                    Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                    DirectionAsyncTask directionAsyncTaskWalking = new DirectionAsyncTask(mOrigin, mDestination, mMap, activity,"walking");//calcola il percorso
-                    directionAsyncTaskWalking.execute();
-                    directionAsyncTaskWalking.response = activity;
+                   getDirections();
                 }else
                     noInternetMessage();
 
@@ -447,7 +456,12 @@ public class MainActivity extends FragmentActivity  implements
                                 .title(getString(R.string.my_location)).icon(BitmapDescriptorFactory
                                         .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigin, zoomLevel));
-                        mMap.setOnMapClickListener(null);
+                        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                            @Override
+                            public void onMapClick(LatLng latLng) {
+                                resizeMap(100);
+                            }
+                        });
                         originButton.setVisibility(Button.INVISIBLE);
                         setDestination();
                         Log.d("origin Listner", latLng.toString());
@@ -536,7 +550,12 @@ public class MainActivity extends FragmentActivity  implements
         super.onPause();
 
         if (mGoogleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            if(mGoogleApiClient.isConnected())
+                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            else{
+                mGoogleApiClient.connect();
+                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            }
         }
     }
 
@@ -603,7 +622,94 @@ public class MainActivity extends FragmentActivity  implements
         return selectedPoi;
     }
 
-    public void setSelectedPoi(Poi selectedPoi) {
-        this.selectedPoi = selectedPoi;
+    public Transit getSelectedTransit() {
+        return selectedTransit;
+    }
+
+    private void resizeMap(int weight){
+
+        View mapView = mapFragment.getView();
+        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,0);
+        p.weight = weight;
+        mapView.setLayoutParams(p);
+        mapView.requestLayout();
+    }
+
+    private void getDirections(){
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+        DirectionAsyncTask directionAsyncTaskTransit = new DirectionAsyncTask(mOrigin, mDestination, mMap, activity,"transit");//calcola il percorso
+        directionAsyncTaskTransit.execute();
+        directionAsyncTaskTransit.response = activity;
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+        DirectionAsyncTask directionAsyncTaskWalking = new DirectionAsyncTask(mOrigin, mDestination, mMap, activity,"walking");//calcola il percorso
+        directionAsyncTaskWalking.execute();
+        directionAsyncTaskWalking.response = activity;
+    }
+
+    public void setOnInfoWindowListener(){
+
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+
+                for(Poi poi : getPois()){
+                    if(poi.getMarker().equals(marker)){
+                        Log.d("marker clicked", poi.toString());
+                        selectedPoi = poi;
+                        FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
+                        PoiFragment fragment = new PoiFragment();
+                        if(fTransaction.isEmpty()){
+                            fTransaction.add(R.id.frame_main, fragment);
+                            resizeMap(75);
+                        }
+
+                        else
+                            fTransaction.replace(R.id.frame_main, fragment);
+                        fTransaction.addToBackStack(null);
+                        fTransaction.commit();
+                    }
+                }
+                if(transitRoute != null && transitRoute.draw)
+                    for(Transit transit: transitRoute.getListTransit()){
+                        if(transit.getMarker().equals(marker)){
+
+                            //TODO call RTI
+                            selectedTransit = transit;
+                            FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
+                            TransitFragment fragment = new TransitFragment();
+                            if(fTransaction.isEmpty()){
+                                fTransaction.add(R.id.frame_main, fragment);
+                                resizeMap(75);
+                            }
+
+                            else
+                                // TODO kill on replace of info fragment
+                                fTransaction.replace(R.id.frame_main, fragment);
+                            fTransaction.addToBackStack(null);
+                            fTransaction.commit();
+                        }
+                    }
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Snackbar snackbar = Snackbar
+                .make(activity.findViewById(R.id.main), "Alessandro must die...", Snackbar.LENGTH_LONG);
+
+        snackbar.show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Snackbar snackbar = Snackbar
+                .make(activity.findViewById(R.id.main), "Alessandro is dead...", Snackbar.LENGTH_LONG);
+
+        snackbar.show();
+        onBackPressed();
+        System.exit(1);
     }
 }
