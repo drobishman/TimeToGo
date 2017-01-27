@@ -74,7 +74,8 @@ public class MainActivity extends FragmentActivity  implements
     private SupportMapFragment mapFragment;
     private FragmentManager mFragmentManager;
 
-    private List<Route> routes = new ArrayList<>();
+    private Route walkingRoute;
+    private Route transitRoute;
 
     public List<Poi> getPois() {
         return pois;
@@ -212,31 +213,34 @@ public class MainActivity extends FragmentActivity  implements
 
     @Override
     public void TaskResult(Route route) {
-        routes.add(route);
-        Log.d("mainActivity routes", routes.toString());
 
-        if(routes.size() == 2){
+
+
+        if(route.getMode().matches("transit")) {
+            transitRoute = route;
+            Log.d("mainActivity routes", route.toString());
             transitButton.setVisibility(View.VISIBLE);
-            transitButton.setText("transit: "+routes.get(0).getDuration());
-            walkingButton.setVisibility(View.VISIBLE);
-            walkingButton.setText("walking: "+routes.get(1).getDuration());
-        }else if(routes.size() == 1){
-            if(routes.get(0).getMode().matches("transit")) {
-                transitButton.setVisibility(View.VISIBLE);
-                transitButton.setText("transit: " + routes.get(0).getDuration());
-            }
-            else {
-                walkingButton.setVisibility(View.VISIBLE);
-                transitButton.setText("walking: " + routes.get(0).getDuration());
-            }
+            transitButton.setText("transit: " + route.getDuration());
         }
-
+        else if(route.getMode().matches("walking")) {
+            walkingRoute = route;
+            walkingButton.setVisibility(View.VISIBLE);
+            walkingButton.setText("walking: " + route.getDuration());
+        }
     }
 
     @Override
     public void taskResult(List<Poi> pois) {
 
-        routes.clear();
+        if(transitRoute!= null && transitRoute.draw){
+            transitRoute.erase();
+            transitRoute = null;
+        }
+
+        if(walkingRoute!=null &&walkingRoute.draw){
+            walkingRoute.erase();
+            walkingRoute = null;
+        }
 
         this.pois = pois;
         Log.d("pois",pois.toString());
@@ -263,13 +267,11 @@ public class MainActivity extends FragmentActivity  implements
                         fTransaction.commit();
                     }
                 }
-
             }
         });
-
-
-
     }
+
+
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
@@ -288,9 +290,11 @@ public class MainActivity extends FragmentActivity  implements
     protected void onResume() {
         super.onResume();
 
-        if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()){
-
+        if (mGoogleApiClient == null){
             buildGoogleApiClient();
+        }
+
+        if(!mGoogleApiClient.isConnected()){
             mGoogleApiClient.connect();
         }
 
@@ -335,10 +339,9 @@ public class MainActivity extends FragmentActivity  implements
             @Override
             public void onClick(View view) {
                 if(mOrigin != null && mDestination != null){
-                    routes.get(0).draw();
-                    if(routes.size() == 2 && routes.get(1).draw){
-                        routes.get(1).erase();
-                    }
+                    transitRoute.draw();
+                    if(walkingRoute.draw)
+                        walkingRoute.erase();
                     mMap.setOnMarkerClickListener(null);
                 } else {
                     Toast.makeText(getApplicationContext(),"Origin or destination not set",Toast.LENGTH_SHORT).show();
@@ -352,13 +355,9 @@ public class MainActivity extends FragmentActivity  implements
             @Override
             public void onClick(View view) {
                 if(mOrigin != null && mDestination != null){
-                    if(routes.size()==1)
-                        routes.get(0).draw();
-                    else
-                        routes.get(1).draw();
-                    if(routes.size() == 2 && routes.get(0).draw){
-                        routes.get(0).erase();
-                    }
+                    walkingRoute.draw();
+                    if(transitRoute!= null && transitRoute.draw)
+                        transitRoute.erase();
                     mMap.setOnMarkerClickListener(null);
                 } else {
                     Toast.makeText(getApplicationContext(),"Origin or destination not set",Toast.LENGTH_SHORT).show();

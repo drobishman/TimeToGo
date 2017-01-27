@@ -141,6 +141,10 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
 
     private void getRoute(JSONObject route) throws JSONException {
 
+        if(transitList.size() == 0 && mode.matches("transit")){
+            return;
+        }
+
         JSONArray arrayLegs = route.getJSONArray("legs");
         JSONObject legs = arrayLegs.getJSONObject(0);
 
