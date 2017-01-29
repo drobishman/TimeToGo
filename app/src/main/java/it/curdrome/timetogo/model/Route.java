@@ -134,6 +134,7 @@ public class Route {
             polyline.remove();
         }
 
+        if(listTransit != null)
         for(Transit transit: listTransit){
             transit.getMarker().remove();
         }

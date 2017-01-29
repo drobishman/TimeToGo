@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -279,6 +280,8 @@ public class MainActivity extends FragmentActivity  implements
         transitRoute = null;
         walkingRoute = null;
 
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(romeLatLng,11));
+
         setOnInfoWindowListener();
     }
 
@@ -418,7 +421,7 @@ public class MainActivity extends FragmentActivity  implements
                 });
 
                 if(isNetworkAvailable(getApplicationContext())){
-                   getDirections();
+                    getDirections();
                 }else
                     noInternetMessage();
 
@@ -693,6 +696,7 @@ public class MainActivity extends FragmentActivity  implements
         });
     }
 
+    /*
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -702,14 +706,71 @@ public class MainActivity extends FragmentActivity  implements
         snackbar.show();
     }
 
+
+
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setMessage("Are you sure you want to exit?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        MainActivity.this.finish();
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+*/
+
+    boolean doubleBackToExitPressedOnce = false;
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+
         Snackbar snackbar = Snackbar
-                .make(activity.findViewById(R.id.main), "Alessandro is dead...", Snackbar.LENGTH_LONG);
+                .make(activity.findViewById(R.id.main),R.string.please_click_back_to_exit, Snackbar.LENGTH_LONG);
 
         snackbar.show();
-        onBackPressed();
-        System.exit(1);
+
+        reset();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
     }
+
+    private void reset(){
+        if(mDestination != null){
+            if(walkingRoute != null){
+                walkingRoute.erase();
+            }
+            if(transitRoute != null){
+                transitRoute.erase();
+            }
+            walkingButton.setVisibility(View.INVISIBLE);
+            transitButton.setVisibility(View.INVISIBLE);
+            mDestination = null;
+            resizeMap(100);
+            setDestination();
+            for(Poi poi: pois){
+                poi.getMarker().remove();
+            }
+            pois.clear();
+            if(destinationMarker != null)
+                destinationMarker.remove();
+        }
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(romeLatLng,11));
+    }
+
 }
