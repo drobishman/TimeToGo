@@ -37,40 +37,46 @@
                 android:layout_marginTop="20dp"
                 android:paddingRight="10dp"/>
 
-            <Button
-                android:visibility="gone"
-                android:id="@+id/transit_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right|bottom"
-                android:text="@string/transit_button_message"
-                android:padding="10dp"
-                android:layout_marginTop="20dp"
-                android:paddingRight="10dp"/>
 
 
-            <Button
-                android:visibility="gone"
-                android:id="@+id/walking_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left|bottom"
-                android:text="@string/walking_button_message"
-                android:padding="10dp"
-                android:layout_marginTop="20dp"
-                android:paddingRight="10dp"/>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom"
+                android:weightSum="100">
+
+                <Button
+                    android:visibility="gone"
+                    android:id="@+id/transit_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/transit_button_message"
+                    android:layout_weight="50"
+                    android:background="@color/DeadRed"
+                    android:textColor="@color/Moccasin"/>
+
+
+                <Button
+                    android:visibility="gone"
+                    android:id="@+id/walking_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/walking_button_message"
+                    android:layout_weight="50"
+                    android:background="@color/DeadRed"
+                    android:textColor="@color/Moccasin"/>
+
+            </LinearLayout>
+
         </fragment>
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="25"
             android:id="@+id/frame_main"
             android:layout_gravity="bottom"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
-            android:background="@color/colorPrimary"/>
+            android:background="@color/LightPink"/>
     </LinearLayout>
 
     <ListView

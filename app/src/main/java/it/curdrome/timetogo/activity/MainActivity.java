@@ -218,6 +218,10 @@ public class MainActivity extends FragmentActivity  implements
     @Override
     public void taskResult(String[] output) {
         if(output != null) {
+
+            for(int i = 0; i<output.length; i++){
+                output[i] = output[i].replace("_"," ");
+            }
             // Set the adapter for the list view
             mDrawerList.setAdapter(new ArrayAdapter<String>(this,
                     R.layout.drawer_list_item, output));

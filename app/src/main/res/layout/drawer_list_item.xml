@@ -3,10 +3,12 @@
     android:id="@android:id/text1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/activatedBackgroundIndicator"
+    android:background="@color/wallet_highlighted_text_holo_dark"
     android:gravity="center_vertical"
     android:minHeight="?android:attr/listPreferredItemHeightSmall"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
+    android:textStyle="bold"
+    android:textAllCaps="true"
     android:textAppearance="?android:attr/textAppearanceListItemSmall"
-    android:textColor="@android:color/white" />
+    android:textColor="@color/BlanchedAlmond" />
