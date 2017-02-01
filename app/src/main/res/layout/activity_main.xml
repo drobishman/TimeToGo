@@ -25,6 +25,19 @@
             tools:layout="@layout/place_autocomplete_fragment"
             android:layout_gravity="top">
 
+            <LinearLayout
+                android:id="@+id/lnr_google_searchbar"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/DeadRed">
+
+                <fragment
+                    android:id="@+id/place_autocomplete_fragment"
+                    android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
             <Button
                 android:visibility="gone"
                 android:onClick="gone"
@@ -50,9 +63,10 @@
                     android:visibility="gone"
                     android:id="@+id/transit_button"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:text="@string/transit_button_message"
                     android:layout_weight="50"
+                    android:drawableLeft="@mipmap/bus"
                     android:background="@color/DeadRed"
                     android:textColor="@color/Moccasin"/>
 
@@ -61,9 +75,10 @@
                     android:visibility="gone"
                     android:id="@+id/walking_button"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:text="@string/walking_button_message"
                     android:layout_weight="50"
+                    android:drawableLeft="@mipmap/walk"
                     android:background="@color/DeadRed"
                     android:textColor="@color/Moccasin"/>
 
@@ -76,7 +91,7 @@
             android:layout_weight="25"
             android:id="@+id/frame_main"
             android:layout_gravity="bottom"
-            android:background="@color/LightPink"/>
+            android:background="@color/LightGreen"/>
     </LinearLayout>
 
     <ListView

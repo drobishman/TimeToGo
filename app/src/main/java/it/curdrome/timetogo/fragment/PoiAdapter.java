@@ -46,7 +46,7 @@ public class PoiAdapter extends ArrayAdapter<Poi> implements Serializable {
         name.setText("name: " +poi.getName());
         lat.setText("lat: " + poi.getLat());
         lng.setText("lng: " + poi.getLng());
-        description.setText("description" + poi.getDescription());
+        description.setText("description: " + poi.getDescription());
 
         return convertView;
     }

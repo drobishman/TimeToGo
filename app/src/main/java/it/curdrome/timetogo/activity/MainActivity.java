@@ -19,23 +19,24 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
-import android.text.Layout;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -44,7 +45,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.plus.model.people.Person;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,18 +86,13 @@ public class MainActivity extends FragmentActivity  implements
     private Route walkingRoute;
     private Route transitRoute;
 
-    public List<Poi> getPois() {
-        return pois;
-    }
-
     private List<Poi> pois = new ArrayList<>();
-
     private Poi selectedPoi;
     private Transit selectedTransit;
+    private Place selectedPlace;
 
     public static final String TAG = "MainActivity";
     private static final int MY_REQUEST_POSITION = 0;
-
     // drawer variables
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -114,11 +109,6 @@ public class MainActivity extends FragmentActivity  implements
 
     //origin and destination to generate direction
     public LatLng mOrigin;
-
-    public void setmDestination(LatLng mDestination) {
-        this.mDestination = mDestination;
-    }
-
     public LatLng mDestination;
 
     private MainActivity activity = (MainActivity) this;
@@ -138,10 +128,6 @@ public class MainActivity extends FragmentActivity  implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        if(!isNetworkAvailable(this)) {
-            noInternetMessage();
-        }
 
         if(isNetworkAvailable(this)) {
             pDialog = new ProgressDialog(activity);
@@ -173,6 +159,41 @@ public class MainActivity extends FragmentActivity  implements
         p.weight = 100;
         mapView.setLayoutParams(p);
         mapView.requestLayout();
+
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+
+                selectedPlace = place;
+
+                mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName().toString()).icon(BitmapDescriptorFactory
+                        .defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), zoomLevel));
+                mDestination = place.getLatLng();
+                if(isNetworkAvailable(getApplicationContext())){
+                    getDirections();
+                }else
+                    noInternetMessage();
+                mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick(LatLng latLng) {
+                        resizeMap(100);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(Status status) {
+                Snackbar snackbar = Snackbar
+                        .make(activity.findViewById(R.id.main),"Error occurred: " + status, Snackbar.LENGTH_LONG);
+
+                snackbar.show();
+                Log.i(TAG, "An error occurred: " + status);
+            }
+        });
 
     }
 
@@ -245,12 +266,12 @@ public class MainActivity extends FragmentActivity  implements
             transitRoute = route;
             Log.d("mainActivity routes", route.toString());
             transitButton.setVisibility(View.VISIBLE);
-            transitButton.setText("transit: " + route.getDuration());
+            transitButton.setText(route.getDuration());
         }
         else if(route.getMode().matches("walking")) {
             walkingRoute = route;
             walkingButton.setVisibility(View.VISIBLE);
-            walkingButton.setText("walking: " + route.getDuration());
+            walkingButton.setText(route.getDuration());
         }
 
         if(transitRoute == null)
@@ -775,6 +796,14 @@ public class MainActivity extends FragmentActivity  implements
                 destinationMarker.remove();
         }
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(romeLatLng,11));
+    }
+
+    public List<Poi> getPois() {
+        return pois;
+    }
+
+    public void setmDestination(LatLng mDestination) {
+        this.mDestination = mDestination;
     }
 
 }
