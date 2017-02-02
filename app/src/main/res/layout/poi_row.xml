@@ -41,4 +41,18 @@
         android:text=""
         android:textSize="21sp"
         android:textAllCaps="true"/>
+    <TextView
+        android:id="@+id/id_places"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="21sp"
+        android:textAllCaps="true"/>
+    <TextView
+        android:id="@+id/categories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="21sp"
+        android:textAllCaps="true"/>
 </LinearLayout>
