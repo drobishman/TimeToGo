@@ -56,10 +56,73 @@ public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
             HashMap result = (HashMap) getPalina.call("paline.SmartSearch", token, query);
             jsonResult = new JSONObject(result);
             JSONObject risposta = jsonResult.getJSONObject("risposta");
-            JSONArray palineExtra = risposta.getJSONArray("paline_extra");
 
-            Log.d("idPalinaSmart", jsonResult.toString());
 
+
+            //check if tipo is NOT ambiguous
+            if(risposta.getString("tipo").matches("Palina")){
+            //here i have found the id_palina
+                transit.setIdPalina(risposta.getString("id_palina"));
+            }else if (risposta.getString("tipo").matches("Ambiguo")){                           //if tipo is "ambiguo"
+                JSONArray paline_semplice = risposta.getJSONArray("paline_semplice");
+                if (!paline_semplice.isNull(0)) {                                               //if paline_semplice isn't void
+                    for (int i = 0; i < paline_semplice.length(); i++) {                        //for each item in paline_semplice
+                        paline.add(paline_semplice.getJSONObject(i).getString("id_palina"));    //add all the id_palina found in paline for future filtering
+                    }
+                }else {
+                    JSONArray paline_extra = risposta.getJSONArray("paline_extra");             //if the paline_semplice is void, i'm looking for the paline_extra array
+                    if (!paline_extra.isNull(0)){
+                        for (int i = 0; i < paline_extra.length(); i++) {                        //for each item in paline_extra
+                            paline.add(paline_extra.getJSONObject(i).getString("id_palina"));    //add all the id_palina found in paline for future filtering
+                        }
+                    }
+                }
+                //start the filtering on paline
+                for (int i = 0; i < paline.size(); i++) {                           //for each id_palina in paline
+                    XMLRPCClient getLinee = new XMLRPCClient(new URL(stringUrlPalina));
+                    HashMap palinaLinee = (HashMap) getLinee.call("paline.PalinaLinee", token, paline.get(i),"ITA");
+                    JSONObject palinaLineeJson = new JSONObject(palinaLinee);
+                    JSONArray linee = palinaLineeJson.getJSONArray("risposta");     //ask which line passing by id_palina
+                    for (int j = 0; j < linee.length(); j++) {                      //for each line
+                        boolean found=false;
+                        if (linee.getJSONObject(j).getString("linea").equalsIgnoreCase(transit.getLine()))  //if line match
+                            found=true;                                             //MATCH FOUND!
+                        else if (j==linee.length()&&found==false){                  //otherwise if haven't found anything
+                            paline.remove(i);                                       //remove the item in i position from list paline
+                            i--;                                                    //now the item in i+1 position is passed in position i, so for non jumping check of "new i" element i reduce i to i-1;
+                        }
+                    }
+                }
+                for (int i = 0; i < paline.size(); i++){
+                    XMLRPCClient getPrevisioni = new XMLRPCClient(new URL(stringUrlPalina));
+                    HashMap palinePrevisioni = (HashMap) getPrevisioni.call("paline.Previsioni",token,paline.get(i),"ITA");
+                    JSONObject palinePrevisioniJson = new JSONObject(palinePrevisioni);
+
+
+                    JSONObject rispostaPrevisioni = palinePrevisioniJson.getJSONObject("risposta");
+                    JSONArray primi_per_palina = rispostaPrevisioni.getJSONArray("primi_per_palina");
+                    for (int j = 0; j < primi_per_palina.length() ; j++) {
+
+                        JSONObject primo_per_palina = primi_per_palina.getJSONObject(j);
+                        JSONArray arrivi = primo_per_palina.getJSONArray("arrivi");
+                        for (int k = 0; k < arrivi.length(); k++) {
+                            if (transit.getLine().matches(arrivi.getJSONObject(k).getString("linea"))){
+                                if (arrivi.getJSONObject(k).has("capolinea"))
+                                    if (transit.getHeadsign().equalsIgnoreCase(arrivi.getJSONObject(k).getString("capolinea"))){
+                                        transit.setIdPalina(arrivi.getJSONObject(k).getString("id_palina"));
+                                }
+                            }
+                        }
+                    }
+
+
+                }
+            }
+
+
+            /*JSONArray palineExtra = risposta.getJSONArray("paline_extra");
+
+            Log.i("IdPalinaSmart",jsonResult.toString());
             // cycle to get palina id
             for (int i =0; i< palineExtra.length(); i++) {
                 JSONObject palina = palineExtra.getJSONObject(i);
@@ -70,10 +133,6 @@ public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
                 for (int j = 0; j < lineeInfo.length(); j++) {
                     JSONObject info = lineeInfo.getJSONObject(j);
 
-                    if(info.getString("id_linea").matches(transit.getLine()))
-
-
-
                     // check for our direction
                     if (info.getString("direzione").equalsIgnoreCase(transit.getHeadsign())){
 
@@ -81,8 +140,6 @@ public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
                         HashMap palinaLinee = (HashMap) getLinee.call("paline.PalinaLinee", token, palina.getString("id_palina"),"ITA");
                         JSONObject palinaLineeJson = new JSONObject(palinaLinee);
                         JSONArray linee = palinaLineeJson.getJSONArray("risposta");
-
-                        Log.d("palinaLinee", palinaLineeJson.toString());
 
                         // check for every stop if our line pass there
                         for(int k =0;k<linee.length();k++){
@@ -93,7 +150,7 @@ public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
                         }
                     }
                 }
-            }
+            }*/
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (XMLRPCException e) {

@@ -44,14 +44,16 @@ public class Transit {
         this.departureTime = departureTime;
         this.palinaLatLng = new LatLng(lat,lng);
 
-        /*
+
         if(this.type.matches("BUS")) {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             new IdPalinaAsyncTask(this).execute();
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            new RTIAsyncTask(transit).execute();
+            if (this.getIdPalina()!=null){
+                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+                new RTIAsyncTask(transit).execute();
+            }
         }
-        */
+
 
     }
 
