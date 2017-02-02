@@ -57,6 +57,7 @@ import it.curdrome.timetogo.connection.server.CategoriesAsyncTask;
 import it.curdrome.timetogo.connection.server.PoisByCategoryAsyncTask;
 import it.curdrome.timetogo.connection.server.PoisByCategoryResponse;
 import it.curdrome.timetogo.fragment.PoiFragment;
+import it.curdrome.timetogo.fragment.RouteFragment;
 import it.curdrome.timetogo.fragment.TransitFragment;
 import it.curdrome.timetogo.model.Poi;
 import it.curdrome.timetogo.model.Route;
@@ -85,6 +86,7 @@ public class MainActivity extends FragmentActivity  implements
 
     private Route walkingRoute;
     private Route transitRoute;
+    private Route selectedRoute;
 
     private List<Poi> pois = new ArrayList<>();
     private Poi selectedPoi;
@@ -382,6 +384,20 @@ public class MainActivity extends FragmentActivity  implements
                     if(walkingRoute.draw)
                         walkingRoute.erase();
                     mMap.setOnMarkerClickListener(null);
+                    selectedRoute = transitRoute;
+
+                    FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
+                    RouteFragment fragment = new RouteFragment();
+                    if(fTransaction.isEmpty()){
+                        fTransaction.add(R.id.frame_main, fragment);
+                        resizeMap(75);
+                    }
+
+                    else
+                        fTransaction.replace(R.id.frame_main, fragment);
+                    fTransaction.addToBackStack(null);
+                    fTransaction.commit();
+
                 } else {
                     Toast.makeText(getApplicationContext(),"Origin or destination not set",Toast.LENGTH_SHORT).show();
                 }
@@ -398,6 +414,20 @@ public class MainActivity extends FragmentActivity  implements
                     if(transitRoute!= null && transitRoute.draw)
                         transitRoute.erase();
                     mMap.setOnMarkerClickListener(null);
+                    selectedRoute = walkingRoute;
+
+                    FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
+                    RouteFragment fragment = new RouteFragment();
+                    if(fTransaction.isEmpty()){
+                        fTransaction.add(R.id.frame_main, fragment);
+                        resizeMap(75);
+                    }
+
+                    else
+                        fTransaction.replace(R.id.frame_main, fragment);
+                    fTransaction.addToBackStack(null);
+                    fTransaction.commit();
+
                 } else {
                     Toast.makeText(getApplicationContext(),"Origin or destination not set",Toast.LENGTH_SHORT).show();
                 }
@@ -721,33 +751,6 @@ public class MainActivity extends FragmentActivity  implements
         });
     }
 
-    /*
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Snackbar snackbar = Snackbar
-                .make(activity.findViewById(R.id.main), "Alessandro must die...", Snackbar.LENGTH_LONG);
-
-        snackbar.show();
-    }
-
-
-
-    @Override
-    public void onBackPressed() {
-        new AlertDialog.Builder(this)
-                .setMessage("Are you sure you want to exit?")
-                .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        MainActivity.this.finish();
-                    }
-                })
-                .setNegativeButton("No", null)
-                .show();
-    }
-*/
-
     boolean doubleBackToExitPressedOnce = false;
 
     @Override
@@ -806,4 +809,7 @@ public class MainActivity extends FragmentActivity  implements
         this.mDestination = mDestination;
     }
 
+    public Route getSelectedRoute() {
+        return selectedRoute;
+    }
 }
