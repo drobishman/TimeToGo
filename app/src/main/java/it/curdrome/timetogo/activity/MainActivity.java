@@ -399,7 +399,7 @@ public class MainActivity extends FragmentActivity  implements
                     fTransaction.commit();
 
                 } else {
-                    Toast.makeText(getApplicationContext(),R.string.origin_or_destination_not_set,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),activity.getString(R.string.origin_or_destination_not_set),Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -429,7 +429,7 @@ public class MainActivity extends FragmentActivity  implements
                     fTransaction.commit();
 
                 } else {
-                    Toast.makeText(getApplicationContext(),R.string.origin_or_destination_not_set,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),activity.getString(R.string.origin_or_destination_not_set),Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -465,7 +465,7 @@ public class MainActivity extends FragmentActivity  implements
 
                 mDestination = latLng;
                 destinationMarker = mMap.addMarker(new MarkerOptions().position(mDestination)
-                        .title(getString(R.string.my_destination)).icon(BitmapDescriptorFactory
+                        .title(activity.getString(R.string.my_destination)).icon(BitmapDescriptorFactory
                                 .defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDestination, zoomLevel));
                 mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -498,7 +498,7 @@ public class MainActivity extends FragmentActivity  implements
                 }
                 mOrigin = latLng;
                 originMarker = mMap.addMarker(new MarkerOptions().position(mOrigin)
-                        .title(getString(R.string.my_location)).icon(BitmapDescriptorFactory
+                        .title(activity.getString(R.string.my_location)).icon(BitmapDescriptorFactory
                                 .defaultMarker(BitmapDescriptorFactory.HUE_RED)));
                 originButton = (Button) findViewById(R.id.origin_button);
                 originButton.setVisibility(View.VISIBLE);
@@ -511,7 +511,7 @@ public class MainActivity extends FragmentActivity  implements
                         }
 
                         originMarker = mMap.addMarker(new MarkerOptions().position(mOrigin)
-                                .title(getString(R.string.my_location)).icon(BitmapDescriptorFactory
+                                .title(activity.getString(R.string.my_location)).icon(BitmapDescriptorFactory
                                         .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigin, zoomLevel));
                         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -547,8 +547,8 @@ public class MainActivity extends FragmentActivity  implements
                     "Displaying position permission rationale to provide additional context.");
             AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
             alertBuilder.setCancelable(true);
-            alertBuilder.setTitle(getString(R.string.permission_necessary));
-            alertBuilder.setMessage(getString(R.string.location_permission_is_necessary));
+            alertBuilder.setTitle(activity.getString(R.string.permission_necessary));
+            alertBuilder.setMessage(activity.getString(R.string.location_permission_is_necessary));
             alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -627,7 +627,7 @@ public class MainActivity extends FragmentActivity  implements
             originMarker.remove();
         }
         originMarker = mMap.addMarker(new MarkerOptions().position(mOrigin)
-                .title(getString(R.string.my_location)).icon(BitmapDescriptorFactory
+                .title(activity.getString(R.string.my_location)).icon(BitmapDescriptorFactory
                         .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
 
@@ -649,9 +649,9 @@ public class MainActivity extends FragmentActivity  implements
     public void noInternetMessage(){
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
         alertBuilder.setCancelable(true);
-        alertBuilder.setTitle(getString(R.string.internet_necessary));
-        alertBuilder.setMessage(getString(R.string.message_internet_is_necessary));
-        alertBuilder.setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
+        alertBuilder.setTitle(activity.getString(R.string.internet_necessary));
+        alertBuilder.setMessage(activity.getString(R.string.message_internet_is_necessary));
+        alertBuilder.setPositiveButton(activity.getString(R.string.retry), new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
                 // restart application
@@ -665,7 +665,7 @@ public class MainActivity extends FragmentActivity  implements
             }
         });
 
-        alertBuilder.setNegativeButton(R.string.quit, new DialogInterface.OnClickListener() {
+        alertBuilder.setNegativeButton(activity.getString(R.string.quit), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 System.exit(0);
@@ -763,7 +763,7 @@ public class MainActivity extends FragmentActivity  implements
         this.doubleBackToExitPressedOnce = true;
 
         Snackbar snackbar = Snackbar
-                .make(activity.findViewById(R.id.main),R.string.please_click_back_to_exit, Snackbar.LENGTH_LONG);
+                .make(activity.findViewById(R.id.main),activity.getString(R.string.please_click_back_to_exit), Snackbar.LENGTH_LONG);
 
         snackbar.show();
 

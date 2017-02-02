@@ -41,7 +41,7 @@ public class PoiAdapter extends ArrayAdapter<Poi> implements Serializable {
 
         final Poi poi = getItem(position);
 
-        name.setText(R.string.name +poi.getName());
+        name.setText(activity.getString(R.string.name) +poi.getName());
         if (!poi.getDescription().isEmpty())
             description.setText(activity.getString(R.string.description) + poi.getDescription());
         String cat = "";

@@ -55,7 +55,7 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
         String cat = "";
         for(Transit transit: route.getListTransit())
             cat = cat + " " +transit.getDepartureStop();
-        busStops.setText(R.string.stops + cat);
+        busStops.setText(activity.getString(R.string.stops) + cat);
 
 
 

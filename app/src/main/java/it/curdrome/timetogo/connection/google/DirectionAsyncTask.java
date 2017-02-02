@@ -110,6 +110,7 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
         JSONObject jsonObject;
         try {
             jsonObject = new JSONObject(output);
+            Log.d("output",jsonObject.toString());
 
             // routesArray contains ALL routes
             JSONArray routesArray = jsonObject.getJSONArray("routes");
