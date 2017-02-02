@@ -14,6 +14,7 @@ import java.util.List;
 
 import it.curdrome.timetogo.R;
 import it.curdrome.timetogo.activity.MainActivity;
+import it.curdrome.timetogo.model.Category;
 import it.curdrome.timetogo.model.Poi;
 
 public class PoiAdapter extends ArrayAdapter<Poi> implements Serializable {
@@ -35,6 +36,8 @@ public class PoiAdapter extends ArrayAdapter<Poi> implements Serializable {
 
         TextView id = (TextView) convertView.findViewById(R.id.id);
         TextView name = (TextView) convertView.findViewById(R.id.name);
+        TextView idPlaces = (TextView) convertView.findViewById(R.id.id_places);
+        TextView categories = (TextView) convertView.findViewById(R.id.categories);
         TextView lat = (TextView) convertView.findViewById(R.id.lat);
         TextView lng = (TextView) convertView.findViewById(R.id.lng);
         TextView description = (TextView) convertView.findViewById(R.id.description);
@@ -44,9 +47,14 @@ public class PoiAdapter extends ArrayAdapter<Poi> implements Serializable {
 
         id.setText("id: " + poi.getId());
         name.setText("name: " +poi.getName());
+        idPlaces.setText("id places: " +poi.getIdPlaces());
         lat.setText("lat: " + poi.getLat());
         lng.setText("lng: " + poi.getLng());
         description.setText("description: " + poi.getDescription());
+        String cat = "";
+       for(Category category : poi.getCategories())
+                cat = cat + " " +category.getName();
+        categories.setText("categories:" + cat);
 
         return convertView;
     }

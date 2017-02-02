@@ -8,6 +8,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
+
 import it.curdrome.timetogo.activity.MainActivity;
 import it.curdrome.timetogo.connection.google.DirectionAsyncTask;
 
@@ -21,8 +23,8 @@ public class Poi {
 
     private GoogleMap mMap;
     private int id;
-    private String placeId;
-    private Category category;
+    private String idPlaces;
+    private List<Category> categories;
     private String name;
     private double lat;
     private double lng;
@@ -31,8 +33,8 @@ public class Poi {
 
     public Poi (
             int id,
-            String placeId,
-            Category category,
+            String idPlaces,
+            List<Category> categories,
             String name,
             double lat,
             double lng,
@@ -41,8 +43,8 @@ public class Poi {
             MainActivity activity){
 
         this.id = id;
-        this.placeId = placeId;
-        this.category = category;
+        this.idPlaces = idPlaces;
+        this.categories = categories;
         this.name = name;
         this.lat = lat;
         this.lng =lng;
@@ -111,20 +113,20 @@ public class Poi {
         this.id = id;
     }
 
-    public String getPlaceId() {
-        return placeId;
+    public String getIdPlaces() {
+        return idPlaces;
     }
 
-    public void setPlaceId(String placeId) {
-        this.placeId = placeId;
+    public void setIdPlaces(String idPlaces) {
+        this.idPlaces = idPlaces;
     }
 
-    public Category getCategory() {
-        return category;
+    public List<Category> getCategories() {
+        return categories;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
     }
 
     public String getName() {
@@ -145,6 +147,6 @@ public class Poi {
 
     @Override
     public String toString(){
-        return "id: "+id+", placeId: "+placeId+", name: "+name+", lat: "+lat+", lng: "+ lng+", description: "+description+"";
+        return "id: "+id+", placeId: "+idPlaces+", name: "+name+", lat: "+lat+", lng: "+ lng+", description: "+description+"";
     }
 }

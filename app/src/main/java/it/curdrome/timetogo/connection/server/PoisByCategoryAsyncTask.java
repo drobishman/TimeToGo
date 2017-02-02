@@ -87,18 +87,26 @@ public class PoisByCategoryAsyncTask extends AsyncTask<String, String, String> {
             JSONArray response = new JSONArray(result);
             for(int i=0; i<response.length();i++){
                 JSONObject poi = response.getJSONObject(i);
+                JSONArray categories = poi.getJSONArray("categories");
+
+                List<Category> listCategories = new ArrayList<>();
+                for(int j = 0; j<categories.length();j++)
+                    listCategories.add(new Category(
+                            categories.getJSONObject(j).getInt("id"),
+                            categories.getJSONObject(j).getString("name")));
+
                 Log.d("id dei poi",poi.getInt("id")+"");
                 pois.add(new Poi(
                         poi.getInt("id"),
-                        null,
-                        (new Category(poi.getInt("category.id"), poi.getString("category.name"))),
+                        poi.getString("id_place"),
+                        listCategories,
                         poi.getString("name"),
                         poi.getDouble("lat"),
                         poi.getDouble("lng"),
                         poi.getString("description"),
                         mMap,
                         activity
-                        ));
+                ));
             }
         } catch (JSONException e) {
             e.printStackTrace();
