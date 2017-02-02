@@ -11,14 +11,31 @@
     <string name="my_destination">My destination</string>
     <string name="permission_necessary">Location permission necessary</string>
     <string name="location_permission_is_necessary">"The location permission is necessary for us for make to you a faster and accurated experience with our app, please ALLOW permission in next screen :)"</string>
-    <string name="loading_route_wait">Loading route. Please wait...</string>
-    <string name="loading_categories_wait">Loading categories. Please wait...</string>
+    <string name="loading_route_wait">Loading route. Please wait&#8230;</string>
+    <string name="loading_categories_wait">Loading categories. Please wait&#8230;</string>
     <string name="internet_necessary">Internet is necessary</string>
     <string name="message_internet_is_necessary">Internet is necessary, click retry to restart</string>
     <string name="retry">Retry</string>
     <string name="no_categories_loaded">No categories loaded..</string>
     <string name="quit">Quit</string>
     <string name="please_click_back_to_exit">Please click BACK again to exit</string>
+    <string name="error_occured">Error occurred: </string>
+    <string name="origin_or_destination_not_set">Origin or destination not set</string>
+    <string name="route_not_found">Route not found&#8230;</string>
+    <string name="name">Name: </string>
+    <string name="description">Description: </string>
+    <string name="categories">Categories: </string>
+    <string name="arrival_time">Arrival time:  </string>
+    <string name="departure_time">Departure time: </string>
+    <string name="distance">Distance: </string>
+    <string name="duration">Duration: </string>
+    <string name="stops">Stops: </string>
+    <string name="stop_name">Stop name: </string>
+    <string name="headsign">Headsign: </string>
+    <string name="line">Line: </string>
+    <string name="id_palina">Id palina: </string>
+
+
 
     <string-array name="categories_name">
         <item>none</item>

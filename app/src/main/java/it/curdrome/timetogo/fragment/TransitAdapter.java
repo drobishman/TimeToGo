@@ -44,13 +44,13 @@ public class TransitAdapter extends ArrayAdapter<Transit> implements Serializabl
 
         final Transit transit = getItem(position);
 
-        numStops.setText("number of stops: " + transit.getNumStops());
-        departureStop.setText("stop name: " + transit.getDepartureStop());
-        headsign.setText("headsign: "+transit.getHeadsign());
-        type.setText("type: "+transit.getType());
-        line.setText("line: "+transit.getLine());
-        idPalina.setText("id palina: "+transit.getIdPalina());
-        departureTime.setText("departure time: "+transit.getDepartureTime());
+        numStops.setText(R.string.stops + transit.getNumStops());
+        departureStop.setText(R.string.stop_name+ transit.getDepartureStop());
+        headsign.setText(R.string.headsign+transit.getHeadsign());
+        //type.setText("type: "+transit.getType());
+        line.setText(R.string.line+transit.getLine()+" ("+transit.getType()+")");
+        idPalina.setText(R.string.id_palina+transit.getIdPalina());
+        departureTime.setText(R.string.departure_time+transit.getDepartureTime());
 
         return convertView;
     }

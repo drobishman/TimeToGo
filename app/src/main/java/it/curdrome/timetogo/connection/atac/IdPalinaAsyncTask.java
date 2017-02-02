@@ -61,7 +61,7 @@ public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
 
             //check if tipo is NOT ambiguous
             if(risposta.getString("tipo").matches("Palina")){
-            //here i have found the id_palina
+                //here i have found the id_palina
                 transit.setIdPalina(risposta.getString("id_palina"));
             }else if (risposta.getString("tipo").matches("Ambiguo")){                           //if tipo is "ambiguo"
                 JSONArray paline_semplice = risposta.getJSONArray("paline_semplice");
@@ -110,47 +110,13 @@ public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
                                 if (arrivi.getJSONObject(k).has("capolinea"))
                                     if (transit.getHeadsign().equalsIgnoreCase(arrivi.getJSONObject(k).getString("capolinea"))){
                                         transit.setIdPalina(arrivi.getJSONObject(k).getString("id_palina"));
-                                }
+                                    }
                             }
                         }
                     }
-
-
                 }
             }
 
-
-            /*JSONArray palineExtra = risposta.getJSONArray("paline_extra");
-
-            Log.i("IdPalinaSmart",jsonResult.toString());
-            // cycle to get palina id
-            for (int i =0; i< palineExtra.length(); i++) {
-                JSONObject palina = palineExtra.getJSONObject(i);
-                JSONArray lineeInfo = palina.getJSONArray("linee_info");
-                paline.add(palina.getString("id_palina"));
-
-                // cycle to get infos of the line and if headsign matches check if our line pass it in case of multiple answers
-                for (int j = 0; j < lineeInfo.length(); j++) {
-                    JSONObject info = lineeInfo.getJSONObject(j);
-
-                    // check for our direction
-                    if (info.getString("direzione").equalsIgnoreCase(transit.getHeadsign())){
-
-                        XMLRPCClient getLinee = new XMLRPCClient(new URL(stringUrlPalina));
-                        HashMap palinaLinee = (HashMap) getLinee.call("paline.PalinaLinee", token, palina.getString("id_palina"),"ITA");
-                        JSONObject palinaLineeJson = new JSONObject(palinaLinee);
-                        JSONArray linee = palinaLineeJson.getJSONArray("risposta");
-
-                        // check for every stop if our line pass there
-                        for(int k =0;k<linee.length();k++){
-                            JSONObject linea = linee.getJSONObject(k);
-                            // if yes assign the id to our transit
-                            if(linea.getString("linea").equals(transit.getLine()))
-                                transit.setIdPalina(paline.get(i));
-                        }
-                    }
-                }
-            }*/
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (XMLRPCException e) {

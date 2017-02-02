@@ -130,7 +130,7 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
 
         if(route == null){
             Snackbar snackbar = Snackbar
-                    .make(activity.findViewById(R.id.main), mode+" route not found..", Snackbar.LENGTH_LONG);
+                    .make(activity.findViewById(R.id.main), mode+R.string.route_not_found, Snackbar.LENGTH_LONG);
 
             snackbar.show();
         }

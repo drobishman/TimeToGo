@@ -47,15 +47,15 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
 
         final Route route = getItem(position);
 
-        arrival.setText("arrival time:  " + route.getArrivalTime());
-        departure.setText("departure time: " + route.getDepartureTime());
-        distance.setText("distance: " + route.getDistance());
-        duration.setText("duration: " + route.getDuration());
+        arrival.setText(activity.getString(R.string.arrival_time) + route.getArrivalTime());
+        departure.setText(activity.getString(R.string.departure_time) + route.getDepartureTime());
+        distance.setText(activity.getString(R.string.distance) + route.getDistance());
+        duration.setText(activity.getString(R.string.duration) + route.getDuration());
 
         String cat = "";
         for(Transit transit: route.getListTransit())
             cat = cat + " " +transit.getDepartureStop();
-        busStops.setText("stops:" + cat);
+        busStops.setText(R.string.stops + cat);
 
 
 

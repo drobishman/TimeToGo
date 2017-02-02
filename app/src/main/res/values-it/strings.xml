@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">TimeToGo</string>
-    <string name="title_activity_main" translatable="false">TimeToGo</string>
     <string name="origin_button_message">Imposta l\'origine</string>
     <string name="destination_button_message">Imposta la destinazione</string>
     <string name="walking_button_message">A piedi</string>
@@ -10,7 +8,7 @@
     <string name="my_location">Mia posizione</string>
     <string name="my_destination">Mia destinazione</string>
     <string name="permission_necessary">Permessi sulla posizione necessari</string>
-    <string name="location_permission_is_necessary">"I permessi di geolocalizzazione ci servono per rendere più veloce e accurata l'esperienza con la nostra app, perfavore premi CONSENTI per consentire il permesso nella prossima schermata :)"</string>
+    <string name="location_permission_is_necessary">I permessi di geolocalizzazione ci servono per rendere più veloce e accurata l\'esperienza con la nostra app, perfavore premi CONSENTI per consentire il permesso nella prossima schermata :)</string>
     <string name="loading_route_wait">Caricamento percorso. Attendere prego&#8230;</string>
     <string name="loading_categories_wait">Caricamento categorie. Attendere prego&#8230;</string>
     <string name="internet_necessary">Internet è necessario</string>
@@ -19,6 +17,21 @@
     <string name="no_categories_loaded">Nessuna categoria caricata&#8230;</string>
     <string name="quit">Esci</string>
     <string name="please_click_back_to_exit">Tocca di nuovo il tasto INDIETRO per uscire dall\'app&#8230;</string>
+    <string name="error_occured">Ops&#8230; Errore n°</string>
+    <string name="origin_or_destination_not_set">Origine o destinazione non impostati</string>
+    <string name="route_not_found">Percorso non trovato&#8230;</string>
+    <string name="name">Nome: </string>
+    <string name="categories">Categorie: </string>
+    <string name="arrival_time">Ora di arrivo:  </string>
+    <string name="departure_time">Ora di partenza: </string>
+    <string name="distance">Distanza: </string>
+    <string name="duration">Durata: </string>
+    <string name="stops">N° fermate: </string>
+    <string name="stop_name">Nome fermata: </string>
+    <string name="headsign">Direzione: </string>
+    <string name="line">Linea: </string>
+    <string name="id_palina">N°palina: </string>
+
 
     <string-array name="categories_name">
         <item>vuoto</item>

@@ -190,7 +190,7 @@ public class MainActivity extends FragmentActivity  implements
             @Override
             public void onError(Status status) {
                 Snackbar snackbar = Snackbar
-                        .make(activity.findViewById(R.id.main),"Error occurred: " + status, Snackbar.LENGTH_LONG);
+                        .make(activity.findViewById(R.id.main),getResources().getString(R.string.error_occured) + status, Snackbar.LENGTH_LONG);
 
                 snackbar.show();
                 Log.i(TAG, "An error occurred: " + status);
@@ -399,7 +399,7 @@ public class MainActivity extends FragmentActivity  implements
                     fTransaction.commit();
 
                 } else {
-                    Toast.makeText(getApplicationContext(),"Origin or destination not set",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),R.string.origin_or_destination_not_set,Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -429,7 +429,7 @@ public class MainActivity extends FragmentActivity  implements
                     fTransaction.commit();
 
                 } else {
-                    Toast.makeText(getApplicationContext(),"Origin or destination not set",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),R.string.origin_or_destination_not_set,Toast.LENGTH_SHORT).show();
                 }
 
             }
