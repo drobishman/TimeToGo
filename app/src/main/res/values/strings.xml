@@ -1,22 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">TimeToGo</string>
+    <string name="app_name" translatable="false">TimeToGo</string>
     <string name="title_activity_main">TimeToGo</string>
-    <string name="origin_button_message">Set Origin</string>
-    <string name="destination_button_message">Set Destination</string>
+    <string name="origin_button_message">Set origin</string>
+    <string name="destination_button_message">Set destination</string>
     <string name="walking_button_message">Walking</string>
     <string name="transit_button_message">Transit</string>
-    <string name="get_device_position_first">Get Device Position First</string>
-    <string name="my_location">My Location</string>
+    <string name="get_device_position_first">Get device position first</string>
+    <string name="my_location">My location</string>
     <string name="my_destination">My destination</string>
-    <string name="permission_necessary">Permission Necessary</string>
-    <string name="location_permission_is_necessary">"Location permission is necessary"</string>
+    <string name="permission_necessary">Location permission necessary</string>
+    <string name="location_permission_is_necessary">"The location permission is necessary for us for make to you a faster and accurated experience with our app, please ALLOW permission in next screen :)"</string>
     <string name="loading_route_wait">Loading route. Please wait...</string>
     <string name="loading_categories_wait">Loading categories. Please wait...</string>
     <string name="internet_necessary">Internet is necessary</string>
     <string name="message_internet_is_necessary">Internet is necessary, click retry to restart</string>
     <string name="retry">Retry</string>
     <string name="no_categories_loaded">No categories loaded..</string>
-    <string name="quit">quit</string>
+    <string name="quit">Quit</string>
     <string name="please_click_back_to_exit">Please click BACK again to exit</string>
 
     <string-array name="categories_name">
@@ -25,7 +26,4 @@
         <item>none</item>
         <item>none</item>
     </string-array>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
