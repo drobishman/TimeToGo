@@ -2,6 +2,7 @@ package it.curdrome.timetogo.fragment;
 
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,15 +18,16 @@ import it.curdrome.timetogo.activity.MainActivity;
 import it.curdrome.timetogo.model.Category;
 import it.curdrome.timetogo.model.Poi;
 
-public class PoiAdapter extends ArrayAdapter<Poi> implements Serializable {
+class PoiAdapter extends ArrayAdapter<Poi> implements Serializable {
 
-    MainActivity activity;
+    private MainActivity activity;
 
-    public PoiAdapter(Context context, int resource, List<Poi> objects, MainActivity mainActivity) {
+    PoiAdapter(Context context, int resource, List<Poi> objects, MainActivity mainActivity) {
         super(context, resource, objects);
         activity = mainActivity;
     }
 
+    @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -41,13 +43,13 @@ public class PoiAdapter extends ArrayAdapter<Poi> implements Serializable {
 
         final Poi poi = getItem(position);
 
-        name.setText(activity.getString(R.string.name) +poi.getName());
+        name.setText(activity.getString(R.string.name) + poi.getName());
         if (!poi.getDescription().isEmpty())
             description.setText(activity.getString(R.string.description) + poi.getDescription());
         String cat = "";
        for(Category category : poi.getCategories())
                 cat = cat + " " +category.getName();
-        categories.setText(activity.getString(R.string.categories)+ cat);
+        categories.setText(activity.getString(R.string.categories) + cat);
 
         return convertView;
     }
