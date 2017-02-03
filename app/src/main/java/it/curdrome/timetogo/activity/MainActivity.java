@@ -10,12 +10,12 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -50,16 +50,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.curdrome.timetogo.R;
-
-import it.curdrome.timetogo.connection.server.CategoriesResponse;
-import it.curdrome.timetogo.connection.google.*;
+import it.curdrome.timetogo.connection.google.DirectionAsyncTask;
+import it.curdrome.timetogo.connection.google.DirectionResponse;
+import it.curdrome.timetogo.connection.google.PlacesAsyncTask;
+import it.curdrome.timetogo.connection.google.PlacesResponse;
 import it.curdrome.timetogo.connection.server.CategoriesAsyncTask;
+import it.curdrome.timetogo.connection.server.CategoriesResponse;
 import it.curdrome.timetogo.connection.server.PoisByCategoryAsyncTask;
 import it.curdrome.timetogo.connection.server.PoisByCategoryResponse;
+import it.curdrome.timetogo.fragment.PlaceFragment;
 import it.curdrome.timetogo.fragment.PoiFragment;
 import it.curdrome.timetogo.fragment.RouteFragment;
 import it.curdrome.timetogo.fragment.TransitFragment;
-import it.curdrome.timetogo.model.*;
+import it.curdrome.timetogo.model.Poi;
+import it.curdrome.timetogo.model.Route;
+import it.curdrome.timetogo.model.Transit;
 
 /**
  This class is the main class of the "TimeToGo" application.
@@ -91,6 +96,7 @@ public class MainActivity extends FragmentActivity  implements
     private Poi selectedPoi;
     private Transit selectedTransit;
     private Place selectedPlace;
+    private it.curdrome.timetogo.model.Place selectedMyPlace;
     private String[] categories;
     private List<it.curdrome.timetogo.model.Place> places = new ArrayList<>();
 
@@ -775,6 +781,25 @@ public class MainActivity extends FragmentActivity  implements
                         fTransaction.commit();
                     }
                 }
+
+                for(it.curdrome.timetogo.model.Place place : getPlaces()){
+                    if(place.getMarker().equals(marker)){
+                        Log.d("marker clicked", place.toString());
+                        selectedMyPlace = place;
+                        FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
+                        PlaceFragment fragment = new PlaceFragment();
+                        if(fTransaction.isEmpty()){
+                            fTransaction.add(R.id.frame_main, fragment);
+                            resizeMap(75);
+                        }
+
+                        else
+                            fTransaction.replace(R.id.frame_main, fragment);
+                        fTransaction.commit();
+                    }
+                }
+
+
                 if(transitRoute != null && transitRoute.draw)
                     for(Transit transit: transitRoute.getListTransit()){
                         if(transit.getMarker().equals(marker)){
@@ -865,4 +890,15 @@ public class MainActivity extends FragmentActivity  implements
         return selectedRoute;
     }
 
+    public List<it.curdrome.timetogo.model.Place> getPlaces() {
+        return places;
+    }
+
+    public it.curdrome.timetogo.model.Place getSelectedMyPlace() {
+        return selectedMyPlace;
+    }
+
+    public void setSelectedMyPlace(it.curdrome.timetogo.model.Place selectedMyPlace) {
+        this.selectedMyPlace = selectedMyPlace;
+    }
 }

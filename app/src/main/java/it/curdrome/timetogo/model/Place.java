@@ -142,6 +142,8 @@ public class Place {
         this.marker = marker;
     }
 
+
+
     @Override
     public String toString(){
         return "\n geometry :"+geometry+", name :"+name+", open hours enabled :"+openHoursEnabled+", open now :"+openNow+", place id : "+placeId+", categories: "+categories.toString()+", vicinity: "+vicinity +"";
