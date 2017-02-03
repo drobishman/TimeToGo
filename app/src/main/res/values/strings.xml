@@ -36,11 +36,13 @@
     <string name="id_palina">Id palina: </string>
 
 
-
     <string-array name="categories_name">
         <item>none</item>
         <item>none</item>
         <item>none</item>
         <item>none</item>
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
