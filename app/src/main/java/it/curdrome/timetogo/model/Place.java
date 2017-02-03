@@ -54,7 +54,7 @@ public class Place {
     public void draw(){
         marker = mMap.addMarker(new MarkerOptions().position(geometry)
                 .title(this.getName()).icon(BitmapDescriptorFactory
-                        .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                        .defaultMarker(BitmapDescriptorFactory.HUE_RED)));
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -132,6 +132,14 @@ public class Place {
 
     public void setVicinity(String vicinity) {
         this.vicinity = vicinity;
+    }
+
+    public Marker getMarker() {
+        return marker;
+    }
+
+    public void setMarker(Marker marker) {
+        this.marker = marker;
     }
 
     @Override

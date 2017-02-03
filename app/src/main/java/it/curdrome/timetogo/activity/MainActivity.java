@@ -92,7 +92,7 @@ public class MainActivity extends FragmentActivity  implements
     private Transit selectedTransit;
     private Place selectedPlace;
     private String[] categories;
-    private List<it.curdrome.timetogo.model.Place> places;
+    private List<it.curdrome.timetogo.model.Place> places = new ArrayList<>();
 
     public static final String TAG = "MainActivity";
     private static final int MY_REQUEST_POSITION = 0;
@@ -230,6 +230,9 @@ public class MainActivity extends FragmentActivity  implements
             PlacesAsyncTask placesAsyncTask = new PlacesAsyncTask(mOrigin,mMap,this,categories[position]);
             placesAsyncTask.response = this;
             placesAsyncTask.execute();
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigin,14));
+
         }else
             noInternetMessage();
 
@@ -295,6 +298,14 @@ public class MainActivity extends FragmentActivity  implements
     @Override
     public void taskResult(List<Poi> pois) {
 
+        if(pois.isEmpty()){
+            Snackbar snackbar = Snackbar
+                    //TODO add to strings resources
+                    .make(activity.findViewById(R.id.main),"niente poi!!", Snackbar.LENGTH_LONG);
+
+            snackbar.show();
+        }
+
         if(transitRoute!= null && transitRoute.draw){
             transitRoute.erase();
             transitRoute = null;
@@ -315,19 +326,40 @@ public class MainActivity extends FragmentActivity  implements
         transitRoute = null;
         walkingRoute = null;
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(romeLatLng,11));
-
         setOnInfoWindowListener();
     }
-
     @Override
     public void TaskResult(List<it.curdrome.timetogo.model.Place> places) {
 
+        if(places.isEmpty()){
+            Snackbar snackbar = Snackbar
+                    //TODO add to strings resources
+                    .make(activity.findViewById(R.id.main),"niente google places!!", Snackbar.LENGTH_LONG);
+
+            snackbar.show();
+        }
+
         this.places = places;
+
+
+        if(transitRoute!= null && transitRoute.draw){
+            transitRoute.erase();
+            transitRoute = null;
+        }
+
+        if(walkingRoute!=null &&walkingRoute.draw){
+            walkingRoute.erase();
+            walkingRoute = null;
+        }
 
         for(it.curdrome.timetogo.model.Place place : places){
             place.draw();
         }
+
+        transitRoute = null;
+        walkingRoute = null;
+
+        setOnInfoWindowListener();
     }
 
 
@@ -362,6 +394,8 @@ public class MainActivity extends FragmentActivity  implements
                     .findFragmentById(R.id.map);
             mapFragment.getMapAsync(this);
         }
+
+
     }
 
     /*
@@ -412,7 +446,6 @@ public class MainActivity extends FragmentActivity  implements
 
                     else
                         fTransaction.replace(R.id.frame_main, fragment);
-                    fTransaction.addToBackStack(null);
                     fTransaction.commit();
 
                 } else {
@@ -442,7 +475,6 @@ public class MainActivity extends FragmentActivity  implements
 
                     else
                         fTransaction.replace(R.id.frame_main, fragment);
-                    fTransaction.addToBackStack(null);
                     fTransaction.commit();
 
                 } else {
@@ -740,7 +772,6 @@ public class MainActivity extends FragmentActivity  implements
 
                         else
                             fTransaction.replace(R.id.frame_main, fragment);
-                        fTransaction.addToBackStack(null);
                         fTransaction.commit();
                     }
                 }
@@ -760,7 +791,6 @@ public class MainActivity extends FragmentActivity  implements
                             else
                                 // TODO kill on replace of info fragment
                                 fTransaction.replace(R.id.frame_main, fragment);
-                            fTransaction.addToBackStack(null);
                             fTransaction.commit();
                         }
                     }
@@ -797,10 +827,10 @@ public class MainActivity extends FragmentActivity  implements
 
     private void reset(){
         if(mDestination != null){
-            if(walkingRoute != null){
+            if(walkingRoute != null && walkingRoute.draw){
                 walkingRoute.erase();
             }
-            if(transitRoute != null){
+            if(transitRoute != null && transitRoute.draw){
                 transitRoute.erase();
             }
             walkingButton.setVisibility(View.INVISIBLE);
@@ -808,13 +838,18 @@ public class MainActivity extends FragmentActivity  implements
             mDestination = null;
             resizeMap(100);
             setDestination();
-            for(Poi poi: pois){
-                poi.getMarker().remove();
-            }
-            pois.clear();
+
             if(destinationMarker != null)
                 destinationMarker.remove();
         }
+        for(Poi poi: pois){
+            poi.getMarker().remove();
+        }
+        pois.clear();
+        for(it.curdrome.timetogo.model.Place place: places){
+            place.getMarker().remove();
+        }
+        places.clear();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(romeLatLng,11));
     }
 
@@ -829,4 +864,5 @@ public class MainActivity extends FragmentActivity  implements
     public Route getSelectedRoute() {
         return selectedRoute;
     }
+
 }
