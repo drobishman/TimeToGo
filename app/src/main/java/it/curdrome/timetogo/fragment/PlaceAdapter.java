@@ -44,6 +44,8 @@ class PlaceAdapter extends ArrayAdapter<Place> implements Serializable {
 
         final Place place = getItem(position);
 
+        //TODO gestire le stringhe per le risorse e cambiare i setText() adeguatamente
+
         name.setText(activity.getString(R.string.name) + place.getName());
        categories.setText("categorie: " + place.getCategories().toString());
         geometry.setText("posizione: "+ place.getGeometry());
