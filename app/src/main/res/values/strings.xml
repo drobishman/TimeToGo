@@ -34,6 +34,8 @@
     <string name="headsign">Headsign: </string>
     <string name="line">Line: </string>
     <string name="id_palina">Id palina: </string>
+    <string name="no_personal_poi_found">no personal POI found!</string>
+    <string name="no_Google_POI_found">No one Google POI around you!</string>
 
 
     <string-array name="categories_name">

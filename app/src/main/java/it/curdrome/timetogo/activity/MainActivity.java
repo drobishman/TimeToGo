@@ -306,8 +306,7 @@ public class MainActivity extends FragmentActivity  implements
 
         if(pois.isEmpty()){
             Snackbar snackbar = Snackbar
-                    //TODO add to strings resources
-                    .make(activity.findViewById(R.id.main),"niente poi!!", Snackbar.LENGTH_LONG);
+                    .make(activity.findViewById(R.id.main),activity.getString(R.string.no_personal_poi_found), Snackbar.LENGTH_LONG);
 
             snackbar.show();
         }
@@ -339,8 +338,7 @@ public class MainActivity extends FragmentActivity  implements
 
         if(places.isEmpty()){
             Snackbar snackbar = Snackbar
-                    //TODO add to strings resources
-                    .make(activity.findViewById(R.id.main),"niente google places!!", Snackbar.LENGTH_LONG);
+                    .make(activity.findViewById(R.id.main),activity.getString(R.string.no_Google_POI_found), Snackbar.LENGTH_LONG);
 
             snackbar.show();
         }

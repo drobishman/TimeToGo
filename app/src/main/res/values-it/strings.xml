@@ -31,6 +31,8 @@
     <string name="headsign">Direzione: </string>
     <string name="line">Linea: </string>
     <string name="id_palina">N°palina: </string>
+    <string name="no_personal_poi_found">Nessun POI personale trovato!</string>
+    <string name="no_Google_POI_found">Nessun POI di Google nelle vicinanze!</string>
 
 
     <string-array name="categories_name">
