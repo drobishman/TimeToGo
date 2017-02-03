@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:text=""
         android:textSize="21sp"
-        android:textAllCaps="true"/>
+        android:textAllCaps="false"/>
 
     <TextView
         android:id="@+id/departure"
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:text=""
         android:textSize="21sp"
-        android:textAllCaps="true"/>
+        android:textAllCaps="false"/>
 
     <TextView
         android:id="@+id/distance"
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:text=""
         android:textSize="21sp"
-        android:textAllCaps="true"/>
+        android:textAllCaps="false"/>
 
     <TextView
         android:id="@+id/duration"
@@ -34,13 +34,13 @@
         android:layout_height="wrap_content"
         android:text=""
         android:textSize="21sp"
-        android:textAllCaps="true"/>
+        android:textAllCaps="false"/>
     <TextView
         android:id="@+id/bus_stops"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
         android:textSize="21sp"
-        android:textAllCaps="true"/>
+        android:textAllCaps="false"/>
 
 </LinearLayout>

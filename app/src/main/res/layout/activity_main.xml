@@ -29,7 +29,7 @@
                 android:id="@+id/lnr_google_searchbar"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:background="@color/DeadRed">
+                android:background="@color/lightPrimaryColor">
 
                 <fragment
                     android:id="@+id/place_autocomplete_fragment"
@@ -46,6 +46,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|bottom"
                 android:text="@string/origin_button_message"
+                android:textColor="@color/SecondaryText"
+                android:backgroundTint="@color/lightPrimaryColor"
                 android:padding="10dp"
                 android:layout_marginTop="20dp"
                 android:paddingRight="10dp"/>
@@ -59,28 +61,33 @@
                 android:layout_gravity="bottom"
                 android:weightSum="100">
 
+
                 <Button
                     android:visibility="gone"
+                    android:layout_marginRight="1dp"
                     android:id="@+id/transit_button"
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:text="@string/transit_button_message"
                     android:layout_weight="50"
-                    android:drawableLeft="@mipmap/bus"
-                    android:background="@color/DeadRed"
-                    android:textColor="@color/Moccasin"/>
+                    android:drawableLeft="@drawable/bus"
+                    android:drawableTint="@color/colorAccent"
+                    android:background="@color/lightPrimaryColor"
+                    android:textColor="@color/SecondaryText"/>
 
 
                 <Button
                     android:visibility="gone"
+                    android:layout_marginLeft="1dp"
                     android:id="@+id/walking_button"
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:text="@string/walking_button_message"
                     android:layout_weight="50"
-                    android:drawableLeft="@mipmap/walk"
-                    android:background="@color/DeadRed"
-                    android:textColor="@color/Moccasin"/>
+                    android:drawableLeft="@drawable/walk"
+                    android:drawableTint="@color/colorAccent"
+                    android:background="@color/lightPrimaryColor"
+                    android:textColor="@color/SecondaryText"/>
 
             </LinearLayout>
 
@@ -91,7 +98,7 @@
             android:layout_weight="25"
             android:id="@+id/frame_main"
             android:layout_gravity="bottom"
-            android:background="@color/LightGreen"/>
+            android:background="@color/lightPrimaryColor"/>
     </LinearLayout>
 
     <ListView
@@ -99,10 +106,10 @@
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@android:color/holo_red_dark"
+        android:background="@color/White"
         android:choiceMode="singleChoice"
-        android:divider="@android:drawable/screen_background_light_transparent"
-        android:dividerHeight="0dp" />
+        android:divider="@color/DividerColor"
+        android:dividerHeight="1dp" />
 
 </android.support.v4.widget.DrawerLayout>
 

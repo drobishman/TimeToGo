@@ -483,7 +483,7 @@ public class MainActivity extends FragmentActivity  implements
                 mDestination = latLng;
                 destinationMarker = mMap.addMarker(new MarkerOptions().position(mDestination)
                         .title(activity.getString(R.string.my_destination)).icon(BitmapDescriptorFactory
-                                .defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
+                                .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDestination, zoomLevel));
                 mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override

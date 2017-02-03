@@ -17,7 +17,8 @@
         android:icon="@mipmap/logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:configChanges="orientation">
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -33,6 +34,7 @@
 
         <activity
             android:name=".activity.MainActivity"
+            android:screenOrientation="portrait">
             android:label="@string/title_activity_main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -9,42 +9,42 @@
         android:layout_height="wrap_content"
         android:text=""
         android:textSize="21sp"
-        android:textAllCaps="true"/>
+        android:textAllCaps="false"/>
     <TextView
         android:id="@+id/departure_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
         android:textSize="21sp"
-        android:textAllCaps="true"/>
+        android:textAllCaps="false"/>
     <TextView
         android:id="@+id/headsign"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
         android:textSize="21sp"
-        android:textAllCaps="true"/>
+        android:textAllCaps="false"/>
     <TextView
         android:id="@+id/line"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
         android:textSize="21sp"
-        android:textAllCaps="true"/>
+        android:textAllCaps="false"/>
     <TextView
         android:id="@+id/id_palina"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
         android:textSize="21sp"
-        android:textAllCaps="true"/>
+        android:textAllCaps="false"/>
     <TextView
         android:id="@+id/departure_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
         android:textSize="21sp"
-        android:textAllCaps="true"/>
+        android:textAllCaps="false"/>
 
 
 </LinearLayout>
