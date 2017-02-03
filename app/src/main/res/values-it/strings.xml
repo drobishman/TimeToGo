@@ -8,7 +8,7 @@
     <string name="my_location">Mia posizione</string>
     <string name="my_destination">Mia destinazione</string>
     <string name="permission_necessary">Permessi sulla posizione necessari</string>
-    <string name="location_permission_is_necessary">I permessi di geolocalizzazione servono per rendere più veloce e precisa la tua esperienza con l'app, perfavore premi CONSENTI per consentire il permesso nella prossima schermata :)</string>
+    <string name="location_permission_is_necessary">I permessi di geolocalizzazione servono per rendere più veloce e precisa la tua esperienza con l\'app, perfavore premi CONSENTI per consentire il permesso nella prossima schermata :)</string>
     <string name="loading_route_wait">Caricamento percorso. Attendere prego&#8230;</string>
     <string name="loading_categories_wait">Caricamento categorie. Attendere prego&#8230;</string>
     <string name="internet_necessary">Internet è necessario</string>
