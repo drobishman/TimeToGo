@@ -130,7 +130,7 @@ public class PlacesAsyncTask extends AsyncTask<String,String,String> {
         }
         if(places == null) {
             Snackbar snackbar = Snackbar
-                    .make(activity.findViewById(R.id.main), "allora sei stronzo", Snackbar.LENGTH_LONG);
+                    .make(activity.findViewById(R.id.main), "places = null", Snackbar.LENGTH_LONG);
 
             snackbar.show();
         }else

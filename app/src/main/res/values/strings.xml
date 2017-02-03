@@ -16,7 +16,7 @@
     <string name="internet_necessary">Internet is necessary</string>
     <string name="message_internet_is_necessary">Internet is necessary, click retry to restart</string>
     <string name="retry">Retry</string>
-    <string name="no_categories_loaded">No categories loaded..</string>
+    <string name="no_categories_loaded">No categories loaded&#8230;</string>
     <string name="quit">Quit</string>
     <string name="please_click_back_to_exit">Please click BACK again to exit</string>
     <string name="error_occured">Error occurred: </string>
