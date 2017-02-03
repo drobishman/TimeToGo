@@ -59,9 +59,7 @@ import it.curdrome.timetogo.connection.server.PoisByCategoryResponse;
 import it.curdrome.timetogo.fragment.PoiFragment;
 import it.curdrome.timetogo.fragment.RouteFragment;
 import it.curdrome.timetogo.fragment.TransitFragment;
-import it.curdrome.timetogo.model.Poi;
-import it.curdrome.timetogo.model.Route;
-import it.curdrome.timetogo.model.Transit;
+import it.curdrome.timetogo.model.*;
 
 /**
  This class is the main class of the "TimeToGo" application.
@@ -79,7 +77,8 @@ public class MainActivity extends FragmentActivity  implements
         LocationListener,
         CategoriesResponse,
         DirectionResponse ,
-        PoisByCategoryResponse{
+        PoisByCategoryResponse,
+        PlacesResponse{
 
     private SupportMapFragment mapFragment;
     private FragmentManager mFragmentManager;
@@ -92,6 +91,8 @@ public class MainActivity extends FragmentActivity  implements
     private Poi selectedPoi;
     private Transit selectedTransit;
     private Place selectedPlace;
+    private String[] categories;
+    private List<it.curdrome.timetogo.model.Place> places;
 
     public static final String TAG = "MainActivity";
     private static final int MY_REQUEST_POSITION = 0;
@@ -104,7 +105,7 @@ public class MainActivity extends FragmentActivity  implements
     private Marker originMarker;
     private Marker destinationMarker;
     private LocationRequest mLocationRequest; //
-    private GoogleApiClient mGoogleApiClient;
+    public GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private LatLng romeLatLng = new LatLng (41.902783, 12.496366); //rome position
     private float zoomLevel = 11; // default zoom level
@@ -224,6 +225,11 @@ public class MainActivity extends FragmentActivity  implements
             PoisByCategoryAsyncTask poisByCategoryAsyncTask= new PoisByCategoryAsyncTask(this, mMap, position+1); //get pois by category
             poisByCategoryAsyncTask.response = this;
             poisByCategoryAsyncTask.execute();
+
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            PlacesAsyncTask placesAsyncTask = new PlacesAsyncTask(mOrigin,mMap,this,categories[position]);
+            placesAsyncTask.response = this;
+            placesAsyncTask.execute();
         }else
             noInternetMessage();
 
@@ -245,6 +251,8 @@ public class MainActivity extends FragmentActivity  implements
             for(int i = 0; i<output.length; i++){
                 output[i] = output[i].replace("_"," ");
             }
+            categories = output;
+
             // Set the adapter for the list view
             mDrawerList.setAdapter(new ArrayAdapter<String>(this,
                     R.layout.drawer_list_item, output));
@@ -312,6 +320,15 @@ public class MainActivity extends FragmentActivity  implements
         setOnInfoWindowListener();
     }
 
+    @Override
+    public void TaskResult(List<it.curdrome.timetogo.model.Place> places) {
+
+        this.places = places;
+
+        for(it.curdrome.timetogo.model.Place place : places){
+            place.draw();
+        }
+    }
 
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
