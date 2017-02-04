@@ -56,15 +56,15 @@ class TransitAdapter extends ArrayAdapter<Transit> implements Serializable {
         //type.setText("type: "+transit.getType());
         line.setText(activity.getString(R.string.line)+transit.getLine()+" ("+transit.getType()+")");
         if(transit.getIdPalina() == null){
-            idPalina.setText("Servizio real-time non disponibile");
+            idPalina.setText(activity.getString(R.string.no_bus_arriving));
         }else {
             idPalina.setText(activity.getString(R.string.id_palina) + transit.getIdPalina());
         }
         if(transit.getIdPalina() != null){
-            departureTime.setText(activity.getString(R.string.departure_time) + transit.getDepartureTime() + "\n real-time by roma.mobilità");
+            departureTime.setText(activity.getString(R.string.RTI) + transit.getDepartureTime() + activity.getString(R.string.real_time_by_roma_mobilità));
             departureTime.setTextColor(activity.getColor(R.color.Green));
         }else {
-            departureTime.setText(activity.getString(R.string.departure_time) + transit.getDepartureTime());
+            departureTime.setText(activity.getString(R.string.departure_scheduled) + transit.getDepartureTime());
         }
 
         return convertView;

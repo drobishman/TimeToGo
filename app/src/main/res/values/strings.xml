@@ -36,6 +36,14 @@
     <string name="id_palina">Id palina: </string>
     <string name="no_personal_poi_found">no personal POI found!</string>
     <string name="no_Google_POI_found">No one Google POI around you!</string>
+    <string name="no_bus_arriving">No bus arriving</string>
+    <string name="RTI">RTI: </string>
+    <string name="real_time_by_roma_mobilità">\n real-time by roma.mobilità</string>
+    <string name="departure_scheduled" >Departure scheduled: </string>
+    <string name="now_is_open">Now is open</string>
+    <string name="now_is_close">Now is close</string>
+    <string name="open_hours_not_available">Open hours not available</string>
+    <string name="adress">Adress: </string>
 
 
     <string-array name="categories_name">

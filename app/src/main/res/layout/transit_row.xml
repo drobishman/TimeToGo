@@ -4,6 +4,22 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/departure_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="21sp"
+        android:textAllCaps="false"/>
+
+    <TextView
+        android:id="@+id/line"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="21sp"
+        android:textAllCaps="false"/>
+
+    <TextView
         android:id="@+id/num_stops"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,22 +40,9 @@
         android:text=""
         android:textSize="21sp"
         android:textAllCaps="false"/>
-    <TextView
-        android:id="@+id/line"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="21sp"
-        android:textAllCaps="false"/>
+
     <TextView
         android:id="@+id/id_palina"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="21sp"
-        android:textAllCaps="false"/>
-    <TextView
-        android:id="@+id/departure_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""

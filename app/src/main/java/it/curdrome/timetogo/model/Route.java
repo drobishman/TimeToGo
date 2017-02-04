@@ -7,7 +7,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -116,7 +115,7 @@ public class Route {
             polylines.add(mMap.addPolyline(new PolylineOptions()
                     .add(new LatLng(src.latitude, src.longitude),
                             new LatLng(dest.latitude, dest.longitude))
-                    .width(4).color(Color.RED)));
+                    .width(10).color(Color.RED)));
 
         }
         for(Transit transit: listTransit){
