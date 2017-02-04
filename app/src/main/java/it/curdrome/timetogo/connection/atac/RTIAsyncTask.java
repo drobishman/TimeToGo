@@ -38,7 +38,6 @@ public class RTIAsyncTask extends AsyncTask<String, String, String> {
         Log.d("RTI nome palina", transit.getDepartureStop());
         Log.d("RTI id palina", transit.getIdPalina());
 
-
         try {
             // token request
             XMLRPCClient authClient = new XMLRPCClient(new URL(stringUrlAuth));

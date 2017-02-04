@@ -1,21 +1,16 @@
 package it.curdrome.timetogo.model;
 
 
-
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
 import it.curdrome.timetogo.connection.atac.IdPalinaAsyncTask;
-import it.curdrome.timetogo.connection.atac.RTIAsyncTask;
 
 /**
  * Created by adrian on 21/01/2017.
  */
 
 public class Transit {
-
-    private final android.os.Handler handler = new android.os.Handler();
-
     private Transit transit = this;
 
     private int numStops;
@@ -48,17 +43,6 @@ public class Transit {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             new IdPalinaAsyncTask(this).execute();
         }
-
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                if (idPalina!=null) {
-                    Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                    new RTIAsyncTask(transit).execute();
-                }
-            }
-        }, 10000);
-
-
     }
 
     public int getNumStops() {

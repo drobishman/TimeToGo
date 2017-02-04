@@ -1,6 +1,7 @@
 package it.curdrome.timetogo.connection.atac;
 
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -138,5 +139,16 @@ public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
         Log.d("onPostExecute", s);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("idPalina - RTI", "idPalina"+transit.getIdPalina());
+                if (transit.getIdPalina()!=null) {
+                    Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+                    new RTIAsyncTask(transit).execute();
+                }
+            }
+        }, 1000);
     }
 }
