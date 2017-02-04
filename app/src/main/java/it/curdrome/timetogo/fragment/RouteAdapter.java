@@ -9,18 +9,14 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.io.Serializable;
-import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import it.curdrome.timetogo.R;
 import it.curdrome.timetogo.activity.MainActivity;
-import it.curdrome.timetogo.model.Category;
-import it.curdrome.timetogo.model.Poi;
 import it.curdrome.timetogo.model.Route;
 import it.curdrome.timetogo.model.Transit;
 
@@ -100,7 +96,7 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
 
         String cat = "";
         for(Transit transit: route.getListTransit())
-            cat = cat + " " +transit.getDepartureStop();
+            cat = cat + "\n \t     > " +transit.getDepartureStop();
         busStops.setText(activity.getString(R.string.stops) + cat);
 
 
