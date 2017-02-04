@@ -7,14 +7,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.curdrome.timetogo.model.Transit;
-import it.curdrome.timetogo.xmlrpc.*;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import it.curdrome.timetogo.model.Transit;
+import it.curdrome.timetogo.xmlrpc.XMLRPCClient;
+import it.curdrome.timetogo.xmlrpc.XMLRPCException;
 
 /**
  * Created by adrian on 20/01/2017.
@@ -106,11 +107,15 @@ public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
                         JSONObject primo_per_palina = primi_per_palina.getJSONObject(j);
                         JSONArray arrivi = primo_per_palina.getJSONArray("arrivi");
                         for (int k = 0; k < arrivi.length(); k++) {
+                            Log.d("Id pallina check", transit.getLine()+" = " + arrivi.getJSONObject(k).getString("linea"));
                             if (transit.getLine().matches(arrivi.getJSONObject(k).getString("linea"))){
-                                if (arrivi.getJSONObject(k).has("capolinea"))
-                                    if (transit.getHeadsign().equalsIgnoreCase(arrivi.getJSONObject(k).getString("capolinea"))){
+                                Log.d("Id pallina check","has capolinea: "+arrivi.getJSONObject(k).has("capolinea"));
+                                if (arrivi.getJSONObject(k).has("capolinea")) {
+                                    Log.d("Id pallina check", transit.getHeadsign()+" = "+arrivi.getJSONObject(k).getString("capolinea"));
+                                    if (transit.getHeadsign().equalsIgnoreCase(arrivi.getJSONObject(k).getString("capolinea"))) {
                                         transit.setIdPalina(arrivi.getJSONObject(k).getString("id_palina"));
                                     }
+                                }
                             }
                         }
                     }
@@ -132,6 +137,6 @@ public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        //Log.d("onPostExecute", s);
+        Log.d("onPostExecute", s);
     }
 }

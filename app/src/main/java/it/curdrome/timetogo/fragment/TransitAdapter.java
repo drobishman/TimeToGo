@@ -2,12 +2,13 @@ package it.curdrome.timetogo.fragment;
 
 
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.io.Serializable;
@@ -26,6 +27,7 @@ class TransitAdapter extends ArrayAdapter<Transit> implements Serializable {
         activity = mainActivity;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
@@ -45,14 +47,25 @@ class TransitAdapter extends ArrayAdapter<Transit> implements Serializable {
 
         final Transit transit = getItem(position);
 
+        //TODO resource for multilanguage
+
         assert transit != null;
         numStops.setText(activity.getString(R.string.stops) + transit.getNumStops());
         departureStop.setText(activity.getString(R.string.stop_name)+ transit.getDepartureStop());
         headsign.setText(activity.getString(R.string.headsign)+transit.getHeadsign());
         //type.setText("type: "+transit.getType());
         line.setText(activity.getString(R.string.line)+transit.getLine()+" ("+transit.getType()+")");
-        idPalina.setText(activity.getString(R.string.id_palina)+transit.getIdPalina());
-        departureTime.setText(activity.getString(R.string.departure_time)+transit.getDepartureTime());
+        if(transit.getIdPalina() == null){
+            idPalina.setText("Servizio real-time non disponibile");
+        }else {
+            idPalina.setText(activity.getString(R.string.id_palina) + transit.getIdPalina());
+        }
+        if(idPalina != null){
+            departureTime.setText(activity.getString(R.string.departure_time) + transit.getDepartureTime() + "\n real-time service by roma.mobilita");
+            departureTime.setTextColor(activity.getColor(R.color.Green));
+        }else {
+            departureTime.setText(activity.getString(R.string.departure_time) + transit.getDepartureTime());
+        }
 
         return convertView;
     }

@@ -3,6 +3,7 @@ package it.curdrome.timetogo.connection.atac;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,7 +21,6 @@ import it.curdrome.timetogo.xmlrpc.XMLRPCException;
 
 public class RTIAsyncTask extends AsyncTask<String, String, String> {
 
-    private final android.os.Handler handler = new android.os.Handler();
     private Transit transit;
 
     public RTIAsyncTask(Transit transit){
@@ -53,6 +53,18 @@ public class RTIAsyncTask extends AsyncTask<String, String, String> {
 
             Log.d("RTIAsyncTask", risposta.toString());
 
+            JSONArray primiPerPalina = risposta.getJSONArray("primi_per_palina");
+            for(int i=0; i<primiPerPalina.length();i++) {
+                JSONObject palina = primiPerPalina.getJSONObject(i);
+                JSONArray arrivi = palina.getJSONArray("arrivi");
+                for(int j=0;j<arrivi.length();j++){
+                    Log.d("RTI", transit.getLine() +" = "+arrivi.getJSONObject(j).getString("linea"));
+                    if(transit.getLine().matches(arrivi.getJSONObject(j).getString("linea")) && arrivi.getJSONObject(j).has("annuncio")){
+                        transit.setDepartureTime(arrivi.getJSONObject(j).getString("annuncio"));
+                    }
+                }
+            }
+
         } catch (XMLRPCException e) {
             e.printStackTrace();
         } catch (MalformedURLException e) {
@@ -66,13 +78,5 @@ public class RTIAsyncTask extends AsyncTask<String, String, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-
-        handler.postDelayed(new Runnable() {
-
-            public void run() {
-                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                new RTIAsyncTask(transit).execute();
-            }
-        }, 30000);
     }
 }

@@ -2,8 +2,6 @@ package it.curdrome.timetogo.model;
 
 
 
-import android.os.Handler;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
@@ -16,6 +14,7 @@ import it.curdrome.timetogo.connection.atac.RTIAsyncTask;
 
 public class Transit {
 
+    private final android.os.Handler handler = new android.os.Handler();
 
     private Transit transit = this;
 
@@ -48,11 +47,16 @@ public class Transit {
         if(this.type.matches("BUS")) {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             new IdPalinaAsyncTask(this).execute();
-            if (this.getIdPalina()!=null){
-                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                new RTIAsyncTask(transit).execute();
-            }
         }
+
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                if (idPalina!=null) {
+                    Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+                    new RTIAsyncTask(transit).execute();
+                }
+            }
+        }, 10000);
 
 
     }
