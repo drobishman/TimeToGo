@@ -22,11 +22,25 @@ class TransitAdapter extends ArrayAdapter<Transit> implements Serializable {
 
     private MainActivity activity;
 
+    /**
+     * Default constructor
+     * @param context the context of the activity
+     * @param resource the reference to the resource
+     * @param objects a list cotaining desired data
+     * @param mainActivity the caller activity
+     */
     TransitAdapter(Context context, int resource, List<Transit> objects, MainActivity mainActivity) {
         super(context, resource, objects);
         activity = mainActivity;
     }
 
+    /**
+     * Method that creates the view
+     * @param position where each element must load
+     * @param convertView a view containing each row
+     * @param parent the parent view
+     * @return the converted view
+     */
     @RequiresApi(api = Build.VERSION_CODES.M)
     @NonNull
     @Override

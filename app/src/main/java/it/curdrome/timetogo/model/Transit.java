@@ -8,7 +8,12 @@ import it.curdrome.timetogo.connection.atac.IdPalinaAsyncTask;
 
 /**
  * Created by adrian on 21/01/2017.
+ * Model Class for the Transit
+ *
+ * @author adrian
+ * @version 1
  */
+
 
 public class Transit {
     private Transit transit = this;
@@ -21,14 +26,27 @@ public class Transit {
     private String idPalina;
     private String departureTime;
     private Marker marker;
-
-    public LatLng getPalinaLatLng() {
-        return palinaLatLng;
-    }
-
     private LatLng palinaLatLng;
 
-    public Transit(int numStops, String departureStop, String headsign, String type, String line, String departureTime, double lat, double lng){
+    /**
+     * Default constructor
+     * @param numStops number of stops for this transit
+     * @param departureStop name of the departure stop
+     * @param headsign the headsign of this line
+     * @param type the type of public transport(bus tram...)
+     * @param line the name of the line
+     * @param departureTime the departure time schedulated
+     * @param lat the position of the departure stop
+     * @param lng the position of the departure stop
+     */
+    public Transit(int numStops,
+                   String departureStop,
+                   String headsign,
+                   String type,
+                   String line,
+                   String departureTime,
+                   double lat,
+                   double lng){
 
         this.numStops = numStops;
         this.departureStop = departureStop;
@@ -39,6 +57,7 @@ public class Transit {
         this.palinaLatLng = new LatLng(lat,lng);
 
 
+        // used to set the id of the palina in case of bus or tram, request goes to muovi.roma
         if(this.type.matches("BUS") || this.type.matches("TRAM")) {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             new IdPalinaAsyncTask(this).execute();
@@ -107,6 +126,10 @@ public class Transit {
 
     public void setMarker(Marker marker) {
         this.marker = marker;
+    }
+
+    public LatLng getPalinaLatLng() {
+        return palinaLatLng;
     }
 
     @Override

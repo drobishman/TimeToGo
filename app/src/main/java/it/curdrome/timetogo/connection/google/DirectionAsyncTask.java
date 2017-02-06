@@ -4,10 +4,10 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,27 +24,41 @@ import it.curdrome.timetogo.activity.MainActivity;
 import it.curdrome.timetogo.model.Route;
 import it.curdrome.timetogo.model.Transit;
 
-/*
-   class that generates a route direction using google maps api and print it on map
-     */
+/**
+ *
+ *class that generates a route direction using google maps api and print it on map
+ * @author Drob Adrian Mihai
+ * @version 3
+ */
 public class DirectionAsyncTask extends AsyncTask<String, String, String> {
 
+    // sets response
     public DirectionResponse response = null;
 
     private ProgressDialog pDialog; // to show when direction create
 
-    private MainActivity activity;
+    private MainActivity activity; // caller activity
     private LatLng mOrigin;
     private LatLng mDestination;
     private List<Transit> transitList = new ArrayList<>();
     private Route route;
     private String mode;
 
+    // bounds
     private LatLng northeast;
     private LatLng southwest;
 
     private GoogleMap mMap;
 
+    /**
+     * Constructor method
+     *
+     * @param mOrigin lat long for the origin(user position)
+     * @param mDestination coordinates of the chosen destination
+     * @param mMap the map where decode the result
+     * @param activity the caller activity
+     * @param mode the mode of the henerated route
+     */
     public DirectionAsyncTask (LatLng mOrigin, LatLng mDestination, GoogleMap mMap, MainActivity activity, String mode){
 
         this.activity = activity;
@@ -54,6 +68,9 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
         this.mode = mode;
     }
 
+    /**
+     * method used to start Progress Dialog
+     */
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -66,9 +83,14 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
 
     }
 
+    /**
+     * request method to create a route
+     * @param args default param
+     * @return an output string containing the route info
+     */
     protected String doInBackground(String... args) {
-        //Intent i = getIntent();
 
+        // creation of the url
         String stringUrl = "http://maps.googleapis.com/maps/api/directions/json?origin="
                 + mOrigin.latitude
                 + ","
@@ -77,7 +99,7 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
                 + mDestination.latitude
                 + ","
                 + mDestination.longitude + "&sensor=false&mode="+mode;
-
+        // response variable
         String output = null;
 
         StringBuilder response = new StringBuilder();
@@ -105,6 +127,10 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
         return output;
     }
 
+    /**
+     * Method used tu manipulate the response and create the needed objects and assembly rhe route
+     * @param output is the output of the http request
+     */
     protected void onPostExecute(String output) {
 
         JSONObject jsonObject;
@@ -127,13 +153,14 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
             e.printStackTrace();
         }
 
+        // dismiss the progress dialog
         pDialog.dismiss();
 
         if(route == null){
             if (mode.matches("transit")) {
                 Snackbar snackbar = Snackbar
                         .make(activity.findViewById(R.id.main), activity.getString(R.string.route_not_found) + ": " +activity.getString(R.string.transit), Snackbar.LENGTH_LONG);
-                    snackbar.show();
+                snackbar.show();
             }else if(mode.matches("walking")) {
                 Snackbar snackbar = Snackbar
                         .make(activity.findViewById(R.id.main), activity.getString(R.string.route_not_found) + ": " + activity.getString(R.string.walking), Snackbar.LENGTH_LONG);
@@ -145,6 +172,11 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
 
     }
 
+    /**
+     * method that creates a route
+     * @param route a JSONObject containing the main info of the route
+     * @throws JSONException when the json object creation fails
+     */
     private void getRoute(JSONObject route) throws JSONException {
 
         if(transitList.size() == 0 && mode.matches("transit")){
@@ -189,6 +221,11 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
         );
     }
 
+    /**
+     * method that creates a transit
+     * @param route a JSONObject containing the main info of the route and all transits
+     * @throws JSONException when the json object creation fails
+     */
     private void getTransit(JSONObject route) throws JSONException {
 
         JSONArray arrayLegs = route.getJSONArray("legs");
@@ -225,6 +262,11 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
         }
     }
 
+    /**
+     *
+     * @param route JSONObject containing the main info of the route and also its bounds on map
+     * @throws JSONException when the json object creation fails
+     */
     private void getBounds (JSONObject route) throws JSONException {
 
         JSONObject bounds = route.getJSONObject("bounds");

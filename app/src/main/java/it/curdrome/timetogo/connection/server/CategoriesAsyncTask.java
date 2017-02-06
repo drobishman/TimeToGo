@@ -10,10 +10,14 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import it.curdrome.timetogo.activity.MainActivity;
-
 /**
  * Created by adrian on 16/01/2017.
+ *
+ * Class used to get Categories from our servers
+ *
+ * @author Drob Adrian Mihai
+ * @version 2
+ *
  */
 
 public class CategoriesAsyncTask extends AsyncTask<String, String, String> {
@@ -22,6 +26,12 @@ public class CategoriesAsyncTask extends AsyncTask<String, String, String> {
 
     private String[] stringArray;
 
+    /**
+     * Http request
+     *
+     * @param strings default parameter
+     * @return null
+     */
     @Override
     protected String doInBackground(String... strings) {
 
@@ -54,6 +64,10 @@ public class CategoriesAsyncTask extends AsyncTask<String, String, String> {
         return null;
     }
 
+    /**
+     * all categories will be added to a String array and send as response
+     * @param result
+     */
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);

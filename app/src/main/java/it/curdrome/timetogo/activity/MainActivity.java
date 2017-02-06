@@ -1,7 +1,6 @@
 package it.curdrome.timetogo.activity;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -43,6 +42,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -72,10 +72,14 @@ import it.curdrome.timetogo.model.Transit;
 /**
  This class is the main class of the "TimeToGo" application.
 
- This main class creates and initialises the map fragment, handles permission requests and for now creates also the directions,
+ This main class
+ creates and initialises the map fragment
+ handles permission requests, listners of the map
+
+
 
  @author Drob Adrian Mihai
- @version 13/01/2017
+ @version 1.9
  */
 
 public class MainActivity extends FragmentActivity  implements
@@ -88,26 +92,32 @@ public class MainActivity extends FragmentActivity  implements
         PoisByCategoryResponse,
         PlacesResponse{
 
+    public static final String TAG = "MainActivity";
+    private static final int MY_REQUEST_POSITION = 0;
+
+
+    // fragment variables
     private SupportMapFragment mapFragment;
     private FragmentManager mFragmentManager;
     private FrameLayout frameLayout;
     private Handler handler = new Handler();
 
+    // types of routes
     private Route walkingRoute;
     private Route transitRoute;
     private Route selectedRoute;
 
     private List<Poi> pois = new ArrayList<>();
+    private List<it.curdrome.timetogo.model.Place> places = new ArrayList<>();
     private Poi selectedPoi;
     private Transit selectedTransit;
     private Place selectedPlace;
-    private Marker selectedPlaceMarker;
     private it.curdrome.timetogo.model.Place selectedMyPlace;
-    private String[] categories;
-    private List<it.curdrome.timetogo.model.Place> places = new ArrayList<>();
 
-    public static final String TAG = "MainActivity";
-    private static final int MY_REQUEST_POSITION = 0;
+
+
+    // categories of drawer
+    private String[] categories;
     // drawer variables
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -116,18 +126,24 @@ public class MainActivity extends FragmentActivity  implements
     private GoogleMap mMap;
     private Marker originMarker;
     private Marker destinationMarker;
-    private LocationRequest mLocationRequest; //
+    private Marker selectedPlaceMarker;
+    private Circle mCircle;
+
+    private LocationRequest mLocationRequest;
     public GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
-    private LatLng defaultLatLng = new LatLng (0,0); //rome position
-    private float zoomLevel = 11; // default zoom level
+
 
     //origin and destination to generate direction
     public LatLng mOrigin;
     public LatLng mDestination;
+    private LatLng defaultLatLng = new LatLng (0,0); //default position
+    private float zoomLevel = 11; // default zoom level
+
 
     private MainActivity activity = (MainActivity) this;
 
+    // buttons
     private Button originButton;
     private Button transitButton;
     private Button walkingButton;
@@ -135,9 +151,13 @@ public class MainActivity extends FragmentActivity  implements
     public ProgressDialog pDialog; // to show when direction create
     private boolean wait = true;
 
-    /*
-    Method that creates the main activity and the drawer with its listeners
-    */
+    /**
+     *Method that creates the main activity and the drawer with its listeners
+     *check if internet connection is available
+     *creates fragment for map
+     *creates fragment for search bar and its listner
+     *@param savedInstanceState   instance bundle to be saved
+     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,9 +233,10 @@ public class MainActivity extends FragmentActivity  implements
 
     }
 
-    /*
-   Method used by drawer to set a function for each chosed category
-    */
+    /**
+     *Method used by drawer to set a function for each chosed category, in this case starts the Async Task to get POI/places
+     *@param position the position of the chosen category in drawer
+     */
     private void selectItem(int position) {
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -259,7 +280,11 @@ public class MainActivity extends FragmentActivity  implements
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
-    // risults of getCategories AsyncTask and set the category list on drawer
+    /**
+     *risults of getCategories AsyncTask and set the category list on drawer
+     *@param output contains all categories to set in Drawer view
+     */
+
     @Override
     public void taskResult(String[] output) {
         if(output != null) {
@@ -285,6 +310,10 @@ public class MainActivity extends FragmentActivity  implements
         pDialog.dismiss();
     }
 
+    /**
+     *method containing the result of directionAsyncTask
+     *@param route contains the route calculated by Google
+     */
     @Override
     public void TaskResult(Route route) {
 
@@ -308,6 +337,10 @@ public class MainActivity extends FragmentActivity  implements
         setOnInfoWindowListener();
     }
 
+    /**
+     *method containing the resutlt of poisByCategoryAsyncTask
+     *@param pois contains the POIs of the chosen category
+     */
     @Override
     public void taskResult(List<Poi> pois) {
 
@@ -340,6 +373,11 @@ public class MainActivity extends FragmentActivity  implements
 
         setOnInfoWindowListener();
     }
+
+    /**
+     *method containing the resutlt of placesAsyncTask
+     *@param places contains the Places of the chosen category
+     */
     @Override
     public void TaskResult(List<it.curdrome.timetogo.model.Place> places) {
 
@@ -365,8 +403,10 @@ public class MainActivity extends FragmentActivity  implements
 
         for(it.curdrome.timetogo.model.Place place : places){
             place.draw();
-            mMap.addCircle(new CircleOptions().radius(1500).center(mOrigin).strokeColor(R.color.lightPrimaryColor).fillColor(0x05689F38).strokeWidth(2));
         }
+
+        mCircle = mMap.addCircle(new CircleOptions().radius(1500).center(mOrigin).strokeColor(R.color.lightPrimaryColor).fillColor(0x05689F38).strokeWidth(2));
+
 
         transitRoute = null;
         walkingRoute = null;
@@ -375,6 +415,9 @@ public class MainActivity extends FragmentActivity  implements
     }
 
 
+    /**
+     *inested Class for the listner of ListDrawer
+     */
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
@@ -383,9 +426,9 @@ public class MainActivity extends FragmentActivity  implements
     }
 
 
-    /*
-    Method that connects with google maps api client
-    and after in view map creates a map fragment
+    /**
+     *Method that connects with google maps api client
+     *and after in view map creates a map fragment
      */
 
     @Override
@@ -410,8 +453,8 @@ public class MainActivity extends FragmentActivity  implements
 
     }
 
-    /*
-    Method used to set what map fragment contains
+    /**
+     *Method used to set what map fragment contains
      */
     public void setUpMap(){
 
@@ -420,8 +463,8 @@ public class MainActivity extends FragmentActivity  implements
     }
 
 
-    /*
-    Method that sets up the map when loaded
+    /**
+     *Method that sets up the map when loaded
      */
 
     @Override
@@ -432,8 +475,10 @@ public class MainActivity extends FragmentActivity  implements
 
     }
 
-    /*
-    Method that loads the current device position and asks for location permissions
+    /**
+     * Method that loads the current device position and asks for location permissions
+     *creates also the buttons to switch between routes transit/walking and its listner
+     *@param bundle used to save state variables
      */
     @Override
     public void onConnected(Bundle bundle) {
@@ -466,25 +511,6 @@ public class MainActivity extends FragmentActivity  implements
                 } else {
                     Toast.makeText(getApplicationContext(),activity.getString(R.string.origin_or_destination_not_set),Toast.LENGTH_SHORT).show();
                 }
-
-                if(!transitRoute.getListTransit().isEmpty()){
-
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            for(Transit transit: transitRoute.getListTransit()) {
-                                if(transit.getIdPalina() != null){
-                                    Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                                    new RTIAsyncTask(transit).execute();
-                                }
-                            }
-
-                        }
-                    }, 100);
-
-                }
-
             }
 
         });
@@ -540,8 +566,8 @@ public class MainActivity extends FragmentActivity  implements
         }
     }
 
-    /*
-    method that set the destination
+    /**
+     *method that set the destination containing its listner
      */
     private void setDestination() {
 
@@ -570,8 +596,8 @@ public class MainActivity extends FragmentActivity  implements
         });
     }
 
-    /*
-    Listner for location permission denied
+    /**
+     *Listner for location permission denied
      */
     private void positionPermissionDenied(){
 
@@ -639,7 +665,7 @@ public class MainActivity extends FragmentActivity  implements
 
                 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
                 public void onClick(DialogInterface dialog, int which) {
-                    ActivityCompat.requestPermissions((Activity) MainActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_REQUEST_POSITION);}});
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_REQUEST_POSITION);}});
 
             AlertDialog alert = alertBuilder.create();
             alert.show();
@@ -675,8 +701,8 @@ public class MainActivity extends FragmentActivity  implements
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
-    /*
-    Method used to build a connection to the google api client
+    /**
+     *Method used to build a connection to the google api client
      */
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -686,8 +712,8 @@ public class MainActivity extends FragmentActivity  implements
                 .build();
     }
 
-    /*
-    method used to remove location updates in case app gose on pause mode
+    /**
+     *method used to remove location updates in case app gose on pause mode
      */
     @Override
     protected void onPause(){
@@ -703,8 +729,9 @@ public class MainActivity extends FragmentActivity  implements
         }
     }
 
-    /*
-    method used to update location when location changed
+    /**
+     *method used to update location when location changed
+     * @param location the new location of the device
      */
     @Override
     public void onLocationChanged(Location location) {
@@ -768,14 +795,10 @@ public class MainActivity extends FragmentActivity  implements
         alert.show();
     }
 
-    public Poi getSelectedPoi() {
-        return selectedPoi;
-    }
-
-    public Transit getSelectedTransit() {
-        return selectedTransit;
-    }
-
+    /**
+     * method used to resyze the map when needed
+     * @param weight the new weight of the map
+     */
     private void resizeMap(int weight){
 
         View mapView = mapFragment.getView();
@@ -785,6 +808,9 @@ public class MainActivity extends FragmentActivity  implements
         mapView.requestLayout();
     }
 
+    /**
+     * AsyncTasc caller to get transit and walking routes
+     */
     private void getDirections(){
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         DirectionAsyncTask directionAsyncTaskTransit = new DirectionAsyncTask(mOrigin, mDestination, mMap, activity,"transit");//calcola il percorso
@@ -796,6 +822,11 @@ public class MainActivity extends FragmentActivity  implements
         directionAsyncTaskWalking.response = activity;
     }
 
+    /**
+     * Method used to set the listner on the info window of the markers
+     * places or pois or transit
+     * when needed creates fragments containing extra info
+     */
     public void setOnInfoWindowListener(){
 
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
@@ -847,8 +878,12 @@ public class MainActivity extends FragmentActivity  implements
                     for(Transit transit: transitRoute.getListTransit()){
                         if(transit.getMarker().equals(marker)){
 
-                            //TODO call RTI
                             selectedTransit = transit;
+                            if(transit.getIdPalina() != null){
+                                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+                                new RTIAsyncTask(transit).execute();
+                            }
+
                             FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
                             TransitFragment fragment = new TransitFragment();
                             if(fTransaction.isEmpty()){
@@ -858,7 +893,6 @@ public class MainActivity extends FragmentActivity  implements
                             }
 
                             else {
-                                // TODO kill on replace of info fragment
                                 frameLayout.removeAllViews();
                                 fTransaction.replace(R.id.frame_main, fragment);
                             }
@@ -871,6 +905,9 @@ public class MainActivity extends FragmentActivity  implements
 
     boolean doubleBackToExitPressedOnce = false;
 
+    /**
+     * Default method overrided to decide when exit from app or just reset
+     */
     @Override
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
@@ -896,6 +933,9 @@ public class MainActivity extends FragmentActivity  implements
         }, 2000);
     }
 
+    /**
+     * method used to reset all values of the app
+     */
     private void reset(){
         if(mDestination != null){
             if(walkingRoute != null && walkingRoute.draw){
@@ -925,8 +965,27 @@ public class MainActivity extends FragmentActivity  implements
         places.clear();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigin,11));
 
-        if(selectedPlaceMarker.isVisible())
+        if(selectedPlaceMarker!=null && selectedPlaceMarker.isVisible())
             selectedPlaceMarker.remove();
+
+        handler.removeCallbacksAndMessages(null);
+
+        if(mCircle!=null && mCircle.isVisible()) {
+            mCircle.setVisible(false);
+            mCircle.remove();
+        }
+    }
+
+    /*
+    other setters and getters
+     */
+
+    public Poi getSelectedPoi() {
+        return selectedPoi;
+    }
+
+    public Transit getSelectedTransit() {
+        return selectedTransit;
     }
 
     public List<Poi> getPois() {
@@ -947,9 +1006,5 @@ public class MainActivity extends FragmentActivity  implements
 
     public it.curdrome.timetogo.model.Place getSelectedMyPlace() {
         return selectedMyPlace;
-    }
-
-    public void setSelectedMyPlace(it.curdrome.timetogo.model.Place selectedMyPlace) {
-        this.selectedMyPlace = selectedMyPlace;
     }
 }
