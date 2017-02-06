@@ -39,7 +39,7 @@ public class Transit {
         this.palinaLatLng = new LatLng(lat,lng);
 
 
-        if(this.type.matches("BUS")) {
+        if(this.type.matches("BUS") || this.type.matches("TRAM")) {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             new IdPalinaAsyncTask(this).execute();
         }

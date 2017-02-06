@@ -43,6 +43,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -51,6 +52,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.curdrome.timetogo.R;
+import it.curdrome.timetogo.connection.atac.RTIAsyncTask;
 import it.curdrome.timetogo.connection.google.DirectionAsyncTask;
 import it.curdrome.timetogo.connection.google.DirectionResponse;
 import it.curdrome.timetogo.connection.google.PlacesAsyncTask;
@@ -89,6 +91,7 @@ public class MainActivity extends FragmentActivity  implements
     private SupportMapFragment mapFragment;
     private FragmentManager mFragmentManager;
     private FrameLayout frameLayout;
+    private Handler handler = new Handler();
 
     private Route walkingRoute;
     private Route transitRoute;
@@ -98,6 +101,7 @@ public class MainActivity extends FragmentActivity  implements
     private Poi selectedPoi;
     private Transit selectedTransit;
     private Place selectedPlace;
+    private Marker selectedPlaceMarker;
     private it.curdrome.timetogo.model.Place selectedMyPlace;
     private String[] categories;
     private List<it.curdrome.timetogo.model.Place> places = new ArrayList<>();
@@ -115,7 +119,7 @@ public class MainActivity extends FragmentActivity  implements
     private LocationRequest mLocationRequest; //
     public GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
-    private LatLng romeLatLng = new LatLng (41.902783, 12.496366); //rome position
+    private LatLng defaultLatLng = new LatLng (0,0); //rome position
     private float zoomLevel = 11; // default zoom level
 
     //origin and destination to generate direction
@@ -181,7 +185,7 @@ public class MainActivity extends FragmentActivity  implements
 
                 selectedPlace = place;
 
-                mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName().toString()).icon(BitmapDescriptorFactory
+                selectedPlaceMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName().toString()).icon(BitmapDescriptorFactory
                         .defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), zoomLevel));
                 mDestination = place.getLatLng();
@@ -361,6 +365,7 @@ public class MainActivity extends FragmentActivity  implements
 
         for(it.curdrome.timetogo.model.Place place : places){
             place.draw();
+            mMap.addCircle(new CircleOptions().radius(1500).center(mOrigin).strokeColor(R.color.lightPrimaryColor).fillColor(0x05689F38).strokeWidth(2));
         }
 
         transitRoute = null;
@@ -410,7 +415,7 @@ public class MainActivity extends FragmentActivity  implements
      */
     public void setUpMap(){
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(romeLatLng,11));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLatLng,1));
 
     }
 
@@ -453,7 +458,6 @@ public class MainActivity extends FragmentActivity  implements
                     }
 
                     else {
-                        String ciao ="";
                         frameLayout.removeAllViews();
                         fTransaction.replace(R.id.frame_main, fragment);
                     }
@@ -463,7 +467,26 @@ public class MainActivity extends FragmentActivity  implements
                     Toast.makeText(getApplicationContext(),activity.getString(R.string.origin_or_destination_not_set),Toast.LENGTH_SHORT).show();
                 }
 
+                if(!transitRoute.getListTransit().isEmpty()){
+
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            for(Transit transit: transitRoute.getListTransit()) {
+                                if(transit.getIdPalina() != null){
+                                    Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+                                    new RTIAsyncTask(transit).execute();
+                                }
+                            }
+
+                        }
+                    }, 100);
+
+                }
+
             }
+
         });
 
         walkingButton = (Button) findViewById(R.id.walking_button);
@@ -685,7 +708,8 @@ public class MainActivity extends FragmentActivity  implements
      */
     @Override
     public void onLocationChanged(Location location) {
-        mLastLocation = location;mOrigin = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+        mLastLocation = location;
+        mOrigin = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
         if (originMarker != null) {
             originMarker.remove();
         }
@@ -693,7 +717,12 @@ public class MainActivity extends FragmentActivity  implements
                 .title(activity.getString(R.string.my_location)).icon(BitmapDescriptorFactory
                         .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
+        if(defaultLatLng.longitude==0 && defaultLatLng.latitude == 0) {
 
+            defaultLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLatLng,11));
+
+        }
     }
 
     /**
@@ -871,9 +900,11 @@ public class MainActivity extends FragmentActivity  implements
         if(mDestination != null){
             if(walkingRoute != null && walkingRoute.draw){
                 walkingRoute.erase();
+                walkingRoute = null;
             }
             if(transitRoute != null && transitRoute.draw){
                 transitRoute.erase();
+                transitRoute = null;
             }
             walkingButton.setVisibility(View.INVISIBLE);
             transitButton.setVisibility(View.INVISIBLE);
@@ -892,7 +923,10 @@ public class MainActivity extends FragmentActivity  implements
             place.getMarker().remove();
         }
         places.clear();
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(romeLatLng,11));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigin,11));
+
+        if(selectedPlaceMarker.isVisible())
+            selectedPlaceMarker.remove();
     }
 
     public List<Poi> getPois() {
