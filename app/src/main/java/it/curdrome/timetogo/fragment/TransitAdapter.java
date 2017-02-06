@@ -41,7 +41,6 @@ class TransitAdapter extends ArrayAdapter<Transit> implements Serializable {
         TextView departureStop = (TextView) convertView.findViewById(R.id.departure_stop);
         TextView headsign = (TextView) convertView.findViewById(R.id.headsign);
         TextView line = (TextView) convertView.findViewById(R.id.line);
-        //TextView idPalina = (TextView) convertView.findViewById(R.id.id_palina);
         TextView departureTime = (TextView) convertView.findViewById(R.id. departure_time);
 
 

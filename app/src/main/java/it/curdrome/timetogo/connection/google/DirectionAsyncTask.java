@@ -130,10 +130,15 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
         pDialog.dismiss();
 
         if(route == null){
-            Snackbar snackbar = Snackbar
-                    .make(activity.findViewById(R.id.main), mode+activity.getString(R.string.route_not_found), Snackbar.LENGTH_LONG);
-
-            snackbar.show();
+            if (mode.matches("transit")) {
+                Snackbar snackbar = Snackbar
+                        .make(activity.findViewById(R.id.main), activity.getString(R.string.route_not_found) + ": " +activity.getString(R.string.transit), Snackbar.LENGTH_LONG);
+                    snackbar.show();
+            }else if(mode.matches("walking")) {
+                Snackbar snackbar = Snackbar
+                        .make(activity.findViewById(R.id.main), activity.getString(R.string.route_not_found) + ": " + activity.getString(R.string.walking), Snackbar.LENGTH_LONG);
+                snackbar.show();
+            }
         }
         else
             response.TaskResult(route);

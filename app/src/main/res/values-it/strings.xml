@@ -36,11 +36,11 @@
     <string name="no_bus_arriving">Nessun bus in arrivo</string>
     <string name="RTI">RTI: </string>
     <string name="real_time_by_roma_mobilità">\n real-time by roma.mobilità</string>
-    <string name="departure_scheduled" >Partenza da Capolinea: </string>
-    <string name="now_is_open">Ora aperto</string>
-    <string name="now_is_close">Ora chiuso</string>
+    <string name="departure_scheduled">Partenza da Capolinea: </string>
+    <string name="now_is_open">Aperto ora</string>
+    <string name="now_is_close">Chiuso ora</string>
     <string name="open_hours_not_available">Orari apertura non disponibili</string>
-    <string name="adress">Indirizzo: </string>
+    <string name="address">Indirizzo: </string>
 
 
     <string-array name="categories_name">

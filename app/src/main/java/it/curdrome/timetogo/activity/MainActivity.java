@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -87,6 +88,7 @@ public class MainActivity extends FragmentActivity  implements
 
     private SupportMapFragment mapFragment;
     private FragmentManager mFragmentManager;
+    private FrameLayout frameLayout;
 
     private Route walkingRoute;
     private Route transitRoute;
@@ -137,6 +139,7 @@ public class MainActivity extends FragmentActivity  implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        frameLayout = (FrameLayout) findViewById(R.id.frame_main);
 
         if(isNetworkAvailable(this)) {
             pDialog = new ProgressDialog(activity);
@@ -444,12 +447,16 @@ public class MainActivity extends FragmentActivity  implements
                     FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
                     RouteFragment fragment = new RouteFragment();
                     if(fTransaction.isEmpty()){
+                        frameLayout.removeAllViews();
                         fTransaction.add(R.id.frame_main, fragment);
                         resizeMap(75);
                     }
 
-                    else
+                    else {
+                        String ciao ="";
+                        frameLayout.removeAllViews();
                         fTransaction.replace(R.id.frame_main, fragment);
+                    }
                     fTransaction.commit();
 
                 } else {
@@ -473,12 +480,15 @@ public class MainActivity extends FragmentActivity  implements
                     FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
                     RouteFragment fragment = new RouteFragment();
                     if(fTransaction.isEmpty()){
+                        frameLayout.removeAllViews();
                         fTransaction.add(R.id.frame_main, fragment);
                         resizeMap(75);
                     }
 
-                    else
+                    else {
+                        frameLayout.removeAllViews();
                         fTransaction.replace(R.id.frame_main, fragment);
+                    }
                     fTransaction.commit();
 
                 } else {
@@ -770,12 +780,15 @@ public class MainActivity extends FragmentActivity  implements
                         FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
                         PoiFragment fragment = new PoiFragment();
                         if(fTransaction.isEmpty()){
+                            frameLayout.removeAllViews();
                             fTransaction.add(R.id.frame_main, fragment);
                             resizeMap(75);
                         }
 
-                        else
+                        else {
+                            frameLayout.removeAllViews();
                             fTransaction.replace(R.id.frame_main, fragment);
+                        }
                         fTransaction.commit();
                     }
                 }
@@ -787,12 +800,15 @@ public class MainActivity extends FragmentActivity  implements
                         FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
                         PlaceFragment fragment = new PlaceFragment();
                         if(fTransaction.isEmpty()){
+                            frameLayout.removeAllViews();
                             fTransaction.add(R.id.frame_main, fragment);
                             resizeMap(75);
                         }
 
-                        else
+                        else {
+                            frameLayout.removeAllViews();
                             fTransaction.replace(R.id.frame_main, fragment);
+                        }
                         fTransaction.commit();
                     }
                 }
@@ -807,13 +823,16 @@ public class MainActivity extends FragmentActivity  implements
                             FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
                             TransitFragment fragment = new TransitFragment();
                             if(fTransaction.isEmpty()){
+                                frameLayout.removeAllViews();
                                 fTransaction.add(R.id.frame_main, fragment);
                                 resizeMap(75);
                             }
 
-                            else
+                            else {
                                 // TODO kill on replace of info fragment
+                                frameLayout.removeAllViews();
                                 fTransaction.replace(R.id.frame_main, fragment);
+                            }
                             fTransaction.commit();
                         }
                     }
