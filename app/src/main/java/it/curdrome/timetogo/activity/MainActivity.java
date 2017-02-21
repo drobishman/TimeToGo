@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -66,6 +67,8 @@ import it.curdrome.timetogo.fragment.TransitFragment;
 import it.curdrome.timetogo.model.Poi;
 import it.curdrome.timetogo.model.Route;
 import it.curdrome.timetogo.model.Transit;
+
+
 
 /**
  This class is the main class of the "TimeToGo" application.
@@ -675,7 +678,13 @@ public class MainActivity extends FragmentActivity  implements
                 LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             else{
                 mGoogleApiClient.connect();
-                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+                try {
+                    LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+                }catch (IllegalStateException ise)
+                {
+                    ise.toString();
+                }
+
             }
         }
     }

@@ -46,8 +46,6 @@ class TransitAdapter extends ArrayAdapter<Transit> implements Serializable {
 
         final Transit transit = getItem(position);
 
-        //TODO resource for multilanguage
-
         assert transit != null;
         numStops.setText(activity.getString(R.string.stops) + transit.getNumStops());
         departureStop.setText(activity.getString(R.string.stop_name)+ transit.getDepartureStop());

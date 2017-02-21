@@ -89,7 +89,7 @@ public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
                         boolean found=false;
                         if (linee.getJSONObject(j).getString("linea").equalsIgnoreCase(transit.getLine()))  //if line match
                             found=true;                                             //MATCH FOUND!
-                        else if (j==linee.length()&&found==false){                  //otherwise if haven't found anything
+                        else if (j==linee.length()&&!found){                  //otherwise if haven't found anything
                             paline.remove(i);                                       //remove the item in i position from list paline
                             i--;                                                    //now the item in i+1 position is passed in position i, so for non jumping check of "new i" element i reduce i to i-1;
                         }
