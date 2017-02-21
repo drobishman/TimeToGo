@@ -1,6 +1,5 @@
 package it.curdrome.timetogo.fragment;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,10 @@ import it.curdrome.timetogo.activity.MainActivity;
 import it.curdrome.timetogo.model.Place;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment containing the infos of the selected place
+ *
+ * @author adrian
+ * @version 1
  */
 public class PlaceFragment extends android.support.v4.app.Fragment {
 
@@ -23,6 +25,9 @@ public class PlaceFragment extends android.support.v4.app.Fragment {
     private MainActivity activity;
     //private BookmarkFragment adapter;
 
+    /**
+     * default constructor
+     */
     public PlaceFragment() {
         // Required empty public constructor
     }
@@ -34,12 +39,23 @@ public class PlaceFragment extends android.support.v4.app.Fragment {
     //    super.onSaveInstanceState(outState);
     //}
 
+    /**
+     * Default method used to get the activity
+     * @param savedInstanceState the state of the instance
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = (MainActivity) getActivity();
     }
 
+    /**
+     * Default method to set the inflater
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return a personalized inflater
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -47,6 +63,11 @@ public class PlaceFragment extends android.support.v4.app.Fragment {
         return inflater.inflate(R.layout.fragment_place, container, false);
     }
 
+    /**
+     * Default method used to set the List view and to create the adapter
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

@@ -1,7 +1,6 @@
 package it.curdrome.timetogo.connection.atac;
 
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -20,26 +19,45 @@ import it.curdrome.timetogo.xmlrpc.XMLRPCException;
 
 /**
  * Created by adrian on 20/01/2017.
+ *
+ * class used to calculate using Roma.mobilita API
+ * the id pallina of a Tansit bus stop
+ *
+ * @author Curreli Alessandro
+ * @version 2
  */
 
 public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
 
     private Transit transit;
-    private List<String> paline = new ArrayList<>();
+    private List<String> paline = new ArrayList<>();// array containing palline candidate
 
+    /**
+     * constructor method
+     * @param transit transit to calculate the id palina
+     */
     public IdPalinaAsyncTask(Transit transit){
         this.transit = transit;
     }
 
+    /**
+     * default method overrided to connect to muovi.roma
+     * autenticate
+     * use smartSearch service
+     * parse responses and
+     * @param strings default parameter
+     * @return a debug string to verify if calculated id is ok
+     */
     @Override
     protected String doInBackground(String... strings) {
 
         String stringUrlAuth = "http://muovi.roma.it/ws/xml/autenticazione/1";
         String stringUrlPalina = "http://muovi.roma.it/ws/xml/paline/7";
-        String key = "8T3U52HFT48N5GRnvImL4hF0rRChrKg9";
+        String key = "8T3U52HFT48N5GRnvImL4hF0rRChrKg9";// key to authenticate
 
         String query = transit.getDepartureStop();
 
+        // splits name in 2 parts uses the second for query
         if(query.contains("-")) {
             String splitted[] = query.split("-");
             query = splitted[1];
@@ -138,17 +156,6 @@ public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        Log.d("onPostExecute", s);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Log.d("idPalina - RTI", "idPalina"+transit.getIdPalina());
-                if (transit.getIdPalina()!=null) {
-                    Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                    new RTIAsyncTask(transit).execute();
-                }
-            }
-        }, 1000);
+        Log.d("idPalia", s);
     }
 }

@@ -16,6 +16,10 @@ import java.util.List;
 
 /**
  * Created by adrian on 21/01/2017.
+ * Model Class for the Route
+ *
+ * @author adrian
+ * @version 1
  */
 
 public class Route {
@@ -39,6 +43,19 @@ public class Route {
 
     private List<Polyline> polylines = new ArrayList<>();
 
+    /**
+     * Default constructor method
+     * @param mMap map to be draw
+     * @param points codified polyline points
+     * @param arrivalTime the arrival time
+     * @param departureTime the departure time
+     * @param distance the distance of the route
+     * @param duration the duration of the trip
+     * @param listTransit the list of stops on our route
+     * @param southwest bounds
+     * @param northeast bounds
+     * @param mode the mode walking/transit
+     */
     public Route (GoogleMap mMap,
                   String points,
                   String arrivalTime,
@@ -70,7 +87,11 @@ public class Route {
         this.points = points;
     }
 
-    /* Method to decode polyline points */
+    /**
+     *  Method to decode polyline points
+     *  @param encoded the encoded points
+     *  @return a list Of latLng containg each poly to draw
+     */
     private List<LatLng> decodePoly(String encoded) {
 
         List<LatLng> poly = new ArrayList<>();
@@ -105,6 +126,9 @@ public class Route {
         return poly;
     }
 
+    /**
+     * Method used to draw all marker for transits and polylines on the map
+     */
     public void draw(){
 
         poly = decodePoly(points);
@@ -127,6 +151,9 @@ public class Route {
         draw = true;
     }
 
+    /**
+     * Method used to remove all markers and polylines from the map created before
+     */
     public void erase (){
 
         for(Polyline polyline: polylines){
@@ -134,9 +161,9 @@ public class Route {
         }
 
         if(!listTransit.isEmpty() && this.draw)
-        for(Transit transit: listTransit){
-            transit.getMarker().remove();
-        }
+            for(Transit transit: listTransit){
+                transit.getMarker().remove();
+            }
         polylines.clear();
     }
 

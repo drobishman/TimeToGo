@@ -4,12 +4,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,7 +11,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -29,6 +22,12 @@ import it.curdrome.timetogo.model.Poi;
 
 /**
  * Created by adrian on 19/01/2017.
+ *
+ * Class used to get Pois by category from our servers
+ *
+ * @author Drob Adrian Mihai
+ * @version 2
+ *
  */
 
 public class PoisByCategoryAsyncTask extends AsyncTask<String, String, String> {
@@ -39,6 +38,12 @@ public class PoisByCategoryAsyncTask extends AsyncTask<String, String, String> {
     public PoisByCategoryResponse response = null;
     private List<Poi> pois = new ArrayList<>();
 
+    /**
+     * default constructor method
+     * @param activity caller activity
+     * @param mMap the map where to ve draw
+     * @param categoryId the id of the category
+     */
     public PoisByCategoryAsyncTask(MainActivity activity, GoogleMap mMap, int categoryId){
 
         this.activity = activity;
@@ -47,6 +52,12 @@ public class PoisByCategoryAsyncTask extends AsyncTask<String, String, String> {
     }
 
 
+    /**
+     * Http request
+     *
+     * @param strings default parameter
+     * @return null
+     */
     @Override
     protected String doInBackground(String... strings) {
 
@@ -79,6 +90,10 @@ public class PoisByCategoryAsyncTask extends AsyncTask<String, String, String> {
         return null;
     }
 
+    /**
+     * all pois will be created and added to a List of Pois and send as response
+     * @param result
+     */
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);

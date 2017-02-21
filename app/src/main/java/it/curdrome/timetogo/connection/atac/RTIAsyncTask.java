@@ -17,16 +17,33 @@ import it.curdrome.timetogo.xmlrpc.XMLRPCException;
 
 /**
  * Created by adrian on 23/01/2017.
+ * class used to calculate using Roma.mobilita API
+ * the RTI informatio
+ *
+ * @author Drob Adrian Mihai
+ * @version 2
  */
 
 public class RTIAsyncTask extends AsyncTask<String, String, String> {
 
     private Transit transit;
 
+    /**
+     * constructor method
+     * @param transit to get its RTI
+     */
     public RTIAsyncTask(Transit transit){
         this.transit = transit;
     }
 
+    /**
+     *
+     * Override method to get the RTI infos from muovi.roma
+     * parse its result and override google info in case is availble
+     *
+     * @param strings default parameter
+     * @return a transit to debug info
+     */
     @Override
     protected String doInBackground(String... strings) {
 
@@ -71,11 +88,12 @@ public class RTIAsyncTask extends AsyncTask<String, String, String> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return null;
+        return transit.toString();
     }
 
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
+        Log.d("RTI", s);
     }
 }

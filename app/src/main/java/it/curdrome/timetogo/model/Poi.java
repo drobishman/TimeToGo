@@ -1,7 +1,5 @@
 package it.curdrome.timetogo.model;
 
-import android.app.Activity;
-
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -15,6 +13,10 @@ import it.curdrome.timetogo.connection.google.DirectionAsyncTask;
 
 /**
  * Created by adrian on 16/01/2017.
+ * Model Class for the POI( point of interest)
+ *
+ * @author adrian
+ * @version 1
  */
 
 public class Poi {
@@ -31,6 +33,18 @@ public class Poi {
     private String description;
     private Marker marker;
 
+    /**
+     * Default constructor
+     * @param id the id on database
+     * @param idPlaces the id of google places
+     * @param categories the categories witch it belongs
+     * @param name the name of the poi
+     * @param lat position
+     * @param lng position
+     * @param description a description of the poi
+     * @param mMap the map to be draw
+     * @param activity the caller activity
+     */
     public Poi (
             int id,
             String idPlaces,
@@ -54,6 +68,9 @@ public class Poi {
 
     }
 
+    /**
+     * Method used to draw all marker pois on the map and its listner
+     */
     public void draw(){
        marker = mMap.addMarker(new MarkerOptions().position(new LatLng(this.getLat(),this.getLng()))
                 .title(this.getName()).icon(BitmapDescriptorFactory

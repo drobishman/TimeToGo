@@ -15,15 +15,38 @@ import it.curdrome.timetogo.R;
 import it.curdrome.timetogo.activity.MainActivity;
 import it.curdrome.timetogo.model.Place;
 
+/**
+ *
+ * Class that defines the adapter for a Place
+ *
+ * @author Drob Adrian Mihai
+ * @version 1
+ */
+
 class PlaceAdapter extends ArrayAdapter<Place> implements Serializable {
 
+    // caller activity
     private MainActivity activity;
 
+    /**
+     * Default constructor
+     * @param context the context of the activity
+     * @param resource the reference to the resource
+     * @param objects a list cotaining desired data
+     * @param mainActivity the caller activity
+     */
     PlaceAdapter(Context context, int resource, List<Place> objects, MainActivity mainActivity) {
         super(context, resource, objects);
         activity = mainActivity;
     }
 
+    /**
+     * Method that creates the view
+     * @param position where each element must load
+     * @param convertView a view containing each row
+     * @param parent the parent view
+     * @return the converted view
+     */
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

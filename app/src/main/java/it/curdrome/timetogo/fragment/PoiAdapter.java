@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.io.Serializable;
@@ -22,11 +21,25 @@ class PoiAdapter extends ArrayAdapter<Poi> implements Serializable {
 
     private MainActivity activity;
 
+    /**
+     * Default constructor
+     * @param context the context of the activity
+     * @param resource the reference to the resource
+     * @param objects a list cotaining desired data
+     * @param mainActivity the caller activity
+     */
     PoiAdapter(Context context, int resource, List<Poi> objects, MainActivity mainActivity) {
         super(context, resource, objects);
         activity = mainActivity;
     }
 
+    /**
+     * Method that creates the view
+     * @param position where each element must load
+     * @param convertView a view containing each row
+     * @param parent the parent view
+     * @return the converted view
+     */
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

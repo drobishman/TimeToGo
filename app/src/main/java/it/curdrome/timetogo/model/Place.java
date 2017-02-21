@@ -13,8 +13,11 @@ import it.curdrome.timetogo.connection.google.DirectionAsyncTask;
 
 /**
  * Created by adrian on 03/02/2017.
+ * Model Class for the Place
+ *
+ * @author adrian
+ * @version 1
  */
-
 public class Place {
 
     private MainActivity activity;
@@ -29,6 +32,18 @@ public class Place {
     private List<Category> categories;
     private String vicinity;
 
+    /**
+     * Default constructor method
+     * @param mMap a map where to be draw
+     * @param activity the caller activity
+     * @param geometry the position of the place
+     * @param name the name of the place
+     * @param openHoursEnabled boolean value if service is active
+     * @param openNow boolean value containng the requested info
+     * @param placeId the id of the place for google
+     * @param categories the categories witch it belongs
+     * @param vicinity the leteral adress
+     */
     public Place (GoogleMap mMap,
                   MainActivity activity,
                   LatLng geometry,
@@ -51,6 +66,9 @@ public class Place {
 
     }
 
+    /**
+     * Method used to draw all marker places on the map and its listner
+     */
     public void draw(){
         marker = mMap.addMarker(new MarkerOptions().position(geometry)
                 .title(this.getName()).icon(BitmapDescriptorFactory

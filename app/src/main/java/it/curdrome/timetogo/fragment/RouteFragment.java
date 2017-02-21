@@ -2,7 +2,6 @@ package it.curdrome.timetogo.fragment;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +12,13 @@ import java.util.List;
 
 import it.curdrome.timetogo.R;
 import it.curdrome.timetogo.activity.MainActivity;
-import it.curdrome.timetogo.model.Poi;
 import it.curdrome.timetogo.model.Route;
 
 /**
- * A simple {@link Fragment} subclass.
+ *  A fragment containing the infos of the selected Route
+ *
+ *  @author adrian
+ *  @version 1
  */
 public class RouteFragment extends android.support.v4.app.Fragment {
 
@@ -36,12 +37,23 @@ public class RouteFragment extends android.support.v4.app.Fragment {
     //    super.onSaveInstanceState(outState);
     //}
 
+    /**
+     * default constructor
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = (MainActivity) getActivity();
     }
 
+    /**
+     * default method to crate the view using a inflater
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return a modified inflater
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -49,6 +61,11 @@ public class RouteFragment extends android.support.v4.app.Fragment {
         return inflater.inflate(R.layout.fragment_route, container, false);
     }
 
+    /**
+     * Default method used to set the List view and to create the adapter
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
