@@ -18,6 +18,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
@@ -62,6 +63,7 @@ import it.curdrome.timetogo.connection.server.CategoriesAsyncTask;
 import it.curdrome.timetogo.connection.server.CategoriesResponse;
 import it.curdrome.timetogo.connection.server.PoisByCategoryAsyncTask;
 import it.curdrome.timetogo.connection.server.PoisByCategoryResponse;
+import it.curdrome.timetogo.fab.FloatingActionMenu;
 import it.curdrome.timetogo.fragment.PlaceFragment;
 import it.curdrome.timetogo.fragment.PoiFragment;
 import it.curdrome.timetogo.fragment.RouteFragment;
@@ -148,8 +150,9 @@ public class MainActivity extends FragmentActivity  implements
 
     // buttons
     private Button originButton;
-    private Button transitButton;
-    private Button walkingButton;
+    private FloatingActionMenu floatingActionMenu;
+    private it.curdrome.timetogo.fab.FloatingActionButton transitButton;
+    private it.curdrome.timetogo.fab.FloatingActionButton walkingButton;
 
     public ProgressDialog pDialog; // to show when direction create
     private boolean wait = true;
@@ -320,22 +323,25 @@ public class MainActivity extends FragmentActivity  implements
     @Override
     public void TaskResult(Route route) {
 
+        floatingActionMenu.showMenuButton(true);
+
         if(route.getMode().matches("transit")) {
             transitRoute = route;
             Log.d("mainActivity routes", route.toString());
-            transitButton.setVisibility(View.VISIBLE);
-            transitButton.setText(route.getDuration());
+            transitButton.show(false);
+            transitButton.setLabelText(route.getDuration());
         }
         else if(route.getMode().matches("walking")) {
             walkingRoute = route;
-            walkingButton.setVisibility(View.VISIBLE);
-            walkingButton.setText(route.getDuration());
+            walkingButton.show(false);
+            //walkingButton.setVisibility(View.VISIBLE);
+            walkingButton.setLabelText(route.getDuration());
         }
 
         if(transitRoute == null)
-            transitButton.setVisibility(View.INVISIBLE);
+            transitButton.hideButtonInMenu(true);
         if(walkingRoute == null)
-            walkingButton.setVisibility(View.INVISIBLE);
+            walkingButton.hideButtonInMenu(true);
 
         setOnInfoWindowListener();
     }
@@ -486,7 +492,12 @@ public class MainActivity extends FragmentActivity  implements
     @Override
     public void onConnected(Bundle bundle) {
 
-        transitButton = (Button) findViewById(R.id.transit_button);
+        floatingActionMenu = (FloatingActionMenu) findViewById(R.id.floating_action_menu);
+        floatingActionMenu.hideMenuButton(false);
+
+        walkingButton = (it.curdrome.timetogo.fab.FloatingActionButton) findViewById(R.id.walking_button);
+        transitButton = (it.curdrome.timetogo.fab.FloatingActionButton) findViewById(R.id.transit_button);
+
         transitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -518,7 +529,6 @@ public class MainActivity extends FragmentActivity  implements
 
         });
 
-        walkingButton = (Button) findViewById(R.id.walking_button);
         walkingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

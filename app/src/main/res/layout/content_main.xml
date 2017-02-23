@@ -54,7 +54,7 @@
                 android:paddingRight="10dp"/>
 
             <it.curdrome.timetogo.fab.FloatingActionMenu
-                android:id="@+id/floating_action_menu"
+                android:id="@+id/menu_red"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignParentBottom="true"
@@ -64,25 +64,32 @@
                 android:paddingLeft="10dp"
                 app:menu_labels_ellipsize="end"
                 app:menu_labels_singleLine="true"
-                app:menu_backgroundColor="#ccffffff">
+                app:menu_backgroundColor="#ccffffff"
+                app:menu_fab_label="Menu label">
 
                 <it.curdrome.timetogo.fab.FloatingActionButton
-                    android:id="@+id/walking_button"
+                    android:id="@+id/fab1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/walk"
+                    android:src="@drawable/ic_edit"
                     app:fab_size="mini"
-                    app:fab_label="@string/walking_button_message"
-                    />
+                    app:fab_label="Disabled" />
 
                 <it.curdrome.timetogo.fab.FloatingActionButton
-                    android:id="@+id/transit_button"
+                    android:id="@+id/fab2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/bus"
+                    android:src="@drawable/ic_edit"
                     app:fab_size="mini"
-                    app:fab_label="@string/transit_button_message"
-                    />
+                    app:fab_label="Remove button" />
+
+                <it.curdrome.timetogo.fab.FloatingActionButton
+                    android:id="@+id/fab3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_edit"
+                    app:fab_size="mini"
+                    app:fab_label="Restore Button" />
 
             </it.curdrome.timetogo.fab.FloatingActionMenu>
 
