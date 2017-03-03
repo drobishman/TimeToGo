@@ -22,9 +22,9 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_gravity="top"
             android:layout_weight="75"
-            tools:layout="@layout/place_autocomplete_fragment"
-            android:layout_gravity="top">
+            tools:layout="@layout/place_autocomplete_fragment">
 
             <LinearLayout
                 android:id="@+id/lnr_google_searchbar"
@@ -39,19 +39,31 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
-            <Button
-                android:visibility="gone"
-                android:onClick="gone"
-                android:id="@+id/origin_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center|bottom"
-                android:text="@string/origin_button_message"
-                android:textColor="@color/SecondaryText"
-                android:backgroundTint="@color/lightPrimaryColor"
-                android:padding="10dp"
-                android:layout_marginTop="20dp"
-                android:paddingRight="10dp"/>
+            <it.curdrome.timetogo.fab.FloatingActionMenu
+                android:id="@+id/hidden_floating_action_menu"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:visibility="invisible"
+                app:menu_labels_position="right"
+                app:menu_labels_ellipsize="end"
+                app:menu_labels_singleLine="true">
+
+                <it.curdrome.timetogo.fab.FloatingActionButton
+                    android:id="@+id/origin_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|start"
+                    android:src="@android:drawable/ic_menu_mylocation"
+                    android:visibility="invisible"
+                    app:fab_label="@string/origin_button_message"
+                    app:fab_size="normal" />
+            </it.curdrome.timetogo.fab.FloatingActionMenu>
+
 
             <it.curdrome.timetogo.fab.FloatingActionMenu
                 android:id="@+id/floating_action_menu"
@@ -59,41 +71,42 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
-                android:paddingRight="10dp"
                 android:paddingBottom="10dp"
                 android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:visibility="invisible"
                 app:menu_labels_ellipsize="end"
-                app:menu_labels_singleLine="true"
-                app:menu_backgroundColor="#ccffffff">
+                app:menu_labels_singleLine="true">
 
                 <it.curdrome.timetogo.fab.FloatingActionButton
                     android:id="@+id/walking_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/walk"
-                    app:fab_size="mini"
+                    android:visibility="gone"
                     app:fab_label="@string/walking_button_message"
-                    />
+                    app:fab_size="mini" />
 
                 <it.curdrome.timetogo.fab.FloatingActionButton
                     android:id="@+id/transit_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/bus"
-                    app:fab_size="mini"
+                    android:visibility="gone"
                     app:fab_label="@string/transit_button_message"
-                    />
+                    app:fab_size="mini" />
 
             </it.curdrome.timetogo.fab.FloatingActionMenu>
 
         </fragment>
+
         <FrameLayout
+            android:id="@+id/frame_main"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="25"
-            android:id="@+id/frame_main"
             android:layout_gravity="bottom"
-            android:background="@color/lightPrimaryColor"/>
+            android:layout_weight="25"
+            android:background="@color/lightPrimaryColor" />
     </LinearLayout>
 
     <ListView

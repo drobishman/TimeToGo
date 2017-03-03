@@ -18,7 +18,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
@@ -149,7 +148,8 @@ public class MainActivity extends FragmentActivity  implements
     private MainActivity activity = (MainActivity) this;
 
     // buttons
-    private Button originButton;
+    private it.curdrome.timetogo.fab.FloatingActionMenu hiddenFAM; //menu added for let be see tha originButton's label
+    private it.curdrome.timetogo.fab.FloatingActionButton originButton;
     private FloatingActionMenu floatingActionMenu;
     private it.curdrome.timetogo.fab.FloatingActionButton transitButton;
     private it.curdrome.timetogo.fab.FloatingActionButton walkingButton;
@@ -323,6 +323,8 @@ public class MainActivity extends FragmentActivity  implements
     @Override
     public void TaskResult(Route route) {
 
+        floatingActionMenu.hideMenuButton(false);
+
         floatingActionMenu.setVisibility(View.VISIBLE);
         floatingActionMenu.showMenuButton(true);
 
@@ -330,11 +332,13 @@ public class MainActivity extends FragmentActivity  implements
             transitRoute = route;
             Log.d("mainActivity routes", route.toString());
             transitButton.show(false);
+            transitButton.setVisibility(View.VISIBLE);
             transitButton.setLabelText(route.getDuration());
         }
         else if(route.getMode().matches("walking")) {
             walkingRoute = route;
             walkingButton.show(false);
+            walkingButton.setVisibility(View.VISIBLE);
             walkingButton.setLabelText(route.getDuration());
         }
 
@@ -625,8 +629,15 @@ public class MainActivity extends FragmentActivity  implements
                 originMarker = mMap.addMarker(new MarkerOptions().position(mOrigin)
                         .title(activity.getString(R.string.my_location)).icon(BitmapDescriptorFactory
                                 .defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                originButton = (Button) findViewById(R.id.origin_button);
+                hiddenFAM = (it.curdrome.timetogo.fab.FloatingActionMenu)findViewById(R.id.hidden_floating_action_menu); //setup layout of fam & fab
+                hiddenFAM.setVisibility(View.VISIBLE);
+                hiddenFAM.hideMenuButton(false);
+                hiddenFAM.showMenu(false);
+                originButton = (it.curdrome.timetogo.fab.FloatingActionButton)findViewById(R.id.origin_button);
+                originButton.hide(false);
+                //// TODO: 03/03/2017 find a way to hide botton but not entire menu
                 originButton.setVisibility(View.VISIBLE);
+                originButton.show(true);
                 originButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -645,7 +656,8 @@ public class MainActivity extends FragmentActivity  implements
                                 resizeMap(100);
                             }
                         });
-                        originButton.setVisibility(Button.INVISIBLE);
+                        originButton.hide(true);
+                        originButton.setVisibility(View.INVISIBLE);
                         setDestination();
                         Log.d("origin Listner", latLng.toString());
                     }
