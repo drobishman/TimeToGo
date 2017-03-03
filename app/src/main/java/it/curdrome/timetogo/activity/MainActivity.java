@@ -323,6 +323,7 @@ public class MainActivity extends FragmentActivity  implements
     @Override
     public void TaskResult(Route route) {
 
+        floatingActionMenu.setVisibility(View.VISIBLE);
         floatingActionMenu.showMenuButton(true);
 
         if(route.getMode().matches("transit")) {
@@ -334,7 +335,6 @@ public class MainActivity extends FragmentActivity  implements
         else if(route.getMode().matches("walking")) {
             walkingRoute = route;
             walkingButton.show(false);
-            //walkingButton.setVisibility(View.VISIBLE);
             walkingButton.setLabelText(route.getDuration());
         }
 
@@ -486,7 +486,7 @@ public class MainActivity extends FragmentActivity  implements
 
     /**
      * Method that loads the current device position and asks for location permissions
-     *creates also the buttons to switch between routes transit/walking and its listner
+     *creates also the FloatingActionButtons to switch between routes transit/walking and its listner
      *@param bundle used to save state variables
      */
     @Override
@@ -965,8 +965,11 @@ public class MainActivity extends FragmentActivity  implements
                 transitRoute.erase();
                 transitRoute = null;
             }
-            walkingButton.setVisibility(View.INVISIBLE);
-            transitButton.setVisibility(View.INVISIBLE);
+
+            if(!floatingActionMenu.isMenuHidden()) {
+                floatingActionMenu.hideMenu(true);
+            }
+            floatingActionMenu.hideMenuButton(true);
             mDestination = null;
             resizeMap(100);
             setDestination();
