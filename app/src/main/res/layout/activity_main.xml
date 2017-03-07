@@ -41,7 +41,7 @@
             tools:layout="@layout/place_autocomplete_fragment">
 
             <it.curdrome.timetogo.fab.FloatingActionMenu
-                android:id="@+id/hidden_floating_action_menu"
+                android:id="@+id/origin_button"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignParentBottom="true"
@@ -50,19 +50,13 @@
                 android:paddingBottom="10dp"
                 android:paddingLeft="10dp"
                 android:visibility="invisible"
+                app:menu_icon="@android:drawable/ic_menu_mylocation"
+                app:menu_colorNormal="@color/colorAccent"
+                app:menu_colorPressed="@color/colorAccent"
+                app:menu_fab_label="@string/origin_button_message"
                 app:menu_labels_position="right"
                 app:menu_labels_ellipsize="end"
                 app:menu_labels_singleLine="true">
-
-                <it.curdrome.timetogo.fab.FloatingActionButton
-                    android:id="@+id/origin_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|start"
-                    android:src="@android:drawable/ic_menu_mylocation"
-                    android:visibility="invisible"
-                    app:fab_label="@string/origin_button_message"
-                    app:fab_size="normal" />
             </it.curdrome.timetogo.fab.FloatingActionMenu>
 
 

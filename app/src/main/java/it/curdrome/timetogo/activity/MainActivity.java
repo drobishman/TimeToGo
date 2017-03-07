@@ -16,10 +16,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -30,7 +28,6 @@ import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -155,8 +152,7 @@ public class MainActivity extends AppCompatActivity implements
     private MainActivity activity = (MainActivity) this;
 
     // buttons
-    private it.curdrome.timetogo.fab.FloatingActionMenu hiddenFAM; //menu added for let be see tha originButton's label
-    private it.curdrome.timetogo.fab.FloatingActionButton originButton;
+    private it.curdrome.timetogo.fab.FloatingActionMenu originButton;
     private FloatingActionMenu floatingActionMenu;
     private it.curdrome.timetogo.fab.FloatingActionButton transitButton;
     private it.curdrome.timetogo.fab.FloatingActionButton walkingButton;
@@ -164,8 +160,8 @@ public class MainActivity extends AppCompatActivity implements
     public ProgressDialog pDialog; // to show when direction create
     private boolean wait = true;
 
-    //custom animation for FAM
-    private void createCustomAnimation() {
+    //custom animation for animatefloatigActionMenu
+    private void animatefloatigActionMenu() {
         AnimatorSet set = new AnimatorSet();
 
         ObjectAnimator scaleOutX = ObjectAnimator.ofFloat(floatingActionMenu.getMenuIconView(), "scaleX", 1.0f, 0.2f);
@@ -364,7 +360,7 @@ public class MainActivity extends AppCompatActivity implements
     public void TaskResult(Route route) {
 
         floatingActionMenu.hideMenuButton(false);
-        createCustomAnimation();
+        animatefloatigActionMenu();
         floatingActionMenu.setVisibility(View.VISIBLE);
         floatingActionMenu.showMenuButton(true);
 
@@ -669,37 +665,34 @@ public class MainActivity extends AppCompatActivity implements
                 originMarker = mMap.addMarker(new MarkerOptions().position(mOrigin)
                         .title(activity.getString(R.string.my_location)).icon(BitmapDescriptorFactory
                                 .defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                hiddenFAM = (it.curdrome.timetogo.fab.FloatingActionMenu)findViewById(R.id.hidden_floating_action_menu); //setup layout of fam & fab
-                hiddenFAM.setVisibility(View.VISIBLE);
-                hiddenFAM.hideMenuButton(false);
-                hiddenFAM.showMenu(false);
-                originButton = (it.curdrome.timetogo.fab.FloatingActionButton)findViewById(R.id.origin_button);
-                originButton.hide(false);
-                //// TODO: 03/03/2017 find a way to hide botton but not entire menu
+                originButton = (it.curdrome.timetogo.fab.FloatingActionMenu)findViewById(R.id.origin_button); //setup layout of fam & fab
                 originButton.setVisibility(View.VISIBLE);
-                originButton.show(true);
-                originButton.setOnClickListener(new View.OnClickListener() {
+                originButton.open(true);
+                originButton.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener() {
                     @Override
-                    public void onClick(View view) {
-                        //remove previous current location Marker
-                        if (originMarker != null){
-                            originMarker.remove();
-                        }
-
-                        originMarker = mMap.addMarker(new MarkerOptions().position(mOrigin)
-                                .title(activity.getString(R.string.my_location)).icon(BitmapDescriptorFactory
-                                        .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigin, zoomLevel));
-                        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                            @Override
-                            public void onMapClick(LatLng latLng) {
-                                resizeMap(100);
+                    public void onMenuToggle(boolean opened) {
+                        if (!opened) {
+                            //remove previous current location Marker
+                            if (originMarker != null) {
+                                originMarker.remove();
                             }
-                        });
-                        originButton.hide(true);
-                        originButton.setVisibility(View.INVISIBLE);
-                        setDestination();
-                        Log.d("origin Listner", latLng.toString());
+                            originMarker = mMap.addMarker(new MarkerOptions().position(mOrigin)
+                                    .title(activity.getString(R.string.my_location)).icon(BitmapDescriptorFactory
+                                            .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigin, zoomLevel));
+                            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                                @Override
+                                public void onMapClick(LatLng latLng) {
+                                    resizeMap(100);
+                                }
+                            });
+                            originButton.close(true);
+                            originButton.setVisibility(View.INVISIBLE);
+                            setDestination();
+                            Log.d("origin Listner", latLng.toString());
+                        }else{
+                            originButton.open(true);
+                        }
                     }
                 });
             }
