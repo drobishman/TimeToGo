@@ -8,7 +8,8 @@
         android:id="@+id/arrival"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
+        android:text="@string/arrival_time"
+        android:textColor="@color/SecondaryText"
         android:textSize="21sp"
         android:textAllCaps="false"/>
 
@@ -16,7 +17,8 @@
         android:id="@+id/departure"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
+        android:text="@string/departure_time"
+        android:textColor="@color/SecondaryText"
         android:textSize="21sp"
         android:textAllCaps="false"/>
 
@@ -24,7 +26,8 @@
         android:id="@+id/distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
+        android:text="@string/distance"
+        android:textColor="@color/SecondaryText"
         android:textSize="21sp"
         android:textAllCaps="false"/>
 
@@ -32,14 +35,16 @@
         android:id="@+id/duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
+        android:text="@string/duration"
+        android:textColor="@color/SecondaryText"
         android:textSize="21sp"
         android:textAllCaps="false"/>
     <TextView
         android:id="@+id/bus_stops"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
+        android:text="@string/stops"
+        android:textColor="@color/SecondaryText"
         android:textSize="21sp"
         android:textAllCaps="false"/>
 

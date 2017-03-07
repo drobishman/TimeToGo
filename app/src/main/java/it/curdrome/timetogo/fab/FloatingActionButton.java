@@ -167,12 +167,12 @@ public class FloatingActionButton extends ImageButton {
     }
 
     private void initShowAnimation(TypedArray attr) {
-        int resourceId = attr.getResourceId(R.styleable.FloatingActionButton_fab_showAnimation, R.anim.fab_scale_up);
+        int resourceId = attr.getResourceId(R.styleable.FloatingActionButton_fab_showAnimation, R.anim.fab_slide_in_from_right);
         mShowAnimation = AnimationUtils.loadAnimation(getContext(), resourceId);
     }
 
     private void initHideAnimation(TypedArray attr) {
-        int resourceId = attr.getResourceId(R.styleable.FloatingActionButton_fab_hideAnimation, R.anim.fab_scale_down);
+        int resourceId = attr.getResourceId(R.styleable.FloatingActionButton_fab_hideAnimation, R.anim.fab_slide_out_to_right);
         mHideAnimation = AnimationUtils.loadAnimation(getContext(), resourceId);
     }
 

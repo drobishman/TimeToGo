@@ -1,5 +1,9 @@
 package it.curdrome.timetogo.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -19,8 +23,11 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.OvershootInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -86,7 +93,7 @@ import it.curdrome.timetogo.model.Transit;
  @version 1.9
  */
 
-public class MainActivity extends FragmentActivity  implements
+public class MainActivity extends AppCompatActivity implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -157,6 +164,37 @@ public class MainActivity extends FragmentActivity  implements
     public ProgressDialog pDialog; // to show when direction create
     private boolean wait = true;
 
+    //custom animation for FAM
+    private void createCustomAnimation() {
+        AnimatorSet set = new AnimatorSet();
+
+        ObjectAnimator scaleOutX = ObjectAnimator.ofFloat(floatingActionMenu.getMenuIconView(), "scaleX", 1.0f, 0.2f);
+        ObjectAnimator scaleOutY = ObjectAnimator.ofFloat(floatingActionMenu.getMenuIconView(), "scaleY", 1.0f, 0.2f);
+
+        ObjectAnimator scaleInX = ObjectAnimator.ofFloat(floatingActionMenu.getMenuIconView(), "scaleX", 0.2f, 1.0f);
+        ObjectAnimator scaleInY = ObjectAnimator.ofFloat(floatingActionMenu.getMenuIconView(), "scaleY", 0.2f, 1.0f);
+
+        scaleOutX.setDuration(50);
+        scaleOutY.setDuration(50);
+
+        scaleInX.setDuration(150);
+        scaleInY.setDuration(150);
+
+        scaleInX.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                floatingActionMenu.getMenuIconView().setImageResource(floatingActionMenu.isOpened()
+                        ? android.R.drawable.ic_dialog_map : R.drawable.ic_close);
+            }
+        });
+
+        set.play(scaleOutX).with(scaleOutY);
+        set.play(scaleInX).with(scaleInY).after(scaleOutX);
+        set.setInterpolator(new OvershootInterpolator(2));
+
+        floatingActionMenu.setIconToggleAnimatorSet(set);
+    }
+
     /**
      *Method that creates the main activity and the drawer with its listeners
      *check if internet connection is available
@@ -169,6 +207,8 @@ public class MainActivity extends FragmentActivity  implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         frameLayout = (FrameLayout) findViewById(R.id.frame_main);
 
         if(isNetworkAvailable(this)) {
@@ -201,10 +241,10 @@ public class MainActivity extends FragmentActivity  implements
         p.weight = 100;
         mapView.setLayoutParams(p);
         mapView.requestLayout();
-
+        //// TODO: 06/03/2017 obiettivo far apparire il fragment autocomplete solo allapressione del tasto "lente di ingrandimento posizionato sulla toolbar" 
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-
+        
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -324,7 +364,7 @@ public class MainActivity extends FragmentActivity  implements
     public void TaskResult(Route route) {
 
         floatingActionMenu.hideMenuButton(false);
-
+        createCustomAnimation();
         floatingActionMenu.setVisibility(View.VISIBLE);
         floatingActionMenu.showMenuButton(true);
 
@@ -979,7 +1019,7 @@ public class MainActivity extends FragmentActivity  implements
             }
 
             if(!floatingActionMenu.isMenuHidden()) {
-                floatingActionMenu.hideMenu(true);
+                floatingActionMenu.toggle(true);
             }
             floatingActionMenu.hideMenuButton(true);
             mDestination = null;

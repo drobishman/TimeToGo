@@ -61,19 +61,13 @@ class TransitAdapter extends ArrayAdapter<Transit> implements Serializable {
         final Transit transit = getItem(position);
 
         assert transit != null;
-        numStops.setText(activity.getString(R.string.stops) + transit.getNumStops());
-        departureStop.setText(activity.getString(R.string.stop_name)+ transit.getDepartureStop());
-        headsign.setText(activity.getString(R.string.headsign)+transit.getHeadsign());
-        //type.setText("type: "+transit.getType());
-        line.setText(activity.getString(R.string.line)+transit.getLine()+" ("+transit.getType()+")");
-       /* if(transit.getIdPalina() == null){
-            idPalina.setText(activity.getString(R.string.no_bus_arriving));
-        }else {
-            idPalina.setText(activity.getString(R.string.id_palina) + transit.getIdPalina());
-        */
+        numStops.append(" " + transit.getNumStops());
+        departureStop.append(" "+ transit.getDepartureStop());
+        headsign.append(" "+transit.getHeadsign());
+        line.append(" "+transit.getLine()+" ("+transit.getType()+")");
         if(transit.getIdPalina() != null){
             departureTime.setText(activity.getString(R.string.RTI) + transit.getDepartureTime() + activity.getString(R.string.real_time_by_roma_mobilità));
-            departureTime.setTextColor(activity.getColor(R.color.Green));
+            departureTime.setTextColor(activity.getColor(R.color.colorAccent));
         }else {
             departureTime.setText(activity.getString(R.string.departure_scheduled) + transit.getDepartureTime());
         }

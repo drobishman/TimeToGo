@@ -68,7 +68,7 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
         DateFormat df = new SimpleDateFormat("HH:mm", Locale.ITALY);
         String time= df.format(Calendar.getInstance().getTime());
         if (route.getArrivalTime()!=null) {
-            arrival.setText(activity.getString(R.string.arrival_time) +" "+ route.getArrivalTime());
+            arrival.append(" "+ route.getArrivalTime());
         }else{
             int hour = Integer.parseInt(time.substring(0,2));
             int minute = Integer.parseInt(time.substring(3,5));
@@ -90,10 +90,10 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
                     minute=minute-60;
                     hour++;
                 }
-                arrival.setText(activity.getString(R.string.arrival_time) + " " + Integer.toString(hour) + ":" + Integer.toString(minute));
+                arrival.append(" " + Integer.toString(hour) + ":" + Integer.toString(minute));
             }else if(durationstring.length==2){
                 minute = minute + Integer.parseInt(durationstring[0]);
-                arrival.setText(activity.getString(R.string.arrival_time) + " " + Integer.toString(hour) + ":" + Integer.toString(minute));
+                arrival.append(" " + Integer.toString(hour) + ":" + Integer.toString(minute));
             }else if(durationstring.length==6){
                 Snackbar snackbar = Snackbar
                         .make(activity.findViewById(R.id.main), activity.getString(R.string.error_occured), Snackbar.LENGTH_LONG);
@@ -101,18 +101,18 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
             }
         }
         if (route.getDepartureTime()!=null) {
-            departure.setText(activity.getString(R.string.departure_time) + route.getDepartureTime());
+            departure.append(" "+ route.getDepartureTime());
         }else {
-            departure.setText(activity.getString(R.string.departure_time)+" "+time.substring(0,5));
+            departure.append(" "+time.substring(0,5));
 
         }
-        distance.setText(activity.getString(R.string.distance) + route.getDistance());
-        duration.setText(activity.getString(R.string.duration) + route.getDuration());
+        distance.append(" " + route.getDistance());
+        duration.append(" " + route.getDuration());
 
         String cat = "";
         for(Transit transit: route.getListTransit())
             cat = cat + "\n \t     > " +transit.getDepartureStop();
-        busStops.setText(activity.getString(R.string.stops) + cat);
+        busStops.append(" "+ cat);
 
 
 
