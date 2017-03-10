@@ -3,19 +3,4 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
 
-    <item
-        android:id="@+id/option1"
-        android:title="option1"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/option2"
-        app:showAsAction="never"
-        android:title="option2">
-    </item>
-    <item
-        android:id="@+id/option3"
-        app:showAsAction="never"
-        android:title="option3">
-    </item>
-
 </menu>

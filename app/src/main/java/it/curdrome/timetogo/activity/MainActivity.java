@@ -25,6 +25,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.AdapterView;
@@ -283,7 +285,44 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        SubMenu submenu = menu.addSubMenu(0, Menu.FIRST, Menu.NONE, "Geolocalization");
+        submenu.add(0, 1, Menu.NONE, "Set position manually");
+        submenu.add(0, 2, Menu.NONE, "Use device geolocalization");
+        getMenuInflater().inflate(R.menu.main_menu, submenu);
+
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case 1:
+
+                reset();
+                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,this);
+                positionPermissionDenied();
+                return true;
+            case 2:
+
+                reset();
+                if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    //position permission has not been granted
+                    positionPermissionDenied();
+                    requestPositionPermission();
+                }
+                else {
+                    //position permission has been granted
+                    mMap.getUiSettings().setMyLocationButtonEnabled(true);
+                    mMap.setMyLocationEnabled(true);
+                    LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+                    setDestination();
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /**
@@ -373,11 +412,12 @@ public class MainActivity extends AppCompatActivity implements
         floatingActionMenu.hideMenuButton(false);
         animatefloatigActionMenu();
         floatingActionMenu.setVisibility(View.VISIBLE);
+        transitButton.hideButtonInMenu(false);
+        walkingButton.hideButtonInMenu(false);
         floatingActionMenu.showMenuButton(true);
 
         if(route.getMode().matches("transit")) {
             transitRoute = route;
-            Log.d("mainActivity routes", route.toString());
             transitButton.show(false);
             transitButton.setVisibility(View.VISIBLE);
             transitButton.setLabelText(route.getDuration());
@@ -389,12 +429,9 @@ public class MainActivity extends AppCompatActivity implements
             walkingButton.setLabelText(route.getDuration());
         }
 
-        if(transitRoute == null)
-            transitButton.hideButtonInMenu(true);
-        if(walkingRoute == null)
-            walkingButton.hideButtonInMenu(true);
-
         setOnInfoWindowListener();
+
+        Log.d("mainActivity routes", route.toString());
     }
 
     /**
@@ -564,7 +601,7 @@ public class MainActivity extends AppCompatActivity implements
                     if(fTransaction.isEmpty()){
                         frameLayout.removeAllViews();
                         fTransaction.add(R.id.frame_main, fragment);
-                        resizeMap(0);
+                        resizeMap(75);
                     }
 
                     else {
@@ -595,7 +632,7 @@ public class MainActivity extends AppCompatActivity implements
                     if(fTransaction.isEmpty()){
                         frameLayout.removeAllViews();
                         fTransaction.add(R.id.frame_main, fragment);
-                        resizeMap(0);
+                        resizeMap(75);
                     }
 
                     else {
@@ -919,7 +956,7 @@ public class MainActivity extends AppCompatActivity implements
                         if(fTransaction.isEmpty()){
                             frameLayout.removeAllViews();
                             fTransaction.add(R.id.frame_main, fragment);
-                            resizeMap(0);
+                            resizeMap(75);
                         }
 
                         else {
@@ -939,7 +976,7 @@ public class MainActivity extends AppCompatActivity implements
                         if(fTransaction.isEmpty()){
                             frameLayout.removeAllViews();
                             fTransaction.add(R.id.frame_main, fragment);
-                            resizeMap(0);
+                            resizeMap(75);
                         }
 
                         else {
@@ -966,7 +1003,7 @@ public class MainActivity extends AppCompatActivity implements
                             if(fTransaction.isEmpty()){
                                 frameLayout.removeAllViews();
                                 fTransaction.add(R.id.frame_main, fragment);
-                                resizeMap(0);
+                                resizeMap(75);
                             }
 
                             else {
@@ -1027,7 +1064,10 @@ public class MainActivity extends AppCompatActivity implements
             if(!floatingActionMenu.isMenuHidden()) {
                 floatingActionMenu.toggle(true);
             }
+            floatingActionMenu.hideMenu(true);
             floatingActionMenu.hideMenuButton(true);
+
+
             mDestination = null;
             resizeMap(100);
             setDestination();
