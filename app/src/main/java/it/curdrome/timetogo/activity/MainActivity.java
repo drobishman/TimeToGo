@@ -24,6 +24,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.AdapterView;
@@ -160,7 +161,9 @@ public class MainActivity extends AppCompatActivity implements
     public ProgressDialog pDialog; // to show when direction create
     private boolean wait = true;
 
-    //custom animation for animatefloatigActionMenu
+    /**
+     * custom animation for animatefloatigActionMenu
+     */
     private void animatefloatigActionMenu() {
         AnimatorSet set = new AnimatorSet();
 
@@ -240,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements
         //// TODO: 06/03/2017 obiettivo far apparire il fragment autocomplete solo allapressione del tasto "lente di ingrandimento posizionato sulla toolbar" 
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-        
+        autocompleteFragment.setHint(null);
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -273,6 +276,14 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
+    }
+
+    // Menu icons are inflated just as they were with actionbar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
     }
 
     /**
@@ -553,7 +564,7 @@ public class MainActivity extends AppCompatActivity implements
                     if(fTransaction.isEmpty()){
                         frameLayout.removeAllViews();
                         fTransaction.add(R.id.frame_main, fragment);
-                        resizeMap(75);
+                        resizeMap(0);
                     }
 
                     else {
@@ -584,7 +595,7 @@ public class MainActivity extends AppCompatActivity implements
                     if(fTransaction.isEmpty()){
                         frameLayout.removeAllViews();
                         fTransaction.add(R.id.frame_main, fragment);
-                        resizeMap(75);
+                        resizeMap(0);
                     }
 
                     else {
@@ -599,6 +610,8 @@ public class MainActivity extends AppCompatActivity implements
 
             }
         });
+
+
 
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(1000);
@@ -863,7 +876,7 @@ public class MainActivity extends AppCompatActivity implements
      * method used to resyze the map when needed
      * @param weight the new weight of the map
      */
-    private void resizeMap(int weight){
+    public void resizeMap(int weight){
 
         View mapView = mapFragment.getView();
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,0);
@@ -906,7 +919,7 @@ public class MainActivity extends AppCompatActivity implements
                         if(fTransaction.isEmpty()){
                             frameLayout.removeAllViews();
                             fTransaction.add(R.id.frame_main, fragment);
-                            resizeMap(75);
+                            resizeMap(0);
                         }
 
                         else {
@@ -926,7 +939,7 @@ public class MainActivity extends AppCompatActivity implements
                         if(fTransaction.isEmpty()){
                             frameLayout.removeAllViews();
                             fTransaction.add(R.id.frame_main, fragment);
-                            resizeMap(75);
+                            resizeMap(0);
                         }
 
                         else {
@@ -953,7 +966,7 @@ public class MainActivity extends AppCompatActivity implements
                             if(fTransaction.isEmpty()){
                                 frameLayout.removeAllViews();
                                 fTransaction.add(R.id.frame_main, fragment);
-                                resizeMap(75);
+                                resizeMap(0);
                             }
 
                             else {
