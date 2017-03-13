@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.ConnectivityManager;
@@ -163,6 +164,9 @@ public class MainActivity extends AppCompatActivity implements
     public ProgressDialog pDialog; // to show when direction create
     private boolean wait = true;
 
+    // preferences
+    public SharedPreferences sharedPref;
+
     /**
      * custom animation for animatefloatigActionMenu
      */
@@ -208,9 +212,24 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // getting preferences
+        sharedPref = this.getPreferences(Context.MODE_PRIVATE);// preferences
+
+        // creation of the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // creation of the frame layout where loads the map
         frameLayout = (FrameLayout) findViewById(R.id.frame_main);
+
+        // creation of the floating menu and hide it to be ready when a route is generated
+        floatingActionMenu = (FloatingActionMenu) findViewById(R.id.floating_action_menu);
+        floatingActionMenu.hideMenuButton(false);
+
+        // creation of the buttons inside the menu
+        walkingButton = (it.curdrome.timetogo.fab.FloatingActionButton) findViewById(R.id.walking_button);
+        transitButton = (it.curdrome.timetogo.fab.FloatingActionButton) findViewById(R.id.transit_button);
 
         if(isNetworkAvailable(this)) {
             pDialog = new ProgressDialog(activity);
@@ -242,7 +261,8 @@ public class MainActivity extends AppCompatActivity implements
         p.weight = 100;
         mapView.setLayoutParams(p);
         mapView.requestLayout();
-        //// TODO: 06/03/2017 obiettivo far apparire il fragment autocomplete solo allapressione del tasto "lente di ingrandimento posizionato sulla toolbar" 
+
+        // creation of the place autocomplete on left of the toolbar and its listener
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
         autocompleteFragment.setHint(null);
@@ -296,17 +316,32 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        reset();
+        SharedPreferences.Editor editor = sharedPref.edit();
+
         // Handle item selection
         switch (item.getItemId()) {
             case 1:
 
-                reset();
+                editor.putBoolean("geolocalization", false);
+                editor.commit();
+
+                Snackbar snackbar = Snackbar
+                        .make(activity.findViewById(R.id.main),"Select new Origin position", Snackbar.LENGTH_LONG);
+
+                snackbar.show();
+                if(originMarker.isVisible())
+                    originMarker.remove();
+
                 LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,this);
                 positionPermissionDenied();
                 return true;
             case 2:
 
-                reset();
+                editor.putBoolean("geolocalization", true);
+                editor.commit();
+
                 if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     //position permission has not been granted
                     positionPermissionDenied();
@@ -412,21 +447,33 @@ public class MainActivity extends AppCompatActivity implements
         floatingActionMenu.hideMenuButton(false);
         animatefloatigActionMenu();
         floatingActionMenu.setVisibility(View.VISIBLE);
-        transitButton.hideButtonInMenu(false);
-        walkingButton.hideButtonInMenu(false);
         floatingActionMenu.showMenuButton(true);
+
+        // added to disable buttons if there are not one of routes found
+        if(transitRoute == null) {
+            transitButton.setEnabled(false);
+            transitButton.setLabelVisibility(View.INVISIBLE);
+        }
+        if(walkingRoute == null) {
+            walkingButton.setEnabled(false);
+            walkingButton.setLabelVisibility(View.INVISIBLE);
+        }
 
         if(route.getMode().matches("transit")) {
             transitRoute = route;
             transitButton.show(false);
             transitButton.setVisibility(View.VISIBLE);
             transitButton.setLabelText(route.getDuration());
+            transitButton.setEnabled(true);
+            transitButton.setLabelVisibility(View.VISIBLE);
         }
         else if(route.getMode().matches("walking")) {
             walkingRoute = route;
             walkingButton.show(false);
             walkingButton.setVisibility(View.VISIBLE);
             walkingButton.setLabelText(route.getDuration());
+            walkingButton.setEnabled(true);
+            walkingButton.setLabelVisibility(View.VISIBLE);
         }
 
         setOnInfoWindowListener();
@@ -580,16 +627,10 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onConnected(Bundle bundle) {
 
-        floatingActionMenu = (FloatingActionMenu) findViewById(R.id.floating_action_menu);
-        floatingActionMenu.hideMenuButton(false);
-
-        walkingButton = (it.curdrome.timetogo.fab.FloatingActionButton) findViewById(R.id.walking_button);
-        transitButton = (it.curdrome.timetogo.fab.FloatingActionButton) findViewById(R.id.transit_button);
-
         transitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mOrigin != null && mDestination != null){
+                if(mOrigin != null && mDestination != null && transitRoute != null){
                     transitRoute.draw();
                     if(walkingRoute.draw)
                         walkingRoute.erase();
@@ -655,17 +696,23 @@ public class MainActivity extends AppCompatActivity implements
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             //position permission has not been granted
             positionPermissionDenied();
             requestPositionPermission();
         }
         else {
-            //position permission has been granted
-            mMap.getUiSettings().setMyLocationButtonEnabled(true);
-            mMap.setMyLocationEnabled(true);
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-            setDestination();
+
+            if(sharedPref.getBoolean("geolocalization",true)){
+                //position permission has been granted
+                mMap.getUiSettings().setMyLocationButtonEnabled(true);
+                mMap.setMyLocationEnabled(true);
+                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+                setDestination();
+            }
+            else positionPermissionDenied();
+
         }
     }
 
