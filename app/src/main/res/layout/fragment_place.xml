@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,7 +8,16 @@
         android:id="@+id/places"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/lightPrimaryColor"
+        android:background="@color/colorPrimaryLight"
         android:padding="1dp" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/details_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:drawableLeft="@drawable/ic_collapse_00000"
+        android:elevation="4dp"
+        android:text="@string/details_button" />
+
+</android.support.design.widget.CoordinatorLayout>

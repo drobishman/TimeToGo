@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@android:id/text1"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/lightPrimaryColor"
-    android:gravity="center_vertical"
-    android:minHeight="?android:attr/listPreferredItemHeightSmall"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:textStyle="normal"
-    android:textAllCaps="false"
-    android:textAppearance="?android:attr/textAppearanceListItemSmall"
-    android:textColor="@color/SecondaryText"
-    android:textColorHighlight="@color/colorAccent"/>
+<ExpandableListView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/left_drawer"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_marginTop="192dp"
+    android:background="@android:color/white"></ExpandableListView>

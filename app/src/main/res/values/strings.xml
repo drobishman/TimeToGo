@@ -46,6 +46,7 @@
     <string name="address">Address: </string>
     <string name="transit">Transit</string>
     <string name="walking">Walking</string>
+    <string name="details_button">Details</string>
 
     <string-array name="categories_name">
         <item>none</item>

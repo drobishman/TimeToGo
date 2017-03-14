@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
@@ -31,7 +32,6 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -106,71 +106,69 @@ public class MainActivity extends AppCompatActivity implements
 
     public static final String TAG = "MainActivity";
     private static final int MY_REQUEST_POSITION = 0;
-
-
+    public GoogleApiClient mGoogleApiClient;
+    //origin and destination to generate direction
+    public LatLng mOrigin;
+    public LatLng mDestination;
+    public ProgressDialog pDialog; // to show when direction create
+    // preferences
+    public SharedPreferences sharedPref;
+    boolean doubleBackToExitPressedOnce = false;
     // fragment variables
     private SupportMapFragment mapFragment;
     private FragmentManager mFragmentManager;
     private FrameLayout frameLayout;
     private Handler handler = new Handler();
-
     // types of routes
     private Route walkingRoute;
     private Route transitRoute;
     private Route selectedRoute;
-
     private List<Poi> pois = new ArrayList<>();
     private List<it.curdrome.timetogo.model.Place> places = new ArrayList<>();
     private Poi selectedPoi;
     private Transit selectedTransit;
     private Place selectedPlace;
     private it.curdrome.timetogo.model.Place selectedMyPlace;
-
-
-
     // categories of drawer
     private String[] categories;
     // drawer variables
     private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-
+    private NavigationView navigationView;
+    private Menu menu;
     // map variables
     private GoogleMap mMap;
     private Marker originMarker;
     private Marker destinationMarker;
     private Marker selectedPlaceMarker;
     private Circle mCircle;
-
     private LocationRequest mLocationRequest;
-    public GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
-
-
-    //origin and destination to generate direction
-    public LatLng mOrigin;
-    public LatLng mDestination;
     private LatLng defaultLatLng = new LatLng (0,0); //default position
     private float zoomLevel = 11; // default zoom level
-
-
     private MainActivity activity = (MainActivity) this;
-
     // buttons
     private it.curdrome.timetogo.fab.FloatingActionMenu originButton;
     private FloatingActionMenu floatingActionMenu;
     private it.curdrome.timetogo.fab.FloatingActionButton transitButton;
     private it.curdrome.timetogo.fab.FloatingActionButton walkingButton;
-
-    public ProgressDialog pDialog; // to show when direction create
     private boolean wait = true;
 
-    // preferences
-    public SharedPreferences sharedPref;
+    /**
+     * This method check mobile is connected to network.
+     *
+     * @param context
+     * @return true if connected otherwise false.
+     */
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager conMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return conMan.getActiveNetworkInfo() != null && conMan.getActiveNetworkInfo().isConnected();
+    }
 
     /**
-     * custom animation for animatefloatigActionMenu
+     * custom animation for floatingActionMenu
+     * @author Alessandro Curreli
      */
-    private void animatefloatigActionMenu() {
+    private void animatefloatingActionMenu() {
         AnimatorSet set = new AnimatorSet();
 
         ObjectAnimator scaleOutX = ObjectAnimator.ofFloat(floatingActionMenu.getMenuIconView(), "scaleX", 1.0f, 0.2f);
@@ -220,6 +218,9 @@ public class MainActivity extends AppCompatActivity implements
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //Initializing NavigationView
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+
         // creation of the frame layout where loads the map
         frameLayout = (FrameLayout) findViewById(R.id.frame_main);
 
@@ -248,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements
         // get categories statically
         // categoryList = getResources().getStringArray(R.array.categories_name);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         mFragmentManager = getSupportFragmentManager();
         mapFragment = (SupportMapFragment) mFragmentManager
@@ -396,15 +397,6 @@ public class MainActivity extends AppCompatActivity implements
 
         }else
             noInternetMessage();
-
-
-        mDrawerList.setItemChecked(position, true);
-        try {
-            getActionBar().setTitle(title);
-        } catch (NullPointerException npex) {
-            Log.d("ERROR", "non è stato possibile egeguire il setTitle() sull'actionBar");
-        }
-        mDrawerLayout.closeDrawer(mDrawerList);
     }
 
     /**
@@ -420,19 +412,22 @@ public class MainActivity extends AppCompatActivity implements
                 output[i] = output[i].replace("_"," ");
             }
             categories = output;
-
-            // Set the adapter for the list view
-            mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-                    R.layout.drawer_list_item, output));
+            menu = navigationView.getMenu();
+            SubMenu subMenu = menu.addSubMenu("Categories");
+            for (int i = 1; i < output.length; i++) {
+                subMenu.add(output[i].toString());
+            }
         }else{
 
             Toast.makeText(getApplicationContext(),R.string.no_categories_loaded,Toast.LENGTH_SHORT).show();
             String[] mStringArray = getResources().getStringArray(R.array.categories_name);
 
-            mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-                    R.layout.drawer_list_item, mStringArray));
+            //// TODO: 14/03/2017 redo
+            //mNavigationView.setAdapter(new ArrayAdapter<String>(this,
+            //        R.layout.drawer_list_item, mStringArray));
         }
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+        //// TODO: 14/03/2017 redo
+        //mNavigationView.setOnItemClickListener(new DrawerItemClickListener());
 
         pDialog.dismiss();
     }
@@ -445,7 +440,7 @@ public class MainActivity extends AppCompatActivity implements
     public void TaskResult(Route route) {
 
         floatingActionMenu.hideMenuButton(false);
-        animatefloatigActionMenu();
+        animatefloatingActionMenu();
         floatingActionMenu.setVisibility(View.VISIBLE);
         floatingActionMenu.showMenuButton(true);
 
@@ -549,7 +544,7 @@ public class MainActivity extends AppCompatActivity implements
             place.draw();
         }
 
-        mCircle = mMap.addCircle(new CircleOptions().radius(1500).center(mOrigin).strokeColor(R.color.lightPrimaryColor).fillColor(0x05689F38).strokeWidth(2));
+        mCircle = mMap.addCircle(new CircleOptions().radius(1500).center(mOrigin).strokeColor(R.color.colorPrimaryLight).fillColor(0x05689F38).strokeWidth(2));
 
 
         transitRoute = null;
@@ -557,18 +552,6 @@ public class MainActivity extends AppCompatActivity implements
 
         setOnInfoWindowListener();
     }
-
-
-    /**
-     *inested Class for the listner of ListDrawer
-     */
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView parent, View view, int position, long id) {
-            selectItem(position);
-        }
-    }
-
 
     /**
      *Method that connects with google maps api client
@@ -606,7 +589,6 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-
     /**
      *Method that sets up the map when loaded
      */
@@ -632,8 +614,10 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(View view) {
                 if(mOrigin != null && mDestination != null && transitRoute != null){
                     transitRoute.draw();
-                    if(walkingRoute.draw)
-                        walkingRoute.erase();
+                    if (walkingRoute != null) {
+                        if (walkingRoute.draw)
+                            walkingRoute.erase();
+                    }
                     mMap.setOnMarkerClickListener(null);
                     selectedRoute = transitRoute;
 
@@ -642,7 +626,7 @@ public class MainActivity extends AppCompatActivity implements
                     if(fTransaction.isEmpty()){
                         frameLayout.removeAllViews();
                         fTransaction.add(R.id.frame_main, fragment);
-                        resizeMap(75);
+                        resizeMap(85);
                     }
 
                     else {
@@ -673,7 +657,7 @@ public class MainActivity extends AppCompatActivity implements
                     if(fTransaction.isEmpty()){
                         frameLayout.removeAllViews();
                         fTransaction.add(R.id.frame_main, fragment);
-                        resizeMap(75);
+                        resizeMap(85);
                     }
 
                     else {
@@ -688,8 +672,6 @@ public class MainActivity extends AppCompatActivity implements
 
             }
         });
-
-
 
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(1000);
@@ -856,6 +838,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
     /**
      *Method used to build a connection to the google api client
      */
@@ -885,7 +868,6 @@ public class MainActivity extends AppCompatActivity implements
                 {
                     ise.toString();
                 }
-
             }
         }
     }
@@ -913,19 +895,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    /**
-     * This method check mobile is connected to network.
-     * @param context
-     * @return true if connected otherwise false.
-     */
-    public static boolean isNetworkAvailable(Context context) {
-        ConnectivityManager conMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(conMan.getActiveNetworkInfo() != null && conMan.getActiveNetworkInfo().isConnected())
-            return true;
-        else
-            return false;
-    }
-
     public void noInternetMessage(){
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
         alertBuilder.setCancelable(true);
@@ -934,11 +903,6 @@ public class MainActivity extends AppCompatActivity implements
         alertBuilder.setPositiveButton(activity.getString(R.string.retry), new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
-                // restart application
-                /*
-                finish();
-                startActivity(getIntent());
-                */
                 if(!isNetworkAvailable(activity)){
                     noInternetMessage();
                 }
@@ -1003,7 +967,7 @@ public class MainActivity extends AppCompatActivity implements
                         if(fTransaction.isEmpty()){
                             frameLayout.removeAllViews();
                             fTransaction.add(R.id.frame_main, fragment);
-                            resizeMap(75);
+                            resizeMap(85);
                         }
 
                         else {
@@ -1023,7 +987,7 @@ public class MainActivity extends AppCompatActivity implements
                         if(fTransaction.isEmpty()){
                             frameLayout.removeAllViews();
                             fTransaction.add(R.id.frame_main, fragment);
-                            resizeMap(75);
+                            resizeMap(85);
                         }
 
                         else {
@@ -1050,7 +1014,7 @@ public class MainActivity extends AppCompatActivity implements
                             if(fTransaction.isEmpty()){
                                 frameLayout.removeAllViews();
                                 fTransaction.add(R.id.frame_main, fragment);
-                                resizeMap(75);
+                                resizeMap(85);
                             }
 
                             else {
@@ -1063,8 +1027,6 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
     }
-
-    boolean doubleBackToExitPressedOnce = false;
 
     /**
      * Default method overrided to decide when exit from app or just reset
@@ -1143,13 +1105,13 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    /*
-    other setters and getters
-     */
-
     public Poi getSelectedPoi() {
         return selectedPoi;
     }
+
+    /*
+    other setters and getters
+     */
 
     public Transit getSelectedTransit() {
         return selectedTransit;
@@ -1173,5 +1135,15 @@ public class MainActivity extends AppCompatActivity implements
 
     public it.curdrome.timetogo.model.Place getSelectedMyPlace() {
         return selectedMyPlace;
+    }
+
+    /**
+     * inested Class for the listner of ListDrawer
+     */
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView parent, View view, int position, long id) {
+            selectItem(position);
+        }
     }
 }
