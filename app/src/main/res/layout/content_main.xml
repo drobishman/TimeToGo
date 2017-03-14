@@ -97,6 +97,6 @@
             android:animateLayoutChanges="true"
             android:background="@color/colorPrimaryLight" />
     </LinearLayout>
-    b
+
 
 </android.support.design.widget.CoordinatorLayout>
