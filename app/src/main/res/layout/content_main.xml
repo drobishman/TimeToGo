@@ -8,7 +8,6 @@
     tools:context="it.curdrome.timetogo.activity.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-
     <LinearLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
@@ -43,7 +42,7 @@
                 app:menu_icon="@android:drawable/ic_menu_mylocation"
                 app:menu_labels_ellipsize="end"
                 app:menu_labels_position="right"
-                app:menu_labels_singleLine="true"></it.curdrome.timetogo.fab.FloatingActionMenu>
+                app:menu_labels_singleLine="true" />
 
 
             <it.curdrome.timetogo.fab.FloatingActionMenu
@@ -52,7 +51,7 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
-                android:paddingBottom="10dp"
+                android:paddingBottom="35dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:visibility="invisible"
@@ -60,6 +59,7 @@
                 app:menu_colorPressed="@color/colorAccent"
                 app:menu_icon="@android:drawable/ic_dialog_map"
                 app:menu_labels_ellipsize="end"
+                app:menu_labels_position="left"
                 app:menu_labels_singleLine="true">
 
                 <it.curdrome.timetogo.fab.FloatingActionButton
@@ -98,5 +98,18 @@
             android:background="@color/colorPrimaryLight" />
     </LinearLayout>
 
-
+    <it.curdrome.timetogo.fab.FloatingActionButton
+        android:id="@+id/details_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:clickable="true"
+        android:src="@android:drawable/arrow_up_float"
+        android:visibility="gone"
+        app:borderWidth="0dp"
+        app:elevation="4dp"
+        app:fab_colorNormal="@color/colorAccent"
+        app:fab_colorPressed="@color/colorAccent"
+        app:layout_anchor="@+id/frame_main"
+        app:layout_anchorGravity="top|right|end" />
 </android.support.design.widget.CoordinatorLayout>
