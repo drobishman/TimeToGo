@@ -29,13 +29,6 @@ public class PoiFragment extends android.support.v4.app.Fragment {
         // Required empty public constructor
     }
 
-    ////salvataggio fragment in Bundle
-    //@Override
-    //public void onSaveInstanceState(Bundle outState) {
-    //    outState.putSerializable("bookmarks", this.adapter);
-    //    super.onSaveInstanceState(outState);
-    //}
-
     /**
      * default constructor
      * @param savedInstanceState

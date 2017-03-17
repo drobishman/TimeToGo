@@ -70,6 +70,7 @@ import it.curdrome.timetogo.connection.server.CategoriesAsyncTask;
 import it.curdrome.timetogo.connection.server.CategoriesResponse;
 import it.curdrome.timetogo.connection.server.PoisByCategoryAsyncTask;
 import it.curdrome.timetogo.connection.server.PoisByCategoryResponse;
+import it.curdrome.timetogo.fab.FloatingActionButton;
 import it.curdrome.timetogo.fab.FloatingActionMenu;
 import it.curdrome.timetogo.fragment.PlaceFragment;
 import it.curdrome.timetogo.fragment.PoiFragment;
@@ -151,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements
     private FloatingActionMenu floatingActionMenu;
     private it.curdrome.timetogo.fab.FloatingActionButton transitButton;
     private it.curdrome.timetogo.fab.FloatingActionButton walkingButton;
+    private it.curdrome.timetogo.fab.FloatingActionButton detailsButton;
     private boolean wait = true;
 
     /**
@@ -223,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // creation of the frame layout where loads the map
         frameLayout = (FrameLayout) findViewById(R.id.frame_main);
+        detailsButton = (FloatingActionButton) findViewById(R.id.details_fab);
 
         // creation of the floating menu and hide it to be ready when a route is generated
         floatingActionMenu = (FloatingActionMenu) findViewById(R.id.floating_action_menu);
@@ -231,6 +234,7 @@ public class MainActivity extends AppCompatActivity implements
         // creation of the buttons inside the menu
         walkingButton = (it.curdrome.timetogo.fab.FloatingActionButton) findViewById(R.id.walking_button);
         transitButton = (it.curdrome.timetogo.fab.FloatingActionButton) findViewById(R.id.transit_button);
+
 
         if(isNetworkAvailable(this)) {
             pDialog = new ProgressDialog(activity);
@@ -285,6 +289,7 @@ public class MainActivity extends AppCompatActivity implements
                     @Override
                     public void onMapClick(LatLng latLng) {
                         resizeMap(100);
+                        detailsButton.setVisibility(View.GONE);
                     }
                 });
             }
@@ -371,6 +376,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onMapClick(LatLng latLng) {
                 resizeMap(100);
+                detailsButton.setVisibility(View.GONE);
             }
         });
 
@@ -627,6 +633,7 @@ public class MainActivity extends AppCompatActivity implements
                         frameLayout.removeAllViews();
                         fTransaction.add(R.id.frame_main, fragment);
                         resizeMap(85);
+                        detailsButton.setVisibility(View.VISIBLE);
                     }
 
                     else {
@@ -658,6 +665,7 @@ public class MainActivity extends AppCompatActivity implements
                         frameLayout.removeAllViews();
                         fTransaction.add(R.id.frame_main, fragment);
                         resizeMap(85);
+                        detailsButton.setVisibility(View.VISIBLE);
                     }
 
                     else {
@@ -716,6 +724,7 @@ public class MainActivity extends AppCompatActivity implements
                     @Override
                     public void onMapClick(LatLng latLng) {
                         resizeMap(100);
+                        detailsButton.setVisibility(View.GONE);
                     }
                 });
 
@@ -763,6 +772,7 @@ public class MainActivity extends AppCompatActivity implements
                                 @Override
                                 public void onMapClick(LatLng latLng) {
                                     resizeMap(100);
+                                    detailsButton.setVisibility(View.GONE);
                                 }
                             });
                             originButton.close(true);
@@ -932,6 +942,7 @@ public class MainActivity extends AppCompatActivity implements
         mapView.setLayoutParams(p);
         mapView.requestLayout();
     }
+
 
     /**
      * AsyncTasc caller to get transit and walking routes
