@@ -34,7 +34,7 @@ public class PoisByCategoryAsyncTask extends AsyncTask<String, String, String> {
 
     private MainActivity activity;
     private GoogleMap mMap;
-    private int categoryId;
+    private String categoryName;
     public PoisByCategoryResponse response = null;
     private List<Poi> pois = new ArrayList<>();
 
@@ -42,13 +42,13 @@ public class PoisByCategoryAsyncTask extends AsyncTask<String, String, String> {
      * default constructor method
      * @param activity caller activity
      * @param mMap the map where to ve draw
-     * @param categoryId the id of the category
+     * @param categoryName the id of the category
      */
-    public PoisByCategoryAsyncTask(MainActivity activity, GoogleMap mMap, int categoryId){
+    public PoisByCategoryAsyncTask(MainActivity activity, GoogleMap mMap, String categoryName){
 
         this.activity = activity;
         this.mMap = mMap;
-        this.categoryId = categoryId;
+        this.categoryName = categoryName;
     }
 
 
@@ -61,7 +61,7 @@ public class PoisByCategoryAsyncTask extends AsyncTask<String, String, String> {
     @Override
     protected String doInBackground(String... strings) {
 
-        String stringUrl = "http://projectis-curdrome.rhcloud.com//android/listpoisbycategory/"+categoryId+"";
+        String stringUrl = "http://projectis-curdrome.rhcloud.com//android/listpoisbycategory/"+categoryName+"";
 
         StringBuilder response = new StringBuilder();
         try {
@@ -113,7 +113,7 @@ public class PoisByCategoryAsyncTask extends AsyncTask<String, String, String> {
                 Log.d("id dei poi",poi.getInt("id")+"");
                 pois.add(new Poi(
                         poi.getInt("id"),
-                        poi.getString("id_place"),
+                        poi.getString("id_places"),
                         listCategories,
                         poi.getString("name"),
                         poi.getDouble("lat"),
@@ -136,11 +136,6 @@ public class PoisByCategoryAsyncTask extends AsyncTask<String, String, String> {
         for (Poi poi : pois){
 
         }
-
-
-
-
-
         response.taskResult(pois);
     }
 }

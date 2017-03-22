@@ -12,7 +12,7 @@
     <string name="permission_necessary">Location permission necessary</string>
     <string name="location_permission_is_necessary">"The location permission is necessary for make to you a faster and accurated experience with app, please ALLOW permission in next screen :)"</string>
     <string name="loading_route_wait">Loading route. Please wait&#8230;</string>
-    <string name="loading_categories_wait">Loading categories. Please wait&#8230;</string>
+    <string name="loading_wait">Loading please wait&#8230;</string>
     <string name="internet_necessary">Internet is necessary</string>
     <string name="message_internet_is_necessary">Internet is necessary, click retry to restart</string>
     <string name="retry">Retry</string>
@@ -34,8 +34,8 @@
     <string name="headsign">Headsign: </string>
     <string name="line">Line: </string>
     <string name="id_palina">Id palina: </string>
-    <string name="no_personal_poi_found">no personal POI found!</string>
-    <string name="no_Google_POI_found">No one Google POI around you!</string>
+    <string name="no_personal_poi_found">No personal POI found!</string>
+    <string name="no_Google_POI_found">There is no Google POI around you!</string>
     <string name="no_bus_arriving">No bus arriving</string>
     <string name="RTI">RTI: </string>
     <string name="real_time_by_roma_mobilità">\n real-time by roma.mobilità</string>
@@ -47,6 +47,10 @@
     <string name="transit">Transit</string>
     <string name="walking">Walking</string>
     <string name="details_button">Details</string>
+    <string name="details_button_message_more">MORE</string>
+    <string name="details_button_message_less">LESS</string>
+    <string name="category">categories</string>
+
 
     <string-array name="categories_name">
         <item>none</item>

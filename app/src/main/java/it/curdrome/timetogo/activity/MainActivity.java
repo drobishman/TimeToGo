@@ -26,15 +26,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
-import android.widget.AdapterView;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -153,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements
     private it.curdrome.timetogo.fab.FloatingActionButton transitButton;
     private it.curdrome.timetogo.fab.FloatingActionButton walkingButton;
     private it.curdrome.timetogo.fab.FloatingActionButton detailsButton;
-    private boolean wait = true;
+    private boolean detailsButtonClicked = false;
 
     /**
      * This method check mobile is connected to network.
@@ -217,15 +218,44 @@ public class MainActivity extends AppCompatActivity implements
         sharedPref = this.getPreferences(Context.MODE_PRIVATE);// preferences
 
         // creation of the toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         //Initializing NavigationView
         navigationView = (NavigationView) findViewById(R.id.nav_view);
 
+        final ImageButton navigationDrawerButton = (ImageButton) findViewById(R.id.navigation_drawer_button);
+        navigationDrawerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+                drawerLayout.openDrawer(Gravity.LEFT);
+            }
+        });
+
         // creation of the frame layout where loads the map
         frameLayout = (FrameLayout) findViewById(R.id.frame_main);
         detailsButton = (FloatingActionButton) findViewById(R.id.details_fab);
+        detailsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!detailsButtonClicked ) {
+                    resizeMap(0);
+                    detailsButton.setImageResource(android.R.drawable.arrow_down_float);
+                    TextView tv = (TextView) findViewById(R.id.details_fab_message);
+                    tv.setText(R.string.details_button_message_less);
+                    detailsButtonClicked = true;
+                }else{
+                    resizeMap(85);
+                    detailsButton.setImageResource(android.R.drawable.arrow_up_float);
+                    TextView tv = (TextView) findViewById(R.id.details_fab_message);
+                    tv.setText(R.string.details_button_message_more);
+                    detailsButtonClicked = false;
+                }
+            }
+        });
 
         // creation of the floating menu and hide it to be ready when a route is generated
         floatingActionMenu = (FloatingActionMenu) findViewById(R.id.floating_action_menu);
@@ -238,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements
 
         if(isNetworkAvailable(this)) {
             pDialog = new ProgressDialog(activity);
-            pDialog.setMessage(activity.getString(R.string.loading_categories_wait));
+            pDialog.setMessage(activity.getString(R.string.loading_wait));
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(false);
             pDialog.show();
@@ -337,7 +367,7 @@ public class MainActivity extends AppCompatActivity implements
                         .make(activity.findViewById(R.id.main),"Select new Origin position", Snackbar.LENGTH_LONG);
 
                 snackbar.show();
-                if(originMarker.isVisible())
+                if(originMarker != null && originMarker.isVisible())
                     originMarker.remove();
 
                 LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,this);
@@ -368,9 +398,9 @@ public class MainActivity extends AppCompatActivity implements
 
     /**
      *Method used by drawer to set a function for each chosed category, in this case starts the Async Task to get POI/places
-     *@param position the position of the chosen category in drawer
+     *@param categoryName the position of the chosen category in drawer
      */
-    private void selectItem(int position) {
+    private void selectItem(String categoryName) {
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -390,12 +420,12 @@ public class MainActivity extends AppCompatActivity implements
                 pois.clear();
             }
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            PoisByCategoryAsyncTask poisByCategoryAsyncTask= new PoisByCategoryAsyncTask(this, mMap, position+1); //get pois by category
+            PoisByCategoryAsyncTask poisByCategoryAsyncTask= new PoisByCategoryAsyncTask(this, mMap, categoryName); //get pois by category
             poisByCategoryAsyncTask.response = this;
             poisByCategoryAsyncTask.execute();
 
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            PlacesAsyncTask placesAsyncTask = new PlacesAsyncTask(mOrigin,mMap,this,categories[position]);
+            PlacesAsyncTask placesAsyncTask = new PlacesAsyncTask(mOrigin,mMap,this,categoryName);
             placesAsyncTask.response = this;
             placesAsyncTask.execute();
 
@@ -404,7 +434,6 @@ public class MainActivity extends AppCompatActivity implements
         }else
             noInternetMessage();
     }
-
     /**
      *risults of getCategories AsyncTask and set the category list on drawer
      *@param output contains all categories to set in Drawer view
@@ -419,21 +448,27 @@ public class MainActivity extends AppCompatActivity implements
             }
             categories = output;
             menu = navigationView.getMenu();
-            SubMenu subMenu = menu.addSubMenu("Categories");
-            for (int i = 1; i < output.length; i++) {
-                subMenu.add(output[i].toString());
+            SubMenu subMenu = menu.addSubMenu(R.string.category);
+            subMenu.setIcon(android.R.drawable.ic_search_category_default);
+            for (int i = 0; i < output.length; i++) {
+                subMenu.add(output[i].toString()).setIcon(android.R.drawable.ic_menu_info_details);
             }
+
+            navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                    selectItem(item.toString());
+                    Toast.makeText(getApplicationContext(),""+item.toString(),Toast.LENGTH_SHORT).show();
+
+                    return false;
+                }
+            });
         }else{
 
             Toast.makeText(getApplicationContext(),R.string.no_categories_loaded,Toast.LENGTH_SHORT).show();
-            String[] mStringArray = getResources().getStringArray(R.array.categories_name);
-
-            //// TODO: 14/03/2017 redo
-            //mNavigationView.setAdapter(new ArrayAdapter<String>(this,
-            //        R.layout.drawer_list_item, mStringArray));
+            categories = getResources().getStringArray(R.array.categories_name);
         }
-        //// TODO: 14/03/2017 redo
-        //mNavigationView.setOnItemClickListener(new DrawerItemClickListener());
 
         pDialog.dismiss();
     }
@@ -445,9 +480,9 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void TaskResult(Route route) {
 
-        floatingActionMenu.hideMenuButton(false);
         animatefloatingActionMenu();
-        floatingActionMenu.setVisibility(View.VISIBLE);
+
+        floatingActionMenu.showMenu(true);
         floatingActionMenu.showMenuButton(true);
 
         // added to disable buttons if there are not one of routes found
@@ -496,12 +531,12 @@ public class MainActivity extends AppCompatActivity implements
             snackbar.show();
         }
 
-        if(transitRoute!= null && transitRoute.draw){
+        if(transitRoute!= null && transitRoute.isDraw){
             transitRoute.erase();
             transitRoute = null;
         }
 
-        if(walkingRoute!=null &&walkingRoute.draw){
+        if(walkingRoute!=null &&walkingRoute.isDraw){
             walkingRoute.erase();
             walkingRoute = null;
         }
@@ -536,12 +571,12 @@ public class MainActivity extends AppCompatActivity implements
         this.places = places;
 
 
-        if(transitRoute!= null && transitRoute.draw){
+        if(transitRoute!= null && transitRoute.isDraw){
             transitRoute.erase();
             transitRoute = null;
         }
 
-        if(walkingRoute!=null &&walkingRoute.draw){
+        if(walkingRoute!=null &&walkingRoute.isDraw){
             walkingRoute.erase();
             walkingRoute = null;
         }
@@ -619,9 +654,10 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 if(mOrigin != null && mDestination != null && transitRoute != null){
-                    transitRoute.draw();
+                    if(!transitRoute.isDraw)
+                        transitRoute.draw();
                     if (walkingRoute != null) {
-                        if (walkingRoute.draw)
+                        if (walkingRoute.isDraw)
                             walkingRoute.erase();
                     }
                     mMap.setOnMarkerClickListener(null);
@@ -653,8 +689,9 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 if(mOrigin != null && mDestination != null){
-                    walkingRoute.draw();
-                    if(transitRoute!= null && transitRoute.draw)
+                    if(!walkingRoute.isDraw)
+                        walkingRoute.draw();
+                    if(transitRoute!= null && transitRoute.isDraw)
                         transitRoute.erase();
                     mMap.setOnMarkerClickListener(null);
                     selectedRoute = walkingRoute;
@@ -999,6 +1036,7 @@ public class MainActivity extends AppCompatActivity implements
                             frameLayout.removeAllViews();
                             fTransaction.add(R.id.frame_main, fragment);
                             resizeMap(85);
+                            detailsButton.setVisibility(View.VISIBLE);
                         }
 
                         else {
@@ -1010,7 +1048,7 @@ public class MainActivity extends AppCompatActivity implements
                 }
 
 
-                if(transitRoute != null && transitRoute.draw)
+                if(transitRoute != null && transitRoute.isDraw)
                     for(Transit transit: transitRoute.getListTransit()){
                         if(transit.getMarker().equals(marker)){
 
@@ -1026,6 +1064,8 @@ public class MainActivity extends AppCompatActivity implements
                                 frameLayout.removeAllViews();
                                 fTransaction.add(R.id.frame_main, fragment);
                                 resizeMap(85);
+                                detailsButton.setVisibility(View.VISIBLE);
+
                             }
 
                             else {
@@ -1072,11 +1112,11 @@ public class MainActivity extends AppCompatActivity implements
      */
     private void reset(){
         if(mDestination != null){
-            if(walkingRoute != null && walkingRoute.draw){
+            if(walkingRoute != null && walkingRoute.isDraw){
                 walkingRoute.erase();
                 walkingRoute = null;
             }
-            if(transitRoute != null && transitRoute.draw){
+            if(transitRoute != null && transitRoute.isDraw){
                 transitRoute.erase();
                 transitRoute = null;
             }
@@ -1090,6 +1130,7 @@ public class MainActivity extends AppCompatActivity implements
 
             mDestination = null;
             resizeMap(100);
+            detailsButton.setVisibility(View.GONE);
             setDestination();
 
             if(destinationMarker != null)
@@ -1103,7 +1144,10 @@ public class MainActivity extends AppCompatActivity implements
             place.getMarker().remove();
         }
         places.clear();
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigin,11));
+        if(mOrigin!=null)
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigin,11));
+        else
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(0,0),1));
 
         if(selectedPlaceMarker!=null && selectedPlaceMarker.isVisible())
             selectedPlaceMarker.remove();
@@ -1148,13 +1192,4 @@ public class MainActivity extends AppCompatActivity implements
         return selectedMyPlace;
     }
 
-    /**
-     * inested Class for the listner of ListDrawer
-     */
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView parent, View view, int position, long id) {
-            selectItem(position);
-        }
-    }
 }

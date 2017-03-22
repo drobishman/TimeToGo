@@ -10,7 +10,7 @@
     <string name="permission_necessary">Permessi sulla posizione necessari</string>
     <string name="location_permission_is_necessary">I permessi di geolocalizzazione servono per rendere più veloce e precisa la tua esperienza con l\'app, perfavore premi CONSENTI per consentire il permesso nella prossima schermata :)</string>
     <string name="loading_route_wait">Caricamento percorso. Attendere prego&#8230;</string>
-    <string name="loading_categories_wait">Caricamento categorie. Attendere prego&#8230;</string>
+    <string name="loading_wait">Caricamento attendere prego&#8230;</string>
     <string name="internet_necessary">Internet è necessario</string>
     <string name="message_internet_is_necessary">Internet è necessario, clicca riprova per riprovare</string>
     <string name="retry">Riprova</string>
@@ -41,6 +41,9 @@
     <string name="now_is_close">Chiuso ora</string>
     <string name="open_hours_not_available">Orari apertura non disponibili</string>
     <string name="address">Indirizzo: </string>
+    <string name="details_button_message_more">PIU\'</string>
+    <string name="details_button_message_less">MENO</string>
+    <string name="category">categorie</string>
 
 
     <string-array name="categories_name">

@@ -39,7 +39,7 @@ public class Route {
 
     private String mode;
 
-    public boolean draw = false;
+    public boolean isDraw = false;
 
     private List<Polyline> polylines = new ArrayList<>();
 
@@ -148,7 +148,7 @@ public class Route {
                             .defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))));
         }
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(new LatLngBounds(southwest, northeast),100));
-        draw = true;
+        isDraw = true;
     }
 
     /**
@@ -160,11 +160,13 @@ public class Route {
             polyline.remove();
         }
 
-        if(!listTransit.isEmpty() && this.draw)
+        if(!listTransit.isEmpty() && this.isDraw)
             for(Transit transit: listTransit){
                 transit.getMarker().remove();
             }
+        isDraw=false;
         polylines.clear();
+
     }
 
     @Override
