@@ -419,6 +419,13 @@ public class MainActivity extends AppCompatActivity implements
             if(!pois.isEmpty()){
                 pois.clear();
             }
+
+            pDialog = new ProgressDialog(activity);
+            pDialog.setMessage(activity.getString(R.string.loading_wait));
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(false);
+            pDialog.show();
+
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             PoisByCategoryAsyncTask poisByCategoryAsyncTask= new PoisByCategoryAsyncTask(this, mMap, categoryName); //get pois by category
             poisByCategoryAsyncTask.response = this;
@@ -460,6 +467,8 @@ public class MainActivity extends AppCompatActivity implements
 
                     selectItem(item.toString());
                     Toast.makeText(getApplicationContext(),""+item.toString(),Toast.LENGTH_SHORT).show();
+                    DrawerLayout  mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    mDrawerLayout.closeDrawers();
 
                     return false;
                 }
@@ -592,6 +601,7 @@ public class MainActivity extends AppCompatActivity implements
         walkingRoute = null;
 
         setOnInfoWindowListener();
+        pDialog.dismiss();
     }
 
     /**
