@@ -2,34 +2,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/border">
 
     <TextView
-        android:id="@+id/arrival"
-        android:layout_width="wrap_content"
+        android:id="@+id/departure_arrival"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/arrival_time"
         android:textColor="@color/SecondaryText"
-        android:textSize="21sp"
-        android:textAllCaps="false"/>
-
-    <TextView
-        android:id="@+id/departure"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/departure_time"
-        android:textColor="@color/SecondaryText"
+        android:textAlignment="center"
         android:textSize="21sp"
         android:textAllCaps="false"/>
 
     <TextView
         android:id="@+id/distance"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/distance"
         android:textColor="@color/SecondaryText"
+        android:textAlignment="center"
         android:textSize="21sp"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/duration"
@@ -38,14 +32,16 @@
         android:text="@string/duration"
         android:textColor="@color/SecondaryText"
         android:textSize="21sp"
-        android:textAllCaps="false"/>
-    <TextView
-        android:id="@+id/bus_stops"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/stops"
-        android:textColor="@color/SecondaryText"
-        android:textSize="21sp"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false"
+        android:visibility="gone"/>
+
+   <LinearLayout
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:id="@+id/bus_stops"
+       android:orientation="horizontal"
+       android:layout_gravity="center_horizontal"/>
+
+
 
 </LinearLayout>

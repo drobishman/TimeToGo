@@ -122,7 +122,8 @@
             android:layout_height="wrap_content"
             android:text="@string/details_button_message_more"
             android:gravity="center"
-            android:layout_marginLeft="15dp"/>
+            android:layout_marginLeft="15dp"
+            android:visibility="gone"/>
 
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

@@ -35,7 +35,7 @@ public class CategoriesAsyncTask extends AsyncTask<String, String, String> {
     @Override
     protected String doInBackground(String... strings) {
 
-        String stringUrl = "http://projectis-curdrome.rhcloud.com/android/listcategories";
+        String stringUrl = "http://projectis-curdrome.rhcloud.com/listcategories";
 
         StringBuilder response = new StringBuilder();
         try {

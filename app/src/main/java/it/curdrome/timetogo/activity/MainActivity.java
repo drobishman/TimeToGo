@@ -320,6 +320,8 @@ public class MainActivity extends AppCompatActivity implements
                     public void onMapClick(LatLng latLng) {
                         resizeMap(100);
                         detailsButton.setVisibility(View.GONE);
+                        TextView tv = (TextView) findViewById(R.id.details_fab_message);
+                        tv.setVisibility(View.GONE);
                     }
                 });
             }
@@ -407,6 +409,8 @@ public class MainActivity extends AppCompatActivity implements
             public void onMapClick(LatLng latLng) {
                 resizeMap(100);
                 detailsButton.setVisibility(View.GONE);
+                TextView tv = (TextView) findViewById(R.id.details_fab_message);
+                tv.setVisibility(View.GONE);
             }
         });
 
@@ -680,6 +684,8 @@ public class MainActivity extends AppCompatActivity implements
                         fTransaction.add(R.id.frame_main, fragment);
                         resizeMap(85);
                         detailsButton.setVisibility(View.VISIBLE);
+                        TextView tv = (TextView) findViewById(R.id.details_fab_message);
+                        tv.setVisibility(View.VISIBLE);
                     }
 
                     else {
@@ -713,6 +719,8 @@ public class MainActivity extends AppCompatActivity implements
                         fTransaction.add(R.id.frame_main, fragment);
                         resizeMap(85);
                         detailsButton.setVisibility(View.VISIBLE);
+                        TextView tv = (TextView) findViewById(R.id.details_fab_message);
+                        tv.setVisibility(View.VISIBLE);
                     }
 
                     else {
@@ -772,6 +780,8 @@ public class MainActivity extends AppCompatActivity implements
                     public void onMapClick(LatLng latLng) {
                         resizeMap(100);
                         detailsButton.setVisibility(View.GONE);
+                        TextView tv = (TextView) findViewById(R.id.details_fab_message);
+                        tv.setVisibility(View.GONE);
                     }
                 });
 
@@ -820,6 +830,8 @@ public class MainActivity extends AppCompatActivity implements
                                 public void onMapClick(LatLng latLng) {
                                     resizeMap(100);
                                     detailsButton.setVisibility(View.GONE);
+                                    TextView tv = (TextView) findViewById(R.id.details_fab_message);
+                                    tv.setVisibility(View.GONE);
                                 }
                             });
                             originButton.close(true);
@@ -1047,6 +1059,8 @@ public class MainActivity extends AppCompatActivity implements
                             fTransaction.add(R.id.frame_main, fragment);
                             resizeMap(85);
                             detailsButton.setVisibility(View.VISIBLE);
+                            TextView tv = (TextView) findViewById(R.id.details_fab_message);
+                            tv.setVisibility(View.VISIBLE);
                         }
 
                         else {
@@ -1075,6 +1089,8 @@ public class MainActivity extends AppCompatActivity implements
                                 fTransaction.add(R.id.frame_main, fragment);
                                 resizeMap(85);
                                 detailsButton.setVisibility(View.VISIBLE);
+                                TextView tv = (TextView) findViewById(R.id.details_fab_message);
+                                tv.setVisibility(View.VISIBLE);
 
                             }
 
@@ -1141,6 +1157,8 @@ public class MainActivity extends AppCompatActivity implements
             mDestination = null;
             resizeMap(100);
             detailsButton.setVisibility(View.GONE);
+            TextView tv = (TextView) findViewById(R.id.details_fab_message);
+            tv.setVisibility(View.GONE);
             setDestination();
 
             if(destinationMarker != null)
