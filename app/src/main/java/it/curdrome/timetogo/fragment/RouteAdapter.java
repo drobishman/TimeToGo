@@ -6,9 +6,11 @@ import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +23,7 @@ import java.util.Locale;
 
 import it.curdrome.timetogo.R;
 import it.curdrome.timetogo.activity.MainActivity;
+import it.curdrome.timetogo.connection.atac.RTIAsyncTask;
 import it.curdrome.timetogo.model.Route;
 import it.curdrome.timetogo.model.Transit;
 
@@ -60,10 +63,71 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         convertView = inflater.inflate(R.layout.route_row, null);
 
-        TextView departure_arrival = (TextView) convertView.findViewById(R.id.departure_arrival);
-        TextView distance = (TextView) convertView.findViewById(R.id.distance);
-        TextView duration = (TextView) convertView.findViewById(R.id.duration);
-        LinearLayout busStops = (LinearLayout) convertView.findViewById(R.id.bus_stops);
+        setLessDetails(convertView, position);
+        setMoreDetails(convertView, position);
+
+        return convertView;
+    }
+
+
+    /**
+     * Sets more details view components
+     * @param convertView
+     * @param position
+     */
+    private void setMoreDetails(View convertView, int position){
+
+
+        final Route route = getItem(position);
+        DateFormat df = new SimpleDateFormat("HH:mm", Locale.ITALY);
+
+        TextView departureArrivalMore = (TextView) convertView.findViewById(R.id.departure_arrival_more);
+        TextView durationMore = (TextView) convertView.findViewById(R.id.duration_more);
+        TextView distanceMore = (TextView) convertView.findViewById(R.id.distance_more);
+
+        ListView transitsList = (ListView) convertView.findViewById(R.id.transits_list);
+        final TransitAdapter adapter = new TransitAdapter(activity.getBaseContext(), R.layout.transit_row, route.getListTransit(), activity);
+        transitsList.setAdapter(adapter);
+        Utility.setListViewHeightBasedOnChildren(transitsList);
+        transitsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                if(route.getListTransit().get(i).getIdPalina() != null)
+                    new RTIAsyncTask(route.getListTransit().get(i)).execute();
+                Toast.makeText(activity, route.getListTransit().get(i).getDepartureStop(),Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        String time= df.format(Calendar.getInstance().getTime());
+
+        if (route.getDepartureTime()!=null) {
+            departureArrivalMore.append(" "+ route.getDepartureTime());
+        }else {
+            departureArrivalMore.append(" "+time.substring(0,5));
+        }
+
+        if (route.getArrivalTime()!=null) {
+            departureArrivalMore.append(" - "+ route.getArrivalTime());
+        }else{
+            departureArrivalMore.append(" - "+setArrivalTime(time, route));
+        }
+
+        distanceMore.append(" " + route.getDistance());
+        durationMore.append(" " + route.getDuration());
+    }
+
+
+    /**
+     * Sets the less details view
+     * @param convertView
+     * @param position
+     */
+    private void setLessDetails(View convertView, int position){
+
+        TextView departureArrivalLess = (TextView) convertView.findViewById(R.id.departure_arrival_less);
+        TextView distanceLess = (TextView) convertView.findViewById(R.id.distance_less);
+        LinearLayout transitImagesLess = (LinearLayout) convertView.findViewById(R.id.transit_images_less);
 
 
         final Route route = getItem(position);
@@ -72,30 +136,27 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
         String time= df.format(Calendar.getInstance().getTime());
 
         if (route.getDepartureTime()!=null) {
-            departure_arrival.append(" "+ route.getDepartureTime());
+            departureArrivalLess.append(" "+ route.getDepartureTime());
         }else {
-            departure_arrival.append(" "+time.substring(0,5));
+            departureArrivalLess.append(" "+time.substring(0,5));
         }
 
         if (route.getArrivalTime()!=null) {
-            departure_arrival.append(" - "+ route.getArrivalTime());
+            departureArrivalLess.append(" - "+ route.getArrivalTime());
         }else{
-            departure_arrival.append(" - "+setArrivalTime(time, route));
+            departureArrivalLess.append(" - "+setArrivalTime(time, route));
         }
-        distance.append(" " + route.getDistance());
-        duration.append(" " + route.getDuration());
-
-
+        distanceLess.append(" " + route.getDistance());
 
         for(Transit transit: route.getListTransit()){
             switch(transit.getType()){
                 case "BUS":
                     ImageView bus = new ImageView(activity);
                     bus.setImageResource(R.drawable.ic_directions_bus);
-                    busStops.addView(bus);
+                    transitImagesLess.addView(bus);
                     ImageView chevron1 = new ImageView(activity);
                     chevron1.setImageResource(R.drawable.ic_chevron_right);
-                    busStops.addView(chevron1);
+                    transitImagesLess.addView(chevron1);
                     break;
                 case "SUBWAY":
                     ImageView subway = new ImageView(activity);
@@ -111,6 +172,9 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
                         case "MEB2":
                             subway.setColorFilter(Color.BLUE);
                             break;
+                        case "MEB":
+                            subway.setColorFilter(Color.BLUE);
+                            break;
                         case "MEC":
                             subway.setColorFilter(Color.GREEN);
                             break;
@@ -118,26 +182,26 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
                             break;
 
                     }
-                    busStops.addView(subway);
+                    transitImagesLess.addView(subway);
                     ImageView chevron2 = new ImageView(activity);
                     chevron2.setImageResource(R.drawable.ic_chevron_right);
-                    busStops.addView(chevron2);
+                    transitImagesLess.addView(chevron2);
                     break;
                 case "TRAM":
                     ImageView tram = new ImageView(activity);
                     tram.setImageResource(R.drawable.ic_tram);
-                    busStops.addView(tram);
+                    transitImagesLess.addView(tram);
                     ImageView chevron3 = new ImageView(activity);
                     chevron3.setImageResource(R.drawable.ic_chevron_right);
-                    busStops.addView(chevron3);
+                    transitImagesLess.addView(chevron3);
                     break;
                 case "HEAVY_RAIL":
                     ImageView heavyRail = new ImageView(activity);
                     heavyRail.setImageResource(R.drawable.ic_directions_railway);
-                    busStops.addView(heavyRail);
+                    transitImagesLess.addView(heavyRail);
                     ImageView chevron4 = new ImageView(activity);
                     chevron4.setImageResource(R.drawable.ic_chevron_right);
-                    busStops.addView(chevron4);
+                    transitImagesLess.addView(chevron4);
                     break;
                 default:
                     Toast.makeText(activity,"type fail",Toast.LENGTH_SHORT).show();
@@ -147,8 +211,8 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
 
         ImageView iv5 = new ImageView(activity);
         iv5.setImageResource(R.drawable.ic_check_box);
-        busStops.addView(iv5);
-        return convertView;
+        transitImagesLess.addView(iv5);
+
     }
 
 
@@ -192,5 +256,4 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
 
         return "error occured! :-(";
     }
-
 }

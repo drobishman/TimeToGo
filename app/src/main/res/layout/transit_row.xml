@@ -5,46 +5,51 @@
 
     <TextView
         android:id="@+id/departure_time"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text=""
         android:textColor="@color/SecondaryText"
         android:textSize="21sp"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false"
+        android:textAlignment="center"/>
 
     <TextView
         android:id="@+id/line"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/line"
         android:textColor="@color/SecondaryText"
         android:textSize="21sp"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false"
+        android:textAlignment="center"/>
 
     <TextView
         android:id="@+id/num_stops"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/stops"
         android:textColor="@color/SecondaryText"
         android:textSize="21sp"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false"
+        android:textAlignment="center"/>
     <TextView
         android:id="@+id/departure_stop"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/stop_name"
         android:textColor="@color/SecondaryText"
         android:textSize="21sp"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false"
+        android:textAlignment="center"/>
     <TextView
         android:id="@+id/headsign"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/headsign"
         android:textColor="@color/SecondaryText"
         android:textSize="21sp"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false"
+        android:textAlignment="center"/>
 
 </LinearLayout>
 

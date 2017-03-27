@@ -50,6 +50,7 @@
     <string name="details_button_message_more">MORE</string>
     <string name="details_button_message_less">LESS</string>
     <string name="category">categories</string>
+    <string name="trip_details">Trip details:</string>
 
 
     <string-array name="categories_name">

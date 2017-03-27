@@ -44,6 +44,7 @@
     <string name="details_button_message_more">PIU\'</string>
     <string name="details_button_message_less">MENO</string>
     <string name="category">categorie</string>
+    <string name="trip_details">Dettagli percorso:</string>
 
 
     <string-array name="categories_name">

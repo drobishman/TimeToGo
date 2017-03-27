@@ -246,12 +246,20 @@ public class MainActivity extends AppCompatActivity implements
                     detailsButton.setImageResource(android.R.drawable.arrow_down_float);
                     TextView tv = (TextView) findViewById(R.id.details_fab_message);
                     tv.setText(R.string.details_button_message_less);
+                    LinearLayout lessLayout = (LinearLayout) findViewById(R.id.less_layout);
+                    lessLayout.setVisibility(View.GONE);
+                    LinearLayout moreLayout = (LinearLayout) findViewById(R.id.more_layout);
+                    moreLayout.setVisibility(View.VISIBLE);
                     detailsButtonClicked = true;
                 }else{
                     resizeMap(85);
                     detailsButton.setImageResource(android.R.drawable.arrow_up_float);
                     TextView tv = (TextView) findViewById(R.id.details_fab_message);
                     tv.setText(R.string.details_button_message_more);
+                    LinearLayout lessLayout = (LinearLayout) findViewById(R.id.less_layout);
+                    lessLayout.setVisibility(View.VISIBLE);
+                    LinearLayout moreLayout = (LinearLayout) findViewById(R.id.more_layout);
+                    moreLayout.setVisibility(View.GONE);
                     detailsButtonClicked = false;
                 }
             }
