@@ -2,11 +2,11 @@ package it.curdrome.timetogo.fragment;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,7 +23,6 @@ import java.util.Locale;
 
 import it.curdrome.timetogo.R;
 import it.curdrome.timetogo.activity.MainActivity;
-import it.curdrome.timetogo.connection.atac.RTIAsyncTask;
 import it.curdrome.timetogo.model.Route;
 import it.curdrome.timetogo.model.Transit;
 
@@ -75,7 +74,7 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
      * @param convertView
      * @param position
      */
-    private void setMoreDetails(View convertView, int position){
+    private void setMoreDetails(View convertView, final int position){
 
 
         final Route route = getItem(position);
@@ -89,15 +88,16 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
         final TransitAdapter adapter = new TransitAdapter(activity.getBaseContext(), R.layout.transit_row, route.getListTransit(), activity);
         transitsList.setAdapter(adapter);
         Utility.setListViewHeightBasedOnChildren(transitsList);
-        transitsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                if(route.getListTransit().get(i).getIdPalina() != null)
-                    new RTIAsyncTask(route.getListTransit().get(i)).execute();
-                Toast.makeText(activity, route.getListTransit().get(i).getDepartureStop(),Toast.LENGTH_SHORT).show();
+        final Handler handler = new Handler();
+        handler.postDelayed( new Runnable() {
+
+            @Override
+            public void run() {
+                adapter.notifyDataSetChanged();
+                handler.postDelayed( this, 1000 );
             }
-        });
+        }, 1000 );
 
         String time= df.format(Calendar.getInstance().getTime());
 
@@ -212,6 +212,9 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
         ImageView iv5 = new ImageView(activity);
         iv5.setImageResource(R.drawable.ic_check_box);
         transitImagesLess.addView(iv5);
+        TextView tv = new TextView(activity);
+        tv.setText("\n");
+        transitImagesLess.addView(tv);
 
     }
 

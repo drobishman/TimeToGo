@@ -29,6 +29,9 @@ import it.curdrome.timetogo.xmlrpc.XMLRPCException;
 
 public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
 
+    // sets response
+    public IdPalinaResponse response = null;
+
     private Transit transit;
     private List<String> paline = new ArrayList<>();// array containing palline candidate
 

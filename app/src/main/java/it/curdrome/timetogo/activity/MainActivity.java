@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.os.Build;
@@ -35,7 +36,6 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -55,14 +55,15 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import it.curdrome.timetogo.R;
-import it.curdrome.timetogo.connection.atac.RTIAsyncTask;
 import it.curdrome.timetogo.connection.google.DirectionAsyncTask;
 import it.curdrome.timetogo.connection.google.DirectionResponse;
 import it.curdrome.timetogo.connection.google.PlacesAsyncTask;
@@ -154,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements
     private it.curdrome.timetogo.fab.FloatingActionButton transitButton;
     private it.curdrome.timetogo.fab.FloatingActionButton walkingButton;
     private it.curdrome.timetogo.fab.FloatingActionButton detailsButton;
+    private it.curdrome.timetogo.fab.FloatingActionButton closeButton;
     private boolean detailsButtonClicked = false;
 
     /**
@@ -244,8 +246,6 @@ public class MainActivity extends AppCompatActivity implements
                 if(!detailsButtonClicked ) {
                     resizeMap(0);
                     detailsButton.setImageResource(android.R.drawable.arrow_down_float);
-                    TextView tv = (TextView) findViewById(R.id.details_fab_message);
-                    tv.setText(R.string.details_button_message_less);
                     LinearLayout lessLayout = (LinearLayout) findViewById(R.id.less_layout);
                     lessLayout.setVisibility(View.GONE);
                     LinearLayout moreLayout = (LinearLayout) findViewById(R.id.more_layout);
@@ -254,8 +254,6 @@ public class MainActivity extends AppCompatActivity implements
                 }else{
                     resizeMap(85);
                     detailsButton.setImageResource(android.R.drawable.arrow_up_float);
-                    TextView tv = (TextView) findViewById(R.id.details_fab_message);
-                    tv.setText(R.string.details_button_message_more);
                     LinearLayout lessLayout = (LinearLayout) findViewById(R.id.less_layout);
                     lessLayout.setVisibility(View.VISIBLE);
                     LinearLayout moreLayout = (LinearLayout) findViewById(R.id.more_layout);
@@ -313,6 +311,8 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onPlaceSelected(Place place) {
 
+                reset();
+
                 selectedPlace = place;
 
                 selectedPlaceMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName().toString()).icon(BitmapDescriptorFactory
@@ -328,8 +328,6 @@ public class MainActivity extends AppCompatActivity implements
                     public void onMapClick(LatLng latLng) {
                         resizeMap(100);
                         detailsButton.setVisibility(View.GONE);
-                        TextView tv = (TextView) findViewById(R.id.details_fab_message);
-                        tv.setVisibility(View.GONE);
                     }
                 });
             }
@@ -412,13 +410,13 @@ public class MainActivity extends AppCompatActivity implements
      */
     private void selectItem(String categoryName) {
 
+        categoryName = categoryName.replace(" ","_");
+
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
                 resizeMap(100);
                 detailsButton.setVisibility(View.GONE);
-                TextView tv = (TextView) findViewById(R.id.details_fab_message);
-                tv.setVisibility(View.GONE);
             }
         });
 
@@ -505,6 +503,8 @@ public class MainActivity extends AppCompatActivity implements
 
         floatingActionMenu.showMenu(true);
         floatingActionMenu.showMenuButton(true);
+        floatingActionMenu.getMenuIconView().setImageResource(android.R.drawable.ic_dialog_map);
+
 
         // added to disable buttons if there are not one of routes found
         if(transitRoute == null) {
@@ -648,6 +648,7 @@ public class MainActivity extends AppCompatActivity implements
      */
     public void setUpMap(){
 
+        mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLatLng,1));
 
     }
@@ -658,6 +659,23 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
+        Calendar calendar = Calendar.getInstance();
+
+        if(calendar.get(Calendar.HOUR_OF_DAY)>19 && calendar.get(Calendar.HOUR_OF_DAY)<6)
+            try {
+                // Customise the styling of the base map using a JSON object defined
+                // in a raw resource file.
+                boolean success = googleMap.setMapStyle(
+                        MapStyleOptions.loadRawResourceStyle(
+                                this, R.raw.style_json));
+
+                if (!success) {
+                    Log.e(TAG, "Style parsing failed.");
+                }
+            } catch (Resources.NotFoundException e) {
+                Log.e(TAG, "Can't find style. Error: ", e);
+            }
 
         mMap = googleMap;
         setUpMap();
@@ -692,8 +710,7 @@ public class MainActivity extends AppCompatActivity implements
                         fTransaction.add(R.id.frame_main, fragment);
                         resizeMap(85);
                         detailsButton.setVisibility(View.VISIBLE);
-                        TextView tv = (TextView) findViewById(R.id.details_fab_message);
-                        tv.setVisibility(View.VISIBLE);
+                        closeButton.setVisibility(View.GONE);
                     }
 
                     else {
@@ -727,8 +744,7 @@ public class MainActivity extends AppCompatActivity implements
                         fTransaction.add(R.id.frame_main, fragment);
                         resizeMap(85);
                         detailsButton.setVisibility(View.VISIBLE);
-                        TextView tv = (TextView) findViewById(R.id.details_fab_message);
-                        tv.setVisibility(View.VISIBLE);
+                        closeButton.setVisibility(View.GONE);
                     }
 
                     else {
@@ -788,8 +804,6 @@ public class MainActivity extends AppCompatActivity implements
                     public void onMapClick(LatLng latLng) {
                         resizeMap(100);
                         detailsButton.setVisibility(View.GONE);
-                        TextView tv = (TextView) findViewById(R.id.details_fab_message);
-                        tv.setVisibility(View.GONE);
                     }
                 });
 
@@ -838,8 +852,6 @@ public class MainActivity extends AppCompatActivity implements
                                 public void onMapClick(LatLng latLng) {
                                     resizeMap(100);
                                     detailsButton.setVisibility(View.GONE);
-                                    TextView tv = (TextView) findViewById(R.id.details_fab_message);
-                                    tv.setVisibility(View.GONE);
                                 }
                             });
                             originButton.close(true);
@@ -1032,6 +1044,15 @@ public class MainActivity extends AppCompatActivity implements
      */
     public void setOnInfoWindowListener(){
 
+        closeButton= (FloatingActionButton) findViewById(R.id.close_fab);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resizeMap(100);
+                closeButton.setVisibility(View.GONE);
+            }
+        });
+
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
@@ -1046,6 +1067,8 @@ public class MainActivity extends AppCompatActivity implements
                             frameLayout.removeAllViews();
                             fTransaction.add(R.id.frame_main, fragment);
                             resizeMap(85);
+                            detailsButton.setVisibility(View.GONE);
+                            closeButton.setVisibility(View.VISIBLE);
                         }
 
                         else {
@@ -1065,10 +1088,9 @@ public class MainActivity extends AppCompatActivity implements
                         if(fTransaction.isEmpty()){
                             frameLayout.removeAllViews();
                             fTransaction.add(R.id.frame_main, fragment);
-                            resizeMap(85);
-                            detailsButton.setVisibility(View.VISIBLE);
-                            TextView tv = (TextView) findViewById(R.id.details_fab_message);
-                            tv.setVisibility(View.VISIBLE);
+                            resizeMap(80);
+                            detailsButton.setVisibility(View.GONE);
+                            closeButton.setVisibility(View.VISIBLE);
                         }
 
                         else {
@@ -1081,24 +1103,19 @@ public class MainActivity extends AppCompatActivity implements
 
 
                 if(transitRoute != null && transitRoute.isDraw)
-                    for(Transit transit: transitRoute.getListTransit()){
+                    for(final Transit transit: transitRoute.getListTransit()){
                         if(transit.getMarker().equals(marker)){
 
                             selectedTransit = transit;
-                            if(transit.getIdPalina() != null){
-                                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                                new RTIAsyncTask(transit).execute();
-                            }
 
                             FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
                             TransitFragment fragment = new TransitFragment();
                             if(fTransaction.isEmpty()){
                                 frameLayout.removeAllViews();
                                 fTransaction.add(R.id.frame_main, fragment);
-                                resizeMap(85);
-                                detailsButton.setVisibility(View.VISIBLE);
-                                TextView tv = (TextView) findViewById(R.id.details_fab_message);
-                                tv.setVisibility(View.VISIBLE);
+                                resizeMap(75);
+                                detailsButton.setVisibility(View.GONE);
+                                closeButton.setVisibility(View.VISIBLE);
 
                             }
 
@@ -1107,6 +1124,7 @@ public class MainActivity extends AppCompatActivity implements
                                 fTransaction.replace(R.id.frame_main, fragment);
                             }
                             fTransaction.commit();
+
                         }
                     }
             }
@@ -1130,8 +1148,17 @@ public class MainActivity extends AppCompatActivity implements
 
         snackbar.show();
 
-        reset();
-
+        if(detailsButtonClicked){
+            resizeMap(85);
+            detailsButton.setImageResource(android.R.drawable.arrow_up_float);
+            LinearLayout lessLayout = (LinearLayout) findViewById(R.id.less_layout);
+            lessLayout.setVisibility(View.VISIBLE);
+            LinearLayout moreLayout = (LinearLayout) findViewById(R.id.more_layout);
+            moreLayout.setVisibility(View.GONE);
+            detailsButtonClicked = false;
+        }else {
+            reset();
+        }
         new Handler().postDelayed(new Runnable() {
 
             @Override
@@ -1165,8 +1192,7 @@ public class MainActivity extends AppCompatActivity implements
             mDestination = null;
             resizeMap(100);
             detailsButton.setVisibility(View.GONE);
-            TextView tv = (TextView) findViewById(R.id.details_fab_message);
-            tv.setVisibility(View.GONE);
+            closeButton.setVisibility(View.GONE);
             setDestination();
 
             if(destinationMarker != null)

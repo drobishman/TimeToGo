@@ -1,27 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/departure_time"
-        android:layout_width="match_parent"
+        android:id="@+id/departure_stop"
+        android:layout_width="220dp"
         android:layout_height="wrap_content"
-        android:text=""
-        android:textColor="@color/SecondaryText"
-        android:textSize="21sp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/line"
         android:textAllCaps="false"
-        android:textAlignment="center"/>
+        android:textColor="@color/SecondaryText"
+        android:textSize="19sp"
+        android:textStyle="bold"/>
 
-    <TextView
+    <LinearLayout
         android:id="@+id/line"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/line"
-        android:textColor="@color/SecondaryText"
-        android:textSize="21sp"
-        android:textAllCaps="false"
-        android:textAlignment="center"/>
+        android:layout_width="70dp"
+        android:layout_height="30dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/colorPrimary"
+        android:layout_alignParentStart="true">
+    </LinearLayout>
 
     <TextView
         android:id="@+id/num_stops"
@@ -29,27 +31,51 @@
         android:layout_height="wrap_content"
         android:text="@string/stops"
         android:textColor="@color/SecondaryText"
-        android:textSize="21sp"
+        android:textSize="17sp"
         android:textAllCaps="false"
-        android:textAlignment="center"/>
-    <TextView
-        android:id="@+id/departure_stop"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/stop_name"
-        android:textColor="@color/SecondaryText"
-        android:textSize="21sp"
-        android:textAllCaps="false"
-        android:textAlignment="center"/>
+        android:layout_below="@+id/headsign"
+        android:layout_alignStart="@+id/headsign" />
+
     <TextView
         android:id="@+id/headsign"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/headsign"
         android:textColor="@color/SecondaryText"
-        android:textSize="21sp"
+        android:textSize="17sp"
         android:textAllCaps="false"
-        android:textAlignment="center"/>
+        android:layout_below="@+id/departure_stop"
+        android:layout_toEndOf="@+id/line" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/departure_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="@color/SecondaryText"
+        android:textSize="17sp"
+        android:textAllCaps="false"
+        android:layout_below="@+id/num_stops"
+        android:layout_alignStart="@+id/num_stops" />
+
+    <ImageView
+        android:id="@+id/image_divider"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/departure_stop"
+        android:layout_toStartOf="@+id/departure_stop"
+        android:layout_alignBottom="@+id/rti_logo" />
+
+    <LinearLayout
+        android:id="@+id/rti_logo"
+        android:layout_width="20dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/departure_time"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/image_divider">
+        </LinearLayout>
+
+</RelativeLayout>
 

@@ -1,6 +1,8 @@
 package it.curdrome.timetogo.fragment;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +49,7 @@ class PlaceAdapter extends ArrayAdapter<Place> implements Serializable {
      * @param parent the parent view
      * @return the converted view
      */
+    @TargetApi(Build.VERSION_CODES.M)
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -57,7 +60,6 @@ class PlaceAdapter extends ArrayAdapter<Place> implements Serializable {
         convertView = inflater.inflate(R.layout.place_row, null);
 
         TextView name = (TextView) convertView.findViewById(R.id.name);
-        TextView categories = (TextView) convertView.findViewById(R.id.categories);
         TextView openNow = (TextView) convertView.findViewById(R.id.open_now);
         TextView vicinity =(TextView) convertView.findViewById(R.id.vicinity);
 
@@ -65,12 +67,16 @@ class PlaceAdapter extends ArrayAdapter<Place> implements Serializable {
         final Place place = getItem(position);
 
         name.setText(activity.getString(R.string.name) + place.getName());
-        if(place.isOpenHoursEnabled() && place.isOpenNow())
+        if(place.isOpenHoursEnabled() && place.isOpenNow()) {
             openNow.setText(activity.getString(R.string.now_is_open));
-        else if(place.isOpenHoursEnabled() && !place.isOpenNow())
+            openNow.setTextColor(activity.getColor(R.color.colorAccent));
+        }
+        else if(place.isOpenHoursEnabled() && !place.isOpenNow()){
             openNow.setText(activity.getString(R.string.now_is_close));
+            openNow.setTextColor(activity.getColor(android.R.color.holo_red_light));
+        }
         else
-        openNow.setText(activity.getString(R.string.open_hours_not_available));
+            openNow.setText(activity.getString(R.string.open_hours_not_available));
         vicinity.setText(activity.getString(R.string.address) + place.getVicinity());
         return convertView;
     }

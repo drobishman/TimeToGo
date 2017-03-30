@@ -26,7 +26,7 @@ public class Utility {
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1)+500);
         listView.setLayoutParams(params);
         listView.requestLayout();
     }

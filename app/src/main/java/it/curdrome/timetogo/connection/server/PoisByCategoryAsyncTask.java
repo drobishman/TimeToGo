@@ -61,7 +61,7 @@ public class PoisByCategoryAsyncTask extends AsyncTask<String, String, String> {
     @Override
     protected String doInBackground(String... strings) {
 
-        String stringUrl = "http://projectis-curdrome.rhcloud.com//android/listpoisbycategory/"+categoryName+"";
+        String stringUrl = "http://projectis-curdrome.rhcloud.com/listpoisbycategory/"+categoryName+"";
 
         StringBuilder response = new StringBuilder();
         try {

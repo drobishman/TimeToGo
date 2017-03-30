@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Locale;
 
 import it.curdrome.timetogo.model.Transit;
 import it.curdrome.timetogo.xmlrpc.XMLRPCClient;
@@ -63,7 +64,7 @@ public class RTIAsyncTask extends AsyncTask<String, String, String> {
 
             //get palina using the name of the bus stop or part of it
             XMLRPCClient getPalina = new XMLRPCClient(new URL(stringUrlPalina));
-            HashMap result = (HashMap) getPalina.call("paline.Previsioni", token, query, "ITA");
+            HashMap result = (HashMap) getPalina.call("paline.Previsioni", token, query, Locale.getDefault().getDisplayLanguage());
             JSONObject jsonResult = new JSONObject(result);
             JSONObject risposta = jsonResult.getJSONObject("risposta");
 
@@ -88,7 +89,7 @@ public class RTIAsyncTask extends AsyncTask<String, String, String> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return transit.toString();
+        return transit.getDepartureTime() + transit.getIdPalina() + transit.getLine();
     }
 
     @Override
