@@ -3,97 +3,67 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/border">
+    android:background="@color/colorPrimaryDark">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/less_layout"
-        android:orientation="vertical">
+        android:id="@+id/details"
+        android:orientation="vertical"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
         <TextView
-            android:id="@+id/departure_arrival_less"
+            android:id="@+id/departure_arrival"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/SecondaryText"
             android:textAlignment="center"
             android:textSize="21sp"
-            android:textAllCaps="false"/>
+            android:textAllCaps="false"
+            android:textStyle="bold"/>
 
         <TextView
-            android:id="@+id/distance_less"
+            android:id="@+id/distance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/distance"
-            android:textColor="@color/SecondaryText"
             android:textAlignment="center"
             android:textSize="21sp"
-            android:textAllCaps="false" />
-
-
+            android:textAllCaps="false"
+            android:textStyle="bold"/>
 
         <LinearLayout
+            android:id="@+id/transit_images"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/transit_images_less"
-            android:orientation="horizontal"
-            android:layout_gravity="center_horizontal"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/more_layout"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/trip_details"
-            android:textSize="25sp"
-            android:background="@color/colorPrimaryDark"/>
+            android:layout_gravity="center"
+            android:orientation="horizontal" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@color/colorPrimary">
+            android:background="@color/colorPrimary"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="40dp">
 
             <TextView
-                android:id="@+id/departure_arrival_more"
+                android:id="@+id/transits_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:textColor="@color/PrimaryText"
+                android:text="@string/trip_details"
                 android:textSize="21sp"
-                android:textAllCaps="false" />
-
-            <TextView
-                android:id="@+id/duration_more"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/PrimaryText"
-                android:text="@string/duration"
-                android:textAlignment="center"
-                android:textSize="21sp"
-                android:textAllCaps="false"/>
-
-            <TextView
-                android:id="@+id/distance_more"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/PrimaryText"
-                android:text="@string/distance"
-                android:textAlignment="center"
-                android:textSize="21sp"
-                android:textAllCaps="false"/>
+                />
 
             <ListView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/transits_list"
                 android:orientation="vertical"
-                android:padding="1dp"
-                android:background="@color/colorPrimaryLight"/>
+                android:divider="@color/colorPrimary"
+                android:dividerHeight="10dp"
+                android:background="@color/colorPrimary"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
+    <!-- android:dividerHeight="5dp" -->

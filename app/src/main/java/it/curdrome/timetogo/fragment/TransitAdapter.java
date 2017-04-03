@@ -135,9 +135,9 @@ class TransitAdapter extends ArrayAdapter<Transit> implements Serializable {
 
         headsign.append(" "+transit.getHeadsign());
 
-        departureStop.append(transit.getDepartureStop());
+        departureStop.append(" "+transit.getDepartureStop());
         if(transit.getIdPalina() != null){
-            departureTime.setText(transit.getDepartureTime());
+            departureTime.setText(" "+transit.getDepartureTime());
             departureTime.setTextColor(activity.getColor(R.color.colorAccent));
             LinearLayout rtiLogo = (LinearLayout) convertView.findViewById(R.id.rti_logo);
             TextView rtiText = new TextView(activity);
@@ -150,7 +150,7 @@ class TransitAdapter extends ArrayAdapter<Transit> implements Serializable {
             rtiLogo.addView(rtiImage);
 
         }else {
-            departureTime.setText(activity.getString(R.string.departure_scheduled) + transit.getDepartureTime());
+            departureTime.setText(activity.getString(R.string.departure_scheduled) + " "+transit.getDepartureTime());
         }
 
         imageDivider.setImageResource(R.drawable.down_arrows);

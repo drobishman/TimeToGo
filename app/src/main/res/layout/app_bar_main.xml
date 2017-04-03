@@ -31,15 +31,10 @@
                 android:layout_height="wrap_content"
                 android:text="@string/app_name"
                 android:textSize="25sp"
-                android:textColor="@color/colorPrimaryLight"
+                android:textColor="#FFFFFF"
                 android:paddingLeft="10dp"/>
 
-            <fragment
-                android:id="@+id/place_autocomplete_fragment"
-                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right" />
+
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

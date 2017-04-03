@@ -26,16 +26,16 @@
     <string name="departure_time"> Ora di partenza: </string>
     <string name="distance">Distanza: </string>
     <string name="duration">Durata: </string>
-    <string name="stops"> N° fermate: </string>
+    <string name="stops">\u00A0 N° fermate: </string>
     <string name="stop_name">Nome fermata: </string>
-    <string name="headsign"> Direzione: </string>
+    <string name="headsign">\u00A0 Direzione: </string>
     <string name="line">Linea: </string>
     <string name="id_palina">N°palina: </string>
     <string name="no_personal_poi_found">Nessun POI personale trovato!</string>
     <string name="no_Google_POI_found">Nessun POI di Google nelle vicinanze!</string>
     <string name="no_bus_arriving">Nessun bus in arrivo</string>
     <string name="RTI">RTI: </string>
-    <string name="real_time_by_roma_mobilità"> by roma.mobilità.it &lt;&lt;tocca per ricaricare!&gt;&gt;</string>
+    <string name="real_time_by_roma_mobilità">\u00A0 by roma.mobilità.it &lt;&lt;tocca per ricaricare!&gt;&gt;</string>
     <string name="departure_scheduled">Partenza da Capolinea: </string>
     <string name="now_is_open">Aperto ora</string>
     <string name="now_is_close">Chiuso ora</string>
@@ -44,7 +44,7 @@
     <string name="details_button_message_more">PIU\'</string>
     <string name="details_button_message_less">MENO</string>
     <string name="category">categorie</string>
-    <string name="trip_details">Dettagli percorso:</string>
+    <string name="trip_details">\u00A0Dettagli percorso:</string>
 
 
     <string-array name="categories_name">

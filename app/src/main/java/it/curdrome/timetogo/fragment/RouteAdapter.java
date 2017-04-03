@@ -62,8 +62,7 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         convertView = inflater.inflate(R.layout.route_row, null);
 
-        setLessDetails(convertView, position);
-        setMoreDetails(convertView, position);
+        setDetails(convertView, position);
 
         return convertView;
     }
@@ -74,66 +73,16 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
      * @param convertView
      * @param position
      */
-    private void setMoreDetails(View convertView, final int position){
+    private void setDetails(View convertView, final int position){
 
 
         final Route route = getItem(position);
         DateFormat df = new SimpleDateFormat("HH:mm", Locale.ITALY);
-
-        TextView departureArrivalMore = (TextView) convertView.findViewById(R.id.departure_arrival_more);
-        TextView durationMore = (TextView) convertView.findViewById(R.id.duration_more);
-        TextView distanceMore = (TextView) convertView.findViewById(R.id.distance_more);
-
-        ListView transitsList = (ListView) convertView.findViewById(R.id.transits_list);
-        final TransitAdapter adapter = new TransitAdapter(activity.getBaseContext(), R.layout.transit_row, route.getListTransit(), activity);
-        transitsList.setAdapter(adapter);
-        Utility.setListViewHeightBasedOnChildren(transitsList);
-
-        final Handler handler = new Handler();
-        handler.postDelayed( new Runnable() {
-
-            @Override
-            public void run() {
-                adapter.notifyDataSetChanged();
-                handler.postDelayed( this, 1000 );
-            }
-        }, 1000 );
-
         String time= df.format(Calendar.getInstance().getTime());
 
-        if (route.getDepartureTime()!=null) {
-            departureArrivalMore.append(" "+ route.getDepartureTime());
-        }else {
-            departureArrivalMore.append(" "+time.substring(0,5));
-        }
-
-        if (route.getArrivalTime()!=null) {
-            departureArrivalMore.append(" - "+ route.getArrivalTime());
-        }else{
-            departureArrivalMore.append(" - "+setArrivalTime(time, route));
-        }
-
-        distanceMore.append(" " + route.getDistance());
-        durationMore.append(" " + route.getDuration());
-    }
-
-
-    /**
-     * Sets the less details view
-     * @param convertView
-     * @param position
-     */
-    private void setLessDetails(View convertView, int position){
-
-        TextView departureArrivalLess = (TextView) convertView.findViewById(R.id.departure_arrival_less);
-        TextView distanceLess = (TextView) convertView.findViewById(R.id.distance_less);
-        LinearLayout transitImagesLess = (LinearLayout) convertView.findViewById(R.id.transit_images_less);
-
-
-        final Route route = getItem(position);
-
-        DateFormat df = new SimpleDateFormat("HH:mm", Locale.ITALY);
-        String time= df.format(Calendar.getInstance().getTime());
+        TextView departureArrivalLess = (TextView) convertView.findViewById(R.id.departure_arrival);
+        TextView distanceLess = (TextView) convertView.findViewById(R.id.distance);
+        LinearLayout transitImagesLess = (LinearLayout) convertView.findViewById(R.id.transit_images);
 
         if (route.getDepartureTime()!=null) {
             departureArrivalLess.append(" "+ route.getDepartureTime());
@@ -216,8 +165,22 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
         tv.setText("\n");
         transitImagesLess.addView(tv);
 
-    }
+        ListView transitsList = (ListView) convertView.findViewById(R.id.transits_list);
+        final TransitAdapter adapter = new TransitAdapter(activity.getBaseContext(), R.layout.transit_row, route.getListTransit(), activity);
+        transitsList.setAdapter(adapter);
+        Utility.setListViewHeightBasedOnChildren(transitsList);
 
+        final Handler handler = new Handler();
+        handler.postDelayed( new Runnable() {
+
+            @Override
+            public void run() {
+                adapter.notifyDataSetChanged();
+                handler.postDelayed( this, 1000 );
+            }
+        }, 1000 );
+
+    }
 
     /**
      * Function that calculates the arrival time in case must be calculated

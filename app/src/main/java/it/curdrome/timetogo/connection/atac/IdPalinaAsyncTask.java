@@ -137,6 +137,9 @@ public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
                                     if (transit.getHeadsign().equalsIgnoreCase(arrivi.getJSONObject(k).getString("capolinea"))) {
                                         transit.setIdPalina(arrivi.getJSONObject(k).getString("id_palina"));
                                     }
+                                    else if(arrivi.getJSONObject(k).getString("capolinea").contains(transit.getHeadsign())){
+                                        transit.setIdPalina(arrivi.getJSONObject(k).getString("id_palina"));
+                                    }
                                 }
                             }
                         }

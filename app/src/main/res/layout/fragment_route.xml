@@ -6,7 +6,7 @@
         android:id="@+id/routes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryLight"
+        android:background="@color/colorPrimary"
         android:orientation="vertical"
         android:padding="1dp" />
 </android.support.design.widget.CoordinatorLayout>

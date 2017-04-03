@@ -246,18 +246,11 @@ public class MainActivity extends AppCompatActivity implements
                 if(!detailsButtonClicked ) {
                     resizeMap(0);
                     detailsButton.setImageResource(android.R.drawable.arrow_down_float);
-                    LinearLayout lessLayout = (LinearLayout) findViewById(R.id.less_layout);
-                    lessLayout.setVisibility(View.GONE);
-                    LinearLayout moreLayout = (LinearLayout) findViewById(R.id.more_layout);
-                    moreLayout.setVisibility(View.VISIBLE);
                     detailsButtonClicked = true;
+
                 }else{
-                    resizeMap(85);
+                    resizeMap(82);
                     detailsButton.setImageResource(android.R.drawable.arrow_up_float);
-                    LinearLayout lessLayout = (LinearLayout) findViewById(R.id.less_layout);
-                    lessLayout.setVisibility(View.VISIBLE);
-                    LinearLayout moreLayout = (LinearLayout) findViewById(R.id.more_layout);
-                    moreLayout.setVisibility(View.GONE);
                     detailsButtonClicked = false;
                 }
             }
@@ -303,10 +296,21 @@ public class MainActivity extends AppCompatActivity implements
         mapView.setLayoutParams(p);
         mapView.requestLayout();
 
+        FloatingActionButton searchFab = (FloatingActionButton) findViewById(R.id.search_fab);
+        searchFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toolbar search =(Toolbar) findViewById(R.id.search);
+                if(search.isShown())
+                    search.setVisibility(View.GONE);
+                else
+                    search.setVisibility(View.VISIBLE);
+            }
+        });
+
         // creation of the place autocomplete on left of the toolbar and its listener
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-        autocompleteFragment.setHint(null);
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -668,7 +672,7 @@ public class MainActivity extends AppCompatActivity implements
                 // in a raw resource file.
                 boolean success = googleMap.setMapStyle(
                         MapStyleOptions.loadRawResourceStyle(
-                                this, R.raw.style_json));
+                                this, R.raw.night_style_json));
 
                 if (!success) {
                     Log.e(TAG, "Style parsing failed.");
@@ -676,6 +680,21 @@ public class MainActivity extends AppCompatActivity implements
             } catch (Resources.NotFoundException e) {
                 Log.e(TAG, "Can't find style. Error: ", e);
             }
+            else
+            try {
+                // Customise the styling of the base map using a JSON object defined
+                // in a raw resource file.
+                boolean success = googleMap.setMapStyle(
+                        MapStyleOptions.loadRawResourceStyle(
+                                this, R.raw.day_style_json));
+
+                if (!success) {
+                    Log.e(TAG, "Style parsing failed.");
+                }
+            } catch (Resources.NotFoundException e) {
+                Log.e(TAG, "Can't find style. Error: ", e);
+            }
+
 
         mMap = googleMap;
         setUpMap();
@@ -708,7 +727,7 @@ public class MainActivity extends AppCompatActivity implements
                     if(fTransaction.isEmpty()){
                         frameLayout.removeAllViews();
                         fTransaction.add(R.id.frame_main, fragment);
-                        resizeMap(85);
+                        resizeMap(82);
                         detailsButton.setVisibility(View.VISIBLE);
                         closeButton.setVisibility(View.GONE);
                     }
@@ -742,7 +761,7 @@ public class MainActivity extends AppCompatActivity implements
                     if(fTransaction.isEmpty()){
                         frameLayout.removeAllViews();
                         fTransaction.add(R.id.frame_main, fragment);
-                        resizeMap(85);
+                        resizeMap(80);
                         detailsButton.setVisibility(View.VISIBLE);
                         closeButton.setVisibility(View.GONE);
                     }
@@ -776,7 +795,6 @@ public class MainActivity extends AppCompatActivity implements
             if(sharedPref.getBoolean("geolocalization",true)){
                 //position permission has been granted
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
-                mMap.setMyLocationEnabled(true);
                 LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
                 setDestination();
             }
@@ -1066,7 +1084,7 @@ public class MainActivity extends AppCompatActivity implements
                         if(fTransaction.isEmpty()){
                             frameLayout.removeAllViews();
                             fTransaction.add(R.id.frame_main, fragment);
-                            resizeMap(85);
+                            resizeMap(80);
                             detailsButton.setVisibility(View.GONE);
                             closeButton.setVisibility(View.VISIBLE);
                         }
@@ -1149,12 +1167,8 @@ public class MainActivity extends AppCompatActivity implements
         snackbar.show();
 
         if(detailsButtonClicked){
-            resizeMap(85);
+            resizeMap(82);
             detailsButton.setImageResource(android.R.drawable.arrow_up_float);
-            LinearLayout lessLayout = (LinearLayout) findViewById(R.id.less_layout);
-            lessLayout.setVisibility(View.VISIBLE);
-            LinearLayout moreLayout = (LinearLayout) findViewById(R.id.more_layout);
-            moreLayout.setVisibility(View.GONE);
             detailsButtonClicked = false;
         }else {
             reset();
