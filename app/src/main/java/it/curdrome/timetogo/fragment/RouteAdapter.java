@@ -1,18 +1,17 @@
 package it.curdrome.timetogo.fragment;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.os.Build;
 import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -24,7 +23,6 @@ import java.util.Locale;
 import it.curdrome.timetogo.R;
 import it.curdrome.timetogo.activity.MainActivity;
 import it.curdrome.timetogo.model.Route;
-import it.curdrome.timetogo.model.Transit;
 
 /**
  * Created by adrian on 02/02/2017.
@@ -54,6 +52,7 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
      * @param parent the parent view
      * @return the converted view
      */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -73,6 +72,7 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
      * @param convertView
      * @param position
      */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void setDetails(View convertView, final int position){
 
 
@@ -80,92 +80,29 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
         DateFormat df = new SimpleDateFormat("HH:mm", Locale.ITALY);
         String time= df.format(Calendar.getInstance().getTime());
 
-        TextView departureArrivalLess = (TextView) convertView.findViewById(R.id.departure_arrival);
-        TextView distanceLess = (TextView) convertView.findViewById(R.id.distance);
-        LinearLayout transitImagesLess = (LinearLayout) convertView.findViewById(R.id.transit_images);
+        TextView departureArrival = (TextView) convertView.findViewById(R.id.departure_arrival);
+        TextView distance = (TextView) convertView.findViewById(R.id.distance);
+        TextView duration = (TextView) convertView.findViewById(R.id.duration);
 
         if (route.getDepartureTime()!=null) {
-            departureArrivalLess.append(" "+ route.getDepartureTime());
+            departureArrival.append(" "+ route.getDepartureTime());
         }else {
-            departureArrivalLess.append(" "+time.substring(0,5));
+            departureArrival.append(" "+time.substring(0,5));
         }
 
         if (route.getArrivalTime()!=null) {
-            departureArrivalLess.append(" - "+ route.getArrivalTime());
+            departureArrival.append(" - "+ route.getArrivalTime());
         }else{
-            departureArrivalLess.append(" - "+setArrivalTime(time, route));
+            departureArrival.append(" - "+setArrivalTime(time, route));
         }
-        distanceLess.append(" " + route.getDistance());
+        distance.append(" " + route.getDistance());
+        duration.append(" " + route.getDuration());
 
-        for(Transit transit: route.getListTransit()){
-            switch(transit.getType()){
-                case "BUS":
-                    ImageView bus = new ImageView(activity);
-                    bus.setImageResource(R.drawable.ic_directions_bus);
-                    transitImagesLess.addView(bus);
-                    ImageView chevron1 = new ImageView(activity);
-                    chevron1.setImageResource(R.drawable.ic_chevron_right);
-                    transitImagesLess.addView(chevron1);
-                    break;
-                case "SUBWAY":
-                    ImageView subway = new ImageView(activity);
-                    subway.setImageResource(R.drawable.ic_subway);
+        ImageView logoRT = (ImageView) convertView.findViewById(R.id.logo_rt);
+        logoRT.setImageResource(R.drawable.bus_rt);
+        logoRT.setColorFilter(activity.getColor(R.color.colorAccent));
 
-                    switch(transit.getLine()){
-                        case "MEA":
-                            subway.setColorFilter(Color.RED);
-                            break;
-                        case "MEB1":
-                            subway.setColorFilter(Color.BLUE);
-                            break;
-                        case "MEB2":
-                            subway.setColorFilter(Color.BLUE);
-                            break;
-                        case "MEB":
-                            subway.setColorFilter(Color.BLUE);
-                            break;
-                        case "MEC":
-                            subway.setColorFilter(Color.GREEN);
-                            break;
-                        default:
-                            break;
-
-                    }
-                    transitImagesLess.addView(subway);
-                    ImageView chevron2 = new ImageView(activity);
-                    chevron2.setImageResource(R.drawable.ic_chevron_right);
-                    transitImagesLess.addView(chevron2);
-                    break;
-                case "TRAM":
-                    ImageView tram = new ImageView(activity);
-                    tram.setImageResource(R.drawable.ic_tram);
-                    transitImagesLess.addView(tram);
-                    ImageView chevron3 = new ImageView(activity);
-                    chevron3.setImageResource(R.drawable.ic_chevron_right);
-                    transitImagesLess.addView(chevron3);
-                    break;
-                case "HEAVY_RAIL":
-                    ImageView heavyRail = new ImageView(activity);
-                    heavyRail.setImageResource(R.drawable.ic_directions_railway);
-                    transitImagesLess.addView(heavyRail);
-                    ImageView chevron4 = new ImageView(activity);
-                    chevron4.setImageResource(R.drawable.ic_chevron_right);
-                    transitImagesLess.addView(chevron4);
-                    break;
-                default:
-                    Toast.makeText(activity,"type fail",Toast.LENGTH_SHORT).show();
-                    break;
-            }
-        }
-
-        ImageView iv5 = new ImageView(activity);
-        iv5.setImageResource(R.drawable.ic_check_box);
-        transitImagesLess.addView(iv5);
-        TextView tv = new TextView(activity);
-        tv.setText("\n");
-        transitImagesLess.addView(tv);
-
-        ListView transitsList = (ListView) convertView.findViewById(R.id.transits_list);
+        final ListView transitsList = (ListView) convertView.findViewById(R.id.transits_list);
         final TransitAdapter adapter = new TransitAdapter(activity.getBaseContext(), R.layout.transit_row, route.getListTransit(), activity);
         transitsList.setAdapter(adapter);
         Utility.setListViewHeightBasedOnChildren(transitsList);

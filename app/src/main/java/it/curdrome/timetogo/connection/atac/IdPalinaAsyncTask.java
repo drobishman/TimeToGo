@@ -72,7 +72,6 @@ public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
             // token request
             XMLRPCClient authClient = new XMLRPCClient(new URL(stringUrlAuth));
             String token = (String) authClient.call("autenticazione.Accedi", key, "");
-            Log.i("token for ATAC: ", token);
 
             //get palina using the name of the bus stop or part of it
             XMLRPCClient getPalina = new XMLRPCClient(new URL(stringUrlPalina));
@@ -116,6 +115,8 @@ public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
                         }
                     }
                 }
+
+
                 for (int i = 0; i < paline.size(); i++){
                     XMLRPCClient getPrevisioni = new XMLRPCClient(new URL(stringUrlPalina));
                     HashMap palinePrevisioni = (HashMap) getPrevisioni.call("paline.Previsioni",token,paline.get(i),"ITA");
@@ -129,16 +130,13 @@ public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
                         JSONObject primo_per_palina = primi_per_palina.getJSONObject(j);
                         JSONArray arrivi = primo_per_palina.getJSONArray("arrivi");
                         for (int k = 0; k < arrivi.length(); k++) {
-                            Log.d("Id pallina check", transit.getLine()+" = " + arrivi.getJSONObject(k).getString("linea"));
                             if (transit.getLine().matches(arrivi.getJSONObject(k).getString("linea"))){
-                                Log.d("Id pallina check","has capolinea: "+arrivi.getJSONObject(k).has("capolinea"));
                                 if (arrivi.getJSONObject(k).has("capolinea")) {
-                                    Log.d("Id pallina check", transit.getHeadsign()+" = "+arrivi.getJSONObject(k).getString("capolinea"));
                                     if (transit.getHeadsign().equalsIgnoreCase(arrivi.getJSONObject(k).getString("capolinea"))) {
-                                        transit.setIdPalina(arrivi.getJSONObject(k).getString("id_palina"));
+                                        return arrivi.getJSONObject(k).getString("id_palina");
                                     }
                                     else if(arrivi.getJSONObject(k).getString("capolinea").contains(transit.getHeadsign())){
-                                        transit.setIdPalina(arrivi.getJSONObject(k).getString("id_palina"));
+                                        return arrivi.getJSONObject(k).getString("id_palina");
                                     }
                                 }
                             }
@@ -156,12 +154,15 @@ public class IdPalinaAsyncTask extends AsyncTask<String, String, String> {
         }
 
 
-        return transit.toString();
+        return null;
     }
 
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        Log.d("idPalia", s);
+
+        transit.setIdPalina(s);
+
+        Log.d("idPalina", transit.getDepartureStop()+" - "+transit.getIdPalina());
     }
 }

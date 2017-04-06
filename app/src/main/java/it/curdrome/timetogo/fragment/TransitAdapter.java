@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ import java.util.List;
 import it.curdrome.timetogo.R;
 import it.curdrome.timetogo.activity.MainActivity;
 import it.curdrome.timetogo.connection.atac.RTIAsyncTask;
+import it.curdrome.timetogo.connection.viaggiatreno.AndamentoTrenoAsyncTask;
 import it.curdrome.timetogo.model.Transit;
 
 class TransitAdapter extends ArrayAdapter<Transit> implements Serializable {
@@ -61,7 +63,7 @@ class TransitAdapter extends ArrayAdapter<Transit> implements Serializable {
         TextView headsign = (TextView) convertView.findViewById(R.id.headsign);
         TextView departureStop = (TextView) convertView.findViewById(R.id.departure_stop);
         TextView departureTime = (TextView) convertView.findViewById(R.id. departure_time);
-        ImageView imageDivider = (ImageView) convertView.findViewById(R.id.image_divider);
+        ImageButton refreshButton = (ImageButton) convertView.findViewById(R.id.refresh_button);
 
 
         final Transit transit = getItem(position);
@@ -134,34 +136,51 @@ class TransitAdapter extends ArrayAdapter<Transit> implements Serializable {
         }
 
         headsign.append(" "+transit.getHeadsign());
+        if(transit.getHeadsign().length()>25){
+            headsign.setTextSize(12);
+        }
 
         departureStop.append(" "+transit.getDepartureStop());
+        if(transit.getDepartureStop().length()>25){
+            headsign.setTextSize(12);
+        }
+
         if(transit.getIdPalina() != null){
             departureTime.setText(" "+transit.getDepartureTime());
             departureTime.setTextColor(activity.getColor(R.color.colorAccent));
-            LinearLayout rtiLogo = (LinearLayout) convertView.findViewById(R.id.rti_logo);
-            TextView rtiText = new TextView(activity);
-            rtiText.setText(activity.getText(R.string.real_time_by_roma_mobilità)+"  ");
-            rtiText.setTextColor(activity.getColor(R.color.colorAccent));
-            rtiLogo.addView(rtiText);
-            ImageView rtiImage = new ImageView(activity);
-            rtiImage.setImageResource(R.drawable.bus_rt);
-            rtiImage.setColorFilter(activity.getColor(R.color.colorAccent));
-            rtiLogo.addView(rtiImage);
 
         }else {
             departureTime.setText(activity.getString(R.string.departure_scheduled) + " "+transit.getDepartureTime());
         }
+        if(transit.getCodLocOrig() != null && transit.getIdTrain()!= null) {
+            departureTime.append(" " + transit.getDelay() + activity.getString(R.string.delay) );
+            departureTime.setTextColor(activity.getColor(R.color.colorAccent));
+        }
 
-        imageDivider.setImageResource(R.drawable.down_arrows);
-        imageDivider.setColorFilter(activity.getColor(R.color.colorPrimary));
 
-        convertView.setOnClickListener(new View.OnClickListener() {
+        if((transit.getType().matches("HEAVY_RAIL") &&
+                (transit.getCodLocOrig() == null && transit.getIdTrain() == null))
+                || transit.getType().matches("SUBWAY")) {
+            refreshButton.setImageResource(R.drawable.ic_sync_disabled);
+            refreshButton.setColorFilter(activity.getColor(R.color.SecondaryText));
+            refreshButton.setEnabled(false);
+        } else {
+            refreshButton.setImageResource(R.drawable.ic_sync_enabled);
+            refreshButton.setColorFilter(activity.getColor(R.color.colorPrimaryDark));
+        }
+
+        refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(transit.getIdPalina()!=null) {
                     RTIAsyncTask rtiAsyncTask = new RTIAsyncTask(transit);
                     rtiAsyncTask.execute();
+                }else if (transit.getType().matches("BUS") ||  transit.getType().matches("TRAM")) {
+                    transit.refreshIDPalina();
+                }
+                if (transit.getIdTrain() != null && transit.getCodLocOrig() != null) {
+                    AndamentoTrenoAsyncTask andamentoTrenoAsyncTask = new AndamentoTrenoAsyncTask(transit);
+                    andamentoTrenoAsyncTask.execute();
                 }
             }
         });

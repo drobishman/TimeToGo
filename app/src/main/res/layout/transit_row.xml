@@ -14,12 +14,13 @@
         android:layout_width="220dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/line"
         android:textAllCaps="false"
         android:textColor="@color/SecondaryText"
         android:textSize="19sp"
         android:textStyle="bold"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/line" />
 
     <LinearLayout
         android:id="@+id/line"
@@ -64,28 +65,19 @@
         android:textSize="17sp"
         android:textAllCaps="false"
         android:layout_below="@+id/num_stops"
-        android:layout_alignStart="@+id/num_stops"
-        android:layout_alignEnd="@+id/num_stops" />
+        android:layout_alignParentEnd="true"
+       android:layout_marginBottom="10dp"
+        android:layout_toEndOf="@+id/refresh_button" />
 
-    <ImageView
-        android:id="@+id/image_divider"
+    <ImageButton
+        android:id="@+id/refresh_button"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_below="@+id/departure_stop"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:layout_alignStart="@+id/line"
         android:layout_toStartOf="@+id/departure_stop"
-        android:layout_alignBottom="@+id/rti_logo" />
-
-    <LinearLayout
-        android:id="@+id/rti_logo"
-        android:layout_width="20dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/departure_time"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/image_divider"
-        android:layout_marginBottom="10dp">
-        </LinearLayout>
+        android:layout_alignBottom="@+id/departure_time"
+        android:layout_below="@+id/line"/>
 
 </RelativeLayout>
 

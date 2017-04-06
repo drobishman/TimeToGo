@@ -5,8 +5,9 @@
     <ListView
         android:id="@+id/routes"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimaryDark"
         android:orientation="vertical"
-        android:padding="1dp" />
+        android:padding="1dp"
+        android:scrollbars="none"/>
 </android.support.design.widget.CoordinatorLayout>

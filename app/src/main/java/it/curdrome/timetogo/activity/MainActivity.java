@@ -5,10 +5,13 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -40,10 +43,16 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
@@ -77,6 +86,7 @@ import it.curdrome.timetogo.fab.FloatingActionMenu;
 import it.curdrome.timetogo.fragment.PlaceFragment;
 import it.curdrome.timetogo.fragment.PoiFragment;
 import it.curdrome.timetogo.fragment.RouteFragment;
+import it.curdrome.timetogo.fragment.RouteMiniFragment;
 import it.curdrome.timetogo.fragment.TransitFragment;
 import it.curdrome.timetogo.model.Poi;
 import it.curdrome.timetogo.model.Route;
@@ -105,7 +115,8 @@ public class MainActivity extends AppCompatActivity implements
         CategoriesResponse,
         DirectionResponse ,
         PoisByCategoryResponse,
-        PlacesResponse{
+        PlacesResponse ,
+        ActivityCompat.OnRequestPermissionsResultCallback{
 
     public static final String TAG = "MainActivity";
     private static final int MY_REQUEST_POSITION = 0;
@@ -157,6 +168,9 @@ public class MainActivity extends AppCompatActivity implements
     private it.curdrome.timetogo.fab.FloatingActionButton detailsButton;
     private it.curdrome.timetogo.fab.FloatingActionButton closeButton;
     private boolean detailsButtonClicked = false;
+    protected static final int REQUEST_CHECK_SETTINGS = 0x1;
+
+
 
     /**
      * This method check mobile is connected to network.
@@ -248,105 +262,129 @@ public class MainActivity extends AppCompatActivity implements
                     detailsButton.setImageResource(android.R.drawable.arrow_down_float);
                     detailsButtonClicked = true;
 
-                }else{
-                    resizeMap(82);
-                    detailsButton.setImageResource(android.R.drawable.arrow_up_float);
-                    detailsButtonClicked = false;
-                }
-            }
-        });
+                    FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
+                    RouteFragment fragment = new RouteFragment();
+                    if(fTransaction.isEmpty()){
+                        frameLayout.removeAllViews();
+                        fTransaction.add(R.id.frame_main, fragment);
+                    }
 
-        // creation of the floating menu and hide it to be ready when a route is generated
-        floatingActionMenu = (FloatingActionMenu) findViewById(R.id.floating_action_menu);
+                    else {
+                        frameLayout.removeAllViews();
+                        fTransaction.replace(R.id.frame_main, fragment);
+                    }
+                    fTransaction.commit();
+            }else{
+                resizeMap(82);
+                detailsButton.setImageResource(android.R.drawable.arrow_up_float);
+                detailsButtonClicked = false;
+                    FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
+                    RouteMiniFragment fragment = new RouteMiniFragment();
+                    if(fTransaction.isEmpty()){
+                        frameLayout.removeAllViews();
+                        fTransaction.add(R.id.frame_main, fragment);
+                    }
+
+                    else {
+                        frameLayout.removeAllViews();
+                        fTransaction.replace(R.id.frame_main, fragment);
+                    }
+                    fTransaction.commit();
+            }
+        }
+    });
+
+    // creation of the floating menu and hide it to be ready when a route is generated
+    floatingActionMenu = (FloatingActionMenu) findViewById(R.id.floating_action_menu);
         floatingActionMenu.hideMenuButton(false);
 
-        // creation of the buttons inside the menu
-        walkingButton = (it.curdrome.timetogo.fab.FloatingActionButton) findViewById(R.id.walking_button);
-        transitButton = (it.curdrome.timetogo.fab.FloatingActionButton) findViewById(R.id.transit_button);
+    // creation of the buttons inside the menu
+    walkingButton = (it.curdrome.timetogo.fab.FloatingActionButton) findViewById(R.id.walking_button);
+    transitButton = (it.curdrome.timetogo.fab.FloatingActionButton) findViewById(R.id.transit_button);
 
 
         if(isNetworkAvailable(this)) {
-            pDialog = new ProgressDialog(activity);
-            pDialog.setMessage(activity.getString(R.string.loading_wait));
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(false);
-            pDialog.show();
+        pDialog = new ProgressDialog(activity);
+        pDialog.setMessage(activity.getString(R.string.loading_wait));
+        pDialog.setIndeterminate(false);
+        pDialog.setCancelable(false);
+        pDialog.show();
 
 
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            CategoriesAsyncTask categoriesAsyncTask = new CategoriesAsyncTask(); //get categories
-            categoriesAsyncTask.response = this;
-            categoriesAsyncTask.execute();
-        }else noInternetMessage();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+        CategoriesAsyncTask categoriesAsyncTask = new CategoriesAsyncTask(); //get categories
+        categoriesAsyncTask.response = this;
+        categoriesAsyncTask.execute();
+    }else noInternetMessage();
 
-        // get categories statically
-        // categoryList = getResources().getStringArray(R.array.categories_name);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
+    // get categories statically
+    // categoryList = getResources().getStringArray(R.array.categories_name);
+    mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+    navigationView = (NavigationView) findViewById(R.id.nav_view);
 
-        mFragmentManager = getSupportFragmentManager();
-        mapFragment = (SupportMapFragment) mFragmentManager
-                .findFragmentById(R.id.map);
+    mFragmentManager = getSupportFragmentManager();
+    mapFragment = (SupportMapFragment) mFragmentManager
+            .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
 
-        View mapView = mapFragment.getView();
-        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,0);
-        p.weight = 100;
+    View mapView = mapFragment.getView();
+    LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,0);
+    p.weight = 100;
         mapView.setLayoutParams(p);
         mapView.requestLayout();
 
-        FloatingActionButton searchFab = (FloatingActionButton) findViewById(R.id.search_fab);
+    FloatingActionButton searchFab = (FloatingActionButton) findViewById(R.id.search_fab);
         searchFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toolbar search =(Toolbar) findViewById(R.id.search);
-                if(search.isShown())
-                    search.setVisibility(View.GONE);
-                else
-                    search.setVisibility(View.VISIBLE);
-            }
-        });
+        @Override
+        public void onClick(View view) {
+            Toolbar search =(Toolbar) findViewById(R.id.search);
+            if(search.isShown())
+                search.setVisibility(View.GONE);
+            else
+                search.setVisibility(View.VISIBLE);
+        }
+    });
 
-        // creation of the place autocomplete on left of the toolbar and its listener
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+    // creation of the place autocomplete on left of the toolbar and its listener
+    PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+            getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
+        @Override
+        public void onPlaceSelected(Place place) {
 
-                reset();
+            reset();
 
-                selectedPlace = place;
+            selectedPlace = place;
 
-                selectedPlaceMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName().toString()).icon(BitmapDescriptorFactory
-                        .defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), zoomLevel));
-                mDestination = place.getLatLng();
-                if(isNetworkAvailable(getApplicationContext())){
-                    getDirections();
-                }else
-                    noInternetMessage();
-                mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                    @Override
-                    public void onMapClick(LatLng latLng) {
-                        resizeMap(100);
-                        detailsButton.setVisibility(View.GONE);
-                    }
-                });
-            }
+            selectedPlaceMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName().toString()).icon(BitmapDescriptorFactory
+                    .defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), zoomLevel));
+            mDestination = place.getLatLng();
+            if(isNetworkAvailable(getApplicationContext())){
+                getDirections();
+            }else
+                noInternetMessage();
+            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLng) {
+                    resizeMap(100);
+                    detailsButton.setVisibility(View.GONE);
+                }
+            });
+        }
 
-            @Override
-            public void onError(Status status) {
-                Snackbar snackbar = Snackbar
-                        .make(activity.findViewById(R.id.main),getResources().getString(R.string.error_occured) + status, Snackbar.LENGTH_LONG);
+        @Override
+        public void onError(Status status) {
+            Snackbar snackbar = Snackbar
+                    .make(activity.findViewById(R.id.main),getResources().getString(R.string.error_occured) + status, Snackbar.LENGTH_LONG);
 
-                snackbar.show();
-                Log.i(TAG, "An error occurred: " + status);
-            }
-        });
+            snackbar.show();
+            Log.i(TAG, "An error occurred: " + status);
+        }
+    });
 
-    }
+}
 
     // Menu icons are inflated just as they were with actionbar
     @Override
@@ -680,7 +718,7 @@ public class MainActivity extends AppCompatActivity implements
             } catch (Resources.NotFoundException e) {
                 Log.e(TAG, "Can't find style. Error: ", e);
             }
-            else
+        else
             try {
                 // Customise the styling of the base map using a JSON object defined
                 // in a raw resource file.
@@ -723,7 +761,7 @@ public class MainActivity extends AppCompatActivity implements
                     selectedRoute = transitRoute;
 
                     FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
-                    RouteFragment fragment = new RouteFragment();
+                    RouteMiniFragment fragment = new RouteMiniFragment();
                     if(fTransaction.isEmpty()){
                         frameLayout.removeAllViews();
                         fTransaction.add(R.id.frame_main, fragment);
@@ -757,13 +795,13 @@ public class MainActivity extends AppCompatActivity implements
                     selectedRoute = walkingRoute;
 
                     FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
-                    RouteFragment fragment = new RouteFragment();
+                    RouteMiniFragment fragment = new RouteMiniFragment();
                     if(fTransaction.isEmpty()){
                         frameLayout.removeAllViews();
                         fTransaction.add(R.id.frame_main, fragment);
                         resizeMap(80);
-                        detailsButton.setVisibility(View.VISIBLE);
-                        closeButton.setVisibility(View.GONE);
+                        detailsButton.setVisibility(View.GONE);
+                        closeButton.setVisibility(View.VISIBLE);
                     }
 
                     else {
@@ -783,6 +821,45 @@ public class MainActivity extends AppCompatActivity implements
         mLocationRequest.setInterval(1000);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(mLocationRequest);
+
+        PendingResult<LocationSettingsResult> result =
+                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
+
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(LocationSettingsResult locationSettingsResult) {
+
+                final Status status = locationSettingsResult.getStatus();
+                final LocationSettingsStates LS_state = locationSettingsResult.getLocationSettingsStates();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        // All location settings are satisfied. The client can initialize location
+                        // requests here.
+
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        // Location settings are not satisfied. But could be fixed by showing the user
+                        // a dialog.
+                        try {
+                            // Show the dialog by calling startResolutionForResult(),
+                            // and check the result in onActivityResult().
+                            status.startResolutionForResult(MainActivity.this, REQUEST_CHECK_SETTINGS);
+
+                        } catch (IntentSender.SendIntentException e) {
+                            // Ignore the error.
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        // Location settings are not satisfied. However, we have no way to fix the
+                        // settings so we won't show the dialog.
+
+                        break;
+                }
+            }
+        });
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -1170,6 +1247,19 @@ public class MainActivity extends AppCompatActivity implements
             resizeMap(82);
             detailsButton.setImageResource(android.R.drawable.arrow_up_float);
             detailsButtonClicked = false;
+            FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
+            RouteMiniFragment fragment = new RouteMiniFragment();
+            if(fTransaction.isEmpty()){
+                frameLayout.removeAllViews();
+                fTransaction.add(R.id.frame_main, fragment);
+            }
+
+            else {
+                frameLayout.removeAllViews();
+                fTransaction.replace(R.id.frame_main, fragment);
+            }
+            fTransaction.commit();
+
         }else {
             reset();
         }
@@ -1233,6 +1323,47 @@ public class MainActivity extends AppCompatActivity implements
         if(mCircle!=null && mCircle.isVisible()) {
             mCircle.setVisible(false);
             mCircle.remove();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        final LocationSettingsStates states = LocationSettingsStates.fromIntent(data);
+        switch (requestCode) {
+            case REQUEST_CHECK_SETTINGS:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        // All required changes were successfully made
+
+                        this.recreate();
+
+                        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            //position permission has not been granted
+                            positionPermissionDenied();
+                            requestPositionPermission();
+                        }
+                        else {
+                            //position permission has been granted
+                            mMap.getUiSettings().setMyLocationButtonEnabled(true);
+                            mMap.setMyLocationEnabled(true);
+                            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+                            setDestination();
+                        }
+
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        // The user was asked to change settings, but chose not to
+                        positionPermissionDenied();
+                        Snackbar snackbar = Snackbar
+                                .make(activity.findViewById(R.id.main),getResources().getString(R.string.chose_origin), Snackbar.LENGTH_LONG);
+
+                        snackbar.show();
+
+                        break;
+                    default:
+                        break;
+                }
+                break;
         }
     }
 

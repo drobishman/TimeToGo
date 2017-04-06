@@ -8,5 +8,5 @@ import it.curdrome.timetogo.model.Transit;
 
 public interface IdPalinaResponse {
 
-    void TaskResult(Transit transit);
+    void TaskResultIdPalina(Transit transit);
 }

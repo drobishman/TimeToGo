@@ -53,48 +53,48 @@ public class RTIAsyncTask extends AsyncTask<String, String, String> {
         String key = "8T3U52HFT48N5GRnvImL4hF0rRChrKg9";
         String query = transit.getIdPalina();
 
-        Log.d("RTI nome palina", transit.getDepartureStop());
-        Log.d("RTI id palina", transit.getIdPalina());
-
         try {
             // token request
             XMLRPCClient authClient = new XMLRPCClient(new URL(stringUrlAuth));
             String token = (String) authClient.call("autenticazione.Accedi", key, "");
-            Log.i("token for ATAC: ", token);
 
             //get palina using the name of the bus stop or part of it
             XMLRPCClient getPalina = new XMLRPCClient(new URL(stringUrlPalina));
             HashMap result = (HashMap) getPalina.call("paline.Previsioni", token, query, Locale.getDefault().getDisplayLanguage());
             JSONObject jsonResult = new JSONObject(result);
-            JSONObject risposta = jsonResult.getJSONObject("risposta");
 
-            Log.d("RTIAsyncTask", risposta.toString());
 
-            JSONArray primiPerPalina = risposta.getJSONArray("primi_per_palina");
-            for(int i=0; i<primiPerPalina.length();i++) {
-                JSONObject palina = primiPerPalina.getJSONObject(i);
-                JSONArray arrivi = palina.getJSONArray("arrivi");
-                for(int j=0;j<arrivi.length();j++){
-                    Log.d("RTI", transit.getLine() +" = "+arrivi.getJSONObject(j).getString("linea"));
-                    if(transit.getLine().matches(arrivi.getJSONObject(j).getString("linea")) && arrivi.getJSONObject(j).has("annuncio")){
-                        transit.setDepartureTime(arrivi.getJSONObject(j).getString("annuncio"));
-                    }
-                }
-            }
+
+            return jsonResult.toString();
 
         } catch (XMLRPCException e) {
             e.printStackTrace();
         } catch (MalformedURLException e) {
             e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
-        return transit.getDepartureTime() + transit.getIdPalina() + transit.getLine();
+        return null;
     }
 
     @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
-        Log.d("RTI", s);
+    protected void onPostExecute(String result) {
+        super.onPostExecute(result);
+        try {
+            JSONObject jo = new JSONObject(result);
+            JSONObject risposta = jo.getJSONObject("risposta");
+            JSONArray primiPerPalina = risposta.getJSONArray("primi_per_palina");
+            for (int i = 0; i < primiPerPalina.length(); i++) {
+                JSONObject palina = primiPerPalina.getJSONObject(i);
+                JSONArray arrivi = palina.getJSONArray("arrivi");
+                for (int j = 0; j < arrivi.length(); j++) {
+                    if (transit.getLine().matches(arrivi.getJSONObject(j).getString("linea")) && arrivi.getJSONObject(j).has("annuncio")) {
+                        transit.setDepartureTime(arrivi.getJSONObject(j).getString("annuncio"));
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("RTI Atac", transit.getLine() +" - "+ transit.getDepartureTime());
     }
 }

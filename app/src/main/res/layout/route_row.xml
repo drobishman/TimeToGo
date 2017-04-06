@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/colorPrimaryDark">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/details"
         android:orientation="vertical"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
+        android:layout_marginRight="10dp"
+        android:scrollbars="none">
         <TextView
             android:id="@+id/departure_arrival"
             android:layout_width="match_parent"
@@ -30,20 +34,24 @@
             android:textAllCaps="false"
             android:textStyle="bold"/>
 
-        <LinearLayout
-            android:id="@+id/transit_images"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/duration"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="horizontal" />
+            android:text="@string/duration"
+            android:textAlignment="center"
+            android:textSize="21sp"
+            android:textAllCaps="false"
+            android:textStyle="bold"/>
 
         <LinearLayout
+            android:id="@+id/trip_details_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:background="@color/colorPrimary"
             android:layout_marginBottom="10dp"
-            android:layout_marginTop="40dp">
+            android:layout_marginTop="10dp">
 
             <TextView
                 android:id="@+id/transits_details"
@@ -55,15 +63,35 @@
 
             <ListView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:id="@+id/transits_list"
                 android:orientation="vertical"
                 android:divider="@color/colorPrimary"
                 android:dividerHeight="10dp"
                 android:background="@color/colorPrimary"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp" />
+                android:layout_marginRight="10dp"
+                android:scrollbars="none" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/real_time_by_roma_mobilità"
+                    android:textSize="21sp"
+                    android:textColor="@color/colorAccent" />
+
+                <ImageView
+                    android:id="@+id/logo_rt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
-    <!-- android:dividerHeight="5dp" -->

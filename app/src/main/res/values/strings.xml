@@ -31,15 +31,15 @@
     <string name="duration">Duration: </string>
     <string name="stops">\u00A0Stops: </string>
     <string name="stop_name">Stop name: </string>
-    <string name="headsign">\u00A0Headsign: </string>
+    <string name="headsign">\u00A0 -&gt; </string>
     <string name="line">Line: </string>
     <string name="id_palina">Id palina: </string>
     <string name="no_personal_poi_found">No personal POI found!</string>
     <string name="no_Google_POI_found">There is no Google POI around you!</string>
     <string name="no_bus_arriving">No bus arriving</string>
     <string name="RTI">RTI: </string>
-    <string name="real_time_by_roma_mobilità">\u00A0by roma.mobilità.it &lt;&lt;tap to refresh!&gt;&gt;</string>
-    <string name="departure_scheduled">\u00A0Departure scheduled: </string>
+    <string name="real_time_by_roma_mobilità">\u00A0by roma.mobilità.it \u00A0</string>
+    <string name="departure_scheduled">\u00A0Departure</string>
     <string name="now_is_open">Now is open</string>
     <string name="now_is_close">Now is close</string>
     <string name="open_hours_not_available">Open hours not available</string>
@@ -51,6 +51,8 @@
     <string name="details_button_message_less">LESS</string>
     <string name="category">categories</string>
     <string name="trip_details">\u00A0Trip details:</string>
+    <string name="chose_origin">Please chose your origin to set!</string>
+    <string name="delay">\' delay</string>
 
 
     <string-array name="categories_name">
@@ -59,5 +61,7 @@
         <item>none</item>
         <item>none</item>
     </string-array>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
