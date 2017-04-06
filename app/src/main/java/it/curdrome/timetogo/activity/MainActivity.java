@@ -41,6 +41,10 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -170,6 +174,8 @@ public class MainActivity extends AppCompatActivity implements
     private boolean detailsButtonClicked = false;
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
 
+    private AdView mAdView;
+
 
 
     /**
@@ -230,6 +236,31 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        MobileAds.initialize(this, "ca-app-pub-4009677260795454/7691723127");
+
+        // Gets the ad view defined in layout/ad_fragment.xml with ad unit ID set in
+        // values/strings.xml.
+        mAdView = (AdView) findViewById(R.id.ad_view);
+
+        // Create an ad request. Check your logcat output for the hashed device ID to
+        // get test ads on a physical device. e.g.
+        // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
+        AdRequest adRequest = new AdRequest.Builder().build();
+
+        // Start loading the ad in the background.
+        mAdView.loadAd(adRequest);
+
+        // when ad loaded set the view visible
+        mAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+
+                mAdView.setVisibility(View.VISIBLE);
+            }
+        });
+
+
         // getting preferences
         sharedPref = this.getPreferences(Context.MODE_PRIVATE);// preferences
 
@@ -275,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements
                     }
                     fTransaction.commit();
             }else{
-                resizeMap(82);
+                resizeMap(80);
                 detailsButton.setImageResource(android.R.drawable.arrow_up_float);
                 detailsButtonClicked = false;
                     FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
@@ -765,7 +796,7 @@ public class MainActivity extends AppCompatActivity implements
                     if(fTransaction.isEmpty()){
                         frameLayout.removeAllViews();
                         fTransaction.add(R.id.frame_main, fragment);
-                        resizeMap(82);
+                        resizeMap(80);
                         detailsButton.setVisibility(View.VISIBLE);
                         closeButton.setVisibility(View.GONE);
                     }
@@ -1208,7 +1239,7 @@ public class MainActivity extends AppCompatActivity implements
                             if(fTransaction.isEmpty()){
                                 frameLayout.removeAllViews();
                                 fTransaction.add(R.id.frame_main, fragment);
-                                resizeMap(75);
+                                resizeMap(80);
                                 detailsButton.setVisibility(View.GONE);
                                 closeButton.setVisibility(View.VISIBLE);
 
@@ -1244,7 +1275,7 @@ public class MainActivity extends AppCompatActivity implements
         snackbar.show();
 
         if(detailsButtonClicked){
-            resizeMap(82);
+            resizeMap(80);
             detailsButton.setImageResource(android.R.drawable.arrow_up_float);
             detailsButtonClicked = false;
             FragmentTransaction fTransaction = mFragmentManager.beginTransaction();

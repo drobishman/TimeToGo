@@ -47,6 +47,7 @@
     <string name="trip_details">\u00A0Dettagli percorso:</string>
     <string name="chose_origin">Seleziona il punto d\'origine!</string>
     <string name="delay">\' ritardo</string>
+    <string name="banner_ad_unit_id">ca-app-pub-4009677260795454/7691723127</string>
 
 
     <string-array name="categories_name">

@@ -1,160 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="it.curdrome.timetogo.activity.MainActivity"
-    tools:showIn="@layout/app_bar_main">
+    tools:showIn="@layout/app_bar_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorPrimaryLight"
+    android:id="@+id/main">
 
-    <LinearLayout
-        android:id="@+id/main"
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:weightSum="100"
-        tools:context="it.curdrome.timetogo.activity.MainActivity">
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ad_view"
+        android:layout_alignParentTop="true">
 
-
-        <fragment
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_gravity="top"
-            android:layout_weight="85"
-            tools:layout="@layout/place_autocomplete_fragment">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="100"
+            tools:context="it.curdrome.timetogo.activity.MainActivity">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/search"
+
+            <fragment
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorPrimaryLight"
-                android:visibility="gone">
+                android:layout_height="0dp"
+                android:layout_gravity="top"
+                android:layout_weight="85"
+                tools:layout="@layout/place_autocomplete_fragment">
 
-                <fragment
-                    android:id="@+id/place_autocomplete_fragment"
-                    android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </android.support.v7.widget.Toolbar>
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimaryLight"
+                    android:visibility="gone">
+
+                    <fragment
+                        android:id="@+id/place_autocomplete_fragment"
+                        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </android.support.v7.widget.Toolbar>
+
+                <it.curdrome.timetogo.fab.FloatingActionButton
+                    android:id="@+id/search_fab"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:clickable="true"
+                    android:src="@drawable/places_ic_search"
+                    app:fab_colorNormal="@color/colorAccent"
+                    app:fab_colorPressed="@color/colorAccent"
+                    app:fab_size="mini" />
+
+                <it.curdrome.timetogo.fab.FloatingActionMenu
+                    android:id="@+id/origin_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:visibility="invisible"
+                    app:menu_colorNormal="@color/colorAccent"
+                    app:menu_colorPressed="@color/colorAccent"
+                    app:menu_fab_label="@string/origin_button_message"
+                    app:menu_icon="@android:drawable/ic_menu_mylocation"
+                    app:menu_labels_ellipsize="end"
+                    app:menu_labels_position="right"
+                    app:menu_labels_singleLine="true" />
+
+
+                <it.curdrome.timetogo.fab.FloatingActionMenu
+                    android:id="@+id/floating_action_menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:paddingBottom="35dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:visibility="invisible"
+                    app:menu_colorNormal="@color/colorAccent"
+                    app:menu_colorPressed="@color/colorAccent"
+                    app:menu_icon="@android:drawable/ic_dialog_map"
+                    app:menu_labels_ellipsize="end"
+                    app:menu_labels_position="left"
+                    app:menu_labels_singleLine="true">
+
+                    <it.curdrome.timetogo.fab.FloatingActionButton
+                        android:id="@+id/walking_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/walk"
+                        android:visibility="gone"
+                        app:fab_colorNormal="@color/colorAccent"
+                        app:fab_colorPressed="@color/colorAccent"
+                        app:fab_label="@string/walking_button_message"
+                        app:fab_size="mini" />
+
+                    <it.curdrome.timetogo.fab.FloatingActionButton
+                        android:id="@+id/transit_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/bus"
+                        android:visibility="gone"
+                        app:fab_colorNormal="@color/colorAccent"
+                        app:fab_colorPressed="@color/colorAccent"
+                        app:fab_label="@string/transit_button_message"
+                        app:fab_size="mini" />
+
+                </it.curdrome.timetogo.fab.FloatingActionMenu>
+
+            </fragment>
+
+
+            <FrameLayout
+                android:id="@+id/frame_main"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:gravity="bottom"
+                android:layout_weight="100"
+                android:animateLayoutChanges="true"
+                android:background="@color/colorPrimaryLight" >
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_anchor="@+id/frame_main"
+            app:layout_anchorGravity="top|right|end">
 
             <it.curdrome.timetogo.fab.FloatingActionButton
-                android:id="@+id/search_fab"
-                android:layout_width="match_parent"
+                android:id="@+id/details_fab"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                android:layout_marginLeft="10dp"
+                android:src="@android:drawable/arrow_up_float"
+                android:visibility="gone"
                 app:fab_colorNormal="@color/colorAccent"
                 app:fab_colorPressed="@color/colorAccent"
-                app:fab_size="mini"
-                android:src="@drawable/places_ic_search" />
+                android:layout_marginRight="10dp" />
 
-            <it.curdrome.timetogo.fab.FloatingActionMenu
-                android:id="@+id/origin_button"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:paddingBottom="10dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:visibility="invisible"
-                app:menu_colorNormal="@color/colorAccent"
-                app:menu_colorPressed="@color/colorAccent"
-                app:menu_fab_label="@string/origin_button_message"
-                app:menu_icon="@android:drawable/ic_menu_mylocation"
-                app:menu_labels_ellipsize="end"
-                app:menu_labels_position="right"
-                app:menu_labels_singleLine="true" />
+            <it.curdrome.timetogo.fab.FloatingActionButton
+                android:id="@+id/close_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:src="@drawable/ic_close"
+                android:visibility="gone"
+                app:fab_colorNormal="@color/colorAccent"
+                app:fab_colorPressed="@color/colorAccent"
+                android:layout_marginRight="10dp" />
 
+        </LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
 
-            <it.curdrome.timetogo.fab.FloatingActionMenu
-                android:id="@+id/floating_action_menu"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:paddingBottom="35dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:visibility="invisible"
-                app:menu_colorNormal="@color/colorAccent"
-                app:menu_colorPressed="@color/colorAccent"
-                app:menu_icon="@android:drawable/ic_dialog_map"
-                app:menu_labels_ellipsize="end"
-                app:menu_labels_position="left"
-                app:menu_labels_singleLine="true">
-
-                <it.curdrome.timetogo.fab.FloatingActionButton
-                    android:id="@+id/walking_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/walk"
-                    android:visibility="gone"
-                    app:fab_colorNormal="@color/colorAccent"
-                    app:fab_colorPressed="@color/colorAccent"
-                    app:fab_label="@string/walking_button_message"
-                    app:fab_size="mini" />
-
-                <it.curdrome.timetogo.fab.FloatingActionButton
-                    android:id="@+id/transit_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/bus"
-                    android:visibility="gone"
-                    app:fab_colorNormal="@color/colorAccent"
-                    app:fab_colorPressed="@color/colorAccent"
-                    app:fab_label="@string/transit_button_message"
-                    app:fab_size="mini" />
-
-            </it.curdrome.timetogo.fab.FloatingActionMenu>
-
-        </fragment>
-
-
-        <FrameLayout
-            android:id="@+id/frame_main"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:gravity="bottom"
-            android:layout_weight="100"
-            android:animateLayoutChanges="true"
-            android:background="@color/colorPrimaryLight" >
-
-        </FrameLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/ad_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_anchor="@+id/frame_main"
-        app:layout_anchorGravity="top|right|end">
-
-        <it.curdrome.timetogo.fab.FloatingActionButton
-            android:id="@+id/details_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:src="@android:drawable/arrow_up_float"
-            android:visibility="gone"
-            app:fab_colorNormal="@color/colorAccent"
-            app:fab_colorPressed="@color/colorAccent"
-            android:layout_marginRight="10dp" />
-
-        <it.curdrome.timetogo.fab.FloatingActionButton
-            android:id="@+id/close_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:src="@drawable/ic_close"
-            android:visibility="gone"
-            app:fab_colorNormal="@color/colorAccent"
-            app:fab_colorPressed="@color/colorAccent"
-            android:layout_marginRight="10dp" />
-
-    </LinearLayout>
-</android.support.design.widget.CoordinatorLayout>
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id" />
+</RelativeLayout>

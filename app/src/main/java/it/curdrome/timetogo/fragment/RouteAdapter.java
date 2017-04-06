@@ -98,9 +98,10 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
         distance.append(" " + route.getDistance());
         duration.append(" " + route.getDuration());
 
-        ImageView logoRT = (ImageView) convertView.findViewById(R.id.logo_rt);
-        logoRT.setImageResource(R.drawable.bus_rt);
-        logoRT.setColorFilter(activity.getColor(R.color.colorAccent));
+        ImageView logoRomaMobilita = (ImageView) convertView.findViewById(R.id.logo_rm);
+        logoRomaMobilita.setImageResource(R.drawable.logo_mobilita_roma);
+        ImageView logoViaggiaTreno = (ImageView) convertView.findViewById(R.id.logo_vt);
+        logoViaggiaTreno.setImageResource(R.drawable.logo_vt);
 
         final ListView transitsList = (ListView) convertView.findViewById(R.id.transits_list);
         final TransitAdapter adapter = new TransitAdapter(activity.getBaseContext(), R.layout.transit_row, route.getListTransit(), activity);
