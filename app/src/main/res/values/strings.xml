@@ -38,7 +38,7 @@
     <string name="no_Google_POI_found">There is no Google POI around you!</string>
     <string name="no_bus_arriving">No bus arriving</string>
     <string name="RTI">RTI: </string>
-    <string name="real_time_by_roma_mobilità">\u00A0by roma.mobilità.it \u00A0</string>
+    <string name="services_rti">services offered by \u00A0</string>
     <string name="departure_scheduled">\u00A0Departure</string>
     <string name="now_is_open">Now is open</string>
     <string name="now_is_close">Now is close</string>

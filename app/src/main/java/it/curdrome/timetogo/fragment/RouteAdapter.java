@@ -1,9 +1,7 @@
 package it.curdrome.timetogo.fragment;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Handler;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,7 +50,6 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
      * @param parent the parent view
      * @return the converted view
      */
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -72,7 +69,6 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
      * @param convertView
      * @param position
      */
-    @RequiresApi(api = Build.VERSION_CODES.M)
     private void setDetails(View convertView, final int position){
 
 
@@ -85,9 +81,9 @@ public class RouteAdapter extends ArrayAdapter<Route> implements Serializable {
         TextView duration = (TextView) convertView.findViewById(R.id.duration);
 
         if (route.getDepartureTime()!=null) {
-            departureArrival.append(" "+ route.getDepartureTime());
+            departureArrival.append(route.getDepartureTime());
         }else {
-            departureArrival.append(" "+time.substring(0,5));
+            departureArrival.append(time.substring(0,5));
         }
 
         if (route.getArrivalTime()!=null) {

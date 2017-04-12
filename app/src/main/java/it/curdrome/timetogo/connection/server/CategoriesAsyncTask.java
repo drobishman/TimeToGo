@@ -71,17 +71,22 @@ public class CategoriesAsyncTask extends AsyncTask<String, String, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        try {
-            JSONArray ja = new JSONArray(result);
-            stringArray = new String[ja.length()];
 
-            for (int i=0; i<ja.length();i++) {
-                stringArray[i]=ja.getJSONObject(i).getString("name");
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if(result == null){
+          response.taskResult(null);
         }
+        else
+            try {
+                JSONArray ja = new JSONArray(result);
+                stringArray = new String[ja.length()];
+
+                for (int i=0; i<ja.length();i++) {
+                    stringArray[i]=ja.getJSONObject(i).getString("name");
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
         response.taskResult(stringArray);
     }

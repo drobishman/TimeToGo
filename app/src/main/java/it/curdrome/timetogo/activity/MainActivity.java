@@ -249,13 +249,11 @@ public class MainActivity extends AppCompatActivity implements
 
         // Start loading the ad in the background.
         mAdView.loadAd(adRequest);
-
         // when ad loaded set the view visible
         mAdView.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
                 super.onAdLoaded();
-
                 mAdView.setVisibility(View.VISIBLE);
             }
         });
@@ -305,10 +303,10 @@ public class MainActivity extends AppCompatActivity implements
                         fTransaction.replace(R.id.frame_main, fragment);
                     }
                     fTransaction.commit();
-            }else{
-                resizeMap(80);
-                detailsButton.setImageResource(android.R.drawable.arrow_up_float);
-                detailsButtonClicked = false;
+                }else{
+                    resizeMap(80);
+                    detailsButton.setImageResource(android.R.drawable.arrow_up_float);
+                    detailsButtonClicked = false;
                     FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
                     RouteMiniFragment fragment = new RouteMiniFragment();
                     if(fTransaction.isEmpty()){
@@ -321,101 +319,101 @@ public class MainActivity extends AppCompatActivity implements
                         fTransaction.replace(R.id.frame_main, fragment);
                     }
                     fTransaction.commit();
+                }
             }
-        }
-    });
+        });
 
-    // creation of the floating menu and hide it to be ready when a route is generated
-    floatingActionMenu = (FloatingActionMenu) findViewById(R.id.floating_action_menu);
+        // creation of the floating menu and hide it to be ready when a route is generated
+        floatingActionMenu = (FloatingActionMenu) findViewById(R.id.floating_action_menu);
         floatingActionMenu.hideMenuButton(false);
 
-    // creation of the buttons inside the menu
-    walkingButton = (it.curdrome.timetogo.fab.FloatingActionButton) findViewById(R.id.walking_button);
-    transitButton = (it.curdrome.timetogo.fab.FloatingActionButton) findViewById(R.id.transit_button);
+        // creation of the buttons inside the menu
+        walkingButton = (it.curdrome.timetogo.fab.FloatingActionButton) findViewById(R.id.walking_button);
+        transitButton = (it.curdrome.timetogo.fab.FloatingActionButton) findViewById(R.id.transit_button);
 
 
         if(isNetworkAvailable(this)) {
-        pDialog = new ProgressDialog(activity);
-        pDialog.setMessage(activity.getString(R.string.loading_wait));
-        pDialog.setIndeterminate(false);
-        pDialog.setCancelable(false);
-        pDialog.show();
+            pDialog = new ProgressDialog(activity);
+            pDialog.setMessage(activity.getString(R.string.loading_wait));
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(false);
+            pDialog.show();
 
 
-        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-        CategoriesAsyncTask categoriesAsyncTask = new CategoriesAsyncTask(); //get categories
-        categoriesAsyncTask.response = this;
-        categoriesAsyncTask.execute();
-    }else noInternetMessage();
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            CategoriesAsyncTask categoriesAsyncTask = new CategoriesAsyncTask(); //get categories
+            categoriesAsyncTask.response = this;
+            categoriesAsyncTask.execute();
+        }else noInternetMessage();
 
-    // get categories statically
-    // categoryList = getResources().getStringArray(R.array.categories_name);
-    mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-    navigationView = (NavigationView) findViewById(R.id.nav_view);
+        // get categories statically
+        // categoryList = getResources().getStringArray(R.array.categories_name);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
 
-    mFragmentManager = getSupportFragmentManager();
-    mapFragment = (SupportMapFragment) mFragmentManager
-            .findFragmentById(R.id.map);
+        mFragmentManager = getSupportFragmentManager();
+        mapFragment = (SupportMapFragment) mFragmentManager
+                .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
 
-    View mapView = mapFragment.getView();
-    LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,0);
-    p.weight = 100;
+        View mapView = mapFragment.getView();
+        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,0);
+        p.weight = 100;
         mapView.setLayoutParams(p);
         mapView.requestLayout();
 
-    FloatingActionButton searchFab = (FloatingActionButton) findViewById(R.id.search_fab);
+        FloatingActionButton searchFab = (FloatingActionButton) findViewById(R.id.search_fab);
         searchFab.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            Toolbar search =(Toolbar) findViewById(R.id.search);
-            if(search.isShown())
-                search.setVisibility(View.GONE);
-            else
-                search.setVisibility(View.VISIBLE);
-        }
-    });
+            @Override
+            public void onClick(View view) {
+                Toolbar search =(Toolbar) findViewById(R.id.search);
+                if(search.isShown())
+                    search.setVisibility(View.GONE);
+                else
+                    search.setVisibility(View.VISIBLE);
+            }
+        });
 
-    // creation of the place autocomplete on left of the toolbar and its listener
-    PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-            getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        // creation of the place autocomplete on left of the toolbar and its listener
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-        @Override
-        public void onPlaceSelected(Place place) {
+            @Override
+            public void onPlaceSelected(Place place) {
 
-            reset();
+                reset();
 
-            selectedPlace = place;
+                selectedPlace = place;
 
-            selectedPlaceMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName().toString()).icon(BitmapDescriptorFactory
-                    .defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), zoomLevel));
-            mDestination = place.getLatLng();
-            if(isNetworkAvailable(getApplicationContext())){
-                getDirections();
-            }else
-                noInternetMessage();
-            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                @Override
-                public void onMapClick(LatLng latLng) {
-                    resizeMap(100);
-                    detailsButton.setVisibility(View.GONE);
-                }
-            });
-        }
+                selectedPlaceMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName().toString()).icon(BitmapDescriptorFactory
+                        .defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), zoomLevel));
+                mDestination = place.getLatLng();
+                if(isNetworkAvailable(getApplicationContext())){
+                    getDirections();
+                }else
+                    noInternetMessage();
+                mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick(LatLng latLng) {
+                        resizeMap(100);
+                        detailsButton.setVisibility(View.GONE);
+                    }
+                });
+            }
 
-        @Override
-        public void onError(Status status) {
-            Snackbar snackbar = Snackbar
-                    .make(activity.findViewById(R.id.main),getResources().getString(R.string.error_occured) + status, Snackbar.LENGTH_LONG);
+            @Override
+            public void onError(Status status) {
+                Snackbar snackbar = Snackbar
+                        .make(activity.findViewById(R.id.main),getResources().getString(R.string.error_occured) + status, Snackbar.LENGTH_LONG);
 
-            snackbar.show();
-            Log.i(TAG, "An error occurred: " + status);
-        }
-    });
+                snackbar.show();
+                Log.i(TAG, "An error occurred: " + status);
+            }
+        });
 
-}
+    }
 
     // Menu icons are inflated just as they were with actionbar
     @Override
@@ -589,7 +587,9 @@ public class MainActivity extends AppCompatActivity implements
             walkingButton.setLabelVisibility(View.INVISIBLE);
         }
 
-        if(route.getMode().matches("transit")) {
+        if(route == null){
+            Snackbar.make(activity.findViewById(R.id.main),getText(R.string.route_not_found),Snackbar.LENGTH_SHORT).show();
+        }else if(route.getMode().matches("transit")) {
             transitRoute = route;
             transitButton.show(false);
             transitButton.setVisibility(View.VISIBLE);
@@ -607,8 +607,6 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         setOnInfoWindowListener();
-
-        Log.d("mainActivity routes", route.toString());
     }
 
     /**
@@ -636,7 +634,6 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         this.pois = pois;
-        Log.d("pois",pois.toString());
 
         for(Poi poi :pois){
             poi.draw();
@@ -902,7 +899,6 @@ public class MainActivity extends AppCompatActivity implements
 
             if(sharedPref.getBoolean("geolocalization",true)){
                 //position permission has been granted
-                mMap.getUiSettings().setMyLocationButtonEnabled(true);
                 LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
                 setDestination();
             }
@@ -1192,7 +1188,7 @@ public class MainActivity extends AppCompatActivity implements
                         if(fTransaction.isEmpty()){
                             frameLayout.removeAllViews();
                             fTransaction.add(R.id.frame_main, fragment);
-                            resizeMap(80);
+                            resizeMap(70);
                             detailsButton.setVisibility(View.GONE);
                             closeButton.setVisibility(View.VISIBLE);
                         }
@@ -1214,7 +1210,7 @@ public class MainActivity extends AppCompatActivity implements
                         if(fTransaction.isEmpty()){
                             frameLayout.removeAllViews();
                             fTransaction.add(R.id.frame_main, fragment);
-                            resizeMap(80);
+                            resizeMap(70);
                             detailsButton.setVisibility(View.GONE);
                             closeButton.setVisibility(View.VISIBLE);
                         }

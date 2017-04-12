@@ -134,24 +134,27 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
     protected void onPostExecute(String output) {
 
         JSONObject jsonObject;
-        try {
-            jsonObject = new JSONObject(output);
-            Log.d("output",jsonObject.toString());
+        if(output==null){
+            response.TaskResult(null);
+        }else
+            try {
+                jsonObject = new JSONObject(output);
+                Log.d("output",jsonObject.toString());
 
-            // routesArray contains ALL routes
-            JSONArray routesArray = jsonObject.getJSONArray("routes");
-            // Grab the first route
-            JSONObject route = routesArray.getJSONObject(0);
+                // routesArray contains ALL routes
+                JSONArray routesArray = jsonObject.getJSONArray("routes");
+                // Grab the first route
+                JSONObject route = routesArray.getJSONObject(0);
 
-            getBounds(route);
+                getBounds(route);
 
-            getTransit(route);
+                getTransit(route);
 
-            getRoute(route);
+                getRoute(route);
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
         // dismiss the progress dialog
         pDialog.dismiss();

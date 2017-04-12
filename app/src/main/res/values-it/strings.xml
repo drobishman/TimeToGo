@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="details_button">Dettagli</string>
+    <string name="walking">A piedi</string>
+    <string name="transit">Trasporti</string>
+    <string name="description">Descrizione: </string>
+    <string name="title_activity_main">TimeToGo</string>
     <string name="origin_button_message">Imposta l\'origine</string>
     <string name="destination_button_message">Imposta la destinazione</string>
     <string name="walking_button_message">A piedi</string>
@@ -35,7 +40,7 @@
     <string name="no_Google_POI_found">Nessun POI di Google nelle vicinanze!</string>
     <string name="no_bus_arriving">Nessun bus in arrivo</string>
     <string name="RTI">RTI: </string>
-    <string name="real_time_by_roma_mobilità">\u00A0 by roma.mobilità.it \u00A0 </string>
+    <string name="services_rti">servizi offerti da \u00A0 </string>
     <string name="departure_scheduled">\u00A0 Partenza </string>
     <string name="now_is_open">Aperto ora</string>
     <string name="now_is_close">Chiuso ora</string>
@@ -47,7 +52,11 @@
     <string name="trip_details">\u00A0Dettagli percorso:</string>
     <string name="chose_origin">Seleziona il punto d\'origine!</string>
     <string name="delay">\' ritardo</string>
+
     <string name="banner_ad_unit_id">ca-app-pub-4009677260795454/7691723127</string>
+
+    <string name="hello_blank_fragment">Ciao fragment vuoto</string>
+
 
 
     <string-array name="categories_name">

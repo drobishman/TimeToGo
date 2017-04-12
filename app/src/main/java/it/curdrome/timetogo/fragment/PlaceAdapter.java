@@ -1,9 +1,8 @@
 package it.curdrome.timetogo.fragment;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +48,6 @@ class PlaceAdapter extends ArrayAdapter<Place> implements Serializable {
      * @param parent the parent view
      * @return the converted view
      */
-    @TargetApi(Build.VERSION_CODES.M)
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -69,11 +67,11 @@ class PlaceAdapter extends ArrayAdapter<Place> implements Serializable {
         name.setText(activity.getString(R.string.name) + place.getName());
         if(place.isOpenHoursEnabled() && place.isOpenNow()) {
             openNow.setText(activity.getString(R.string.now_is_open));
-            openNow.setTextColor(activity.getColor(R.color.colorAccent));
+            openNow.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
         }
         else if(place.isOpenHoursEnabled() && !place.isOpenNow()){
             openNow.setText(activity.getString(R.string.now_is_close));
-            openNow.setTextColor(activity.getColor(android.R.color.holo_red_light));
+            openNow.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_light));
         }
         else
             openNow.setText(activity.getString(R.string.open_hours_not_available));

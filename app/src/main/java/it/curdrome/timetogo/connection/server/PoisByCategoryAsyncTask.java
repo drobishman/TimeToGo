@@ -98,44 +98,38 @@ public class PoisByCategoryAsyncTask extends AsyncTask<String, String, String> {
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
 
-        try {
-            JSONArray response = new JSONArray(result);
-            for(int i=0; i<response.length();i++){
-                JSONObject poi = response.getJSONObject(i);
-                JSONArray categories = poi.getJSONArray("categories");
+        if(result==null){
+            response.taskResult(null);
+        }else
+            try {
+                JSONArray response = new JSONArray(result);
+                for(int i=0; i<response.length();i++){
+                    JSONObject poi = response.getJSONObject(i);
+                    JSONArray categories = poi.getJSONArray("categories");
 
-                List<Category> listCategories = new ArrayList<>();
-                for(int j = 0; j<categories.length();j++)
-                    listCategories.add(new Category(
-                            categories.getJSONObject(j).getInt("id"),
-                            categories.getJSONObject(j).getString("name")));
+                    List<Category> listCategories = new ArrayList<>();
+                    for(int j = 0; j<categories.length();j++)
+                        listCategories.add(new Category(
+                                categories.getJSONObject(j).getInt("id"),
+                                categories.getJSONObject(j).getString("name")));
 
-                Log.d("id dei poi",poi.getInt("id")+"");
-                pois.add(new Poi(
-                        poi.getInt("id"),
-                        poi.getString("id_places"),
-                        listCategories,
-                        poi.getString("name"),
-                        poi.getDouble("lat"),
-                        poi.getDouble("lng"),
-                        poi.getString("description"),
-                        mMap,
-                        activity
-                ));
+                    pois.add(new Poi(
+                            poi.getInt("id"),
+                            poi.getString("id_places"),
+                            listCategories,
+                            poi.getString("name"),
+                            poi.getDouble("lat"),
+                            poi.getDouble("lng"),
+                            poi.getString("description"),
+                            mMap,
+                            activity
+                    ));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
-        Log.d("response", result);
-/*
-        Gson gson = new Gson();
-        Type type = new TypeToken<List<Poi>>(){}.getType();
-        pois = gson.fromJson(result, type);
-*/
-        for (Poi poi : pois){
-
-        }
+        Log.d("POIs", result);
         response.taskResult(pois);
     }
 }

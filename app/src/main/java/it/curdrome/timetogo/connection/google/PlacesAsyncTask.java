@@ -101,55 +101,58 @@ public class PlacesAsyncTask extends AsyncTask<String,String,String> {
 
     /**
      * method used to create the Place object and use them as response
-     * @param s the response from Google servers
+     * @param output the response from Google servers
      */
     @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
+    protected void onPostExecute(String output) {
+        super.onPostExecute(output);
 
         // list that will contain the Places
         List<Place> places= new ArrayList<>();
 
-        try {
-            JSONObject ja = new JSONObject(s);
-            JSONArray results = ja.getJSONArray("results");
+        if(output == null){
+            response.TaskResult(null);
+        }else
+            try {
+                JSONObject ja = new JSONObject(output);
+                JSONArray results = ja.getJSONArray("results");
 
-            for(int i=0; i<results.length();i++){
-                JSONObject jsonPlace = results.getJSONObject(i);
-                JSONObject geometry = jsonPlace.getJSONObject("geometry");
-                JSONObject location = geometry.getJSONObject("location");
-                String name = jsonPlace.getString("name");
-                boolean openNow = false;
-                boolean openHoursEnabled = false;
-                if(jsonPlace.has("opening_hours")){
-                    openHoursEnabled = true;
-                    JSONObject openingHours = jsonPlace.getJSONObject("opening_hours");
-                    openNow = openingHours.getBoolean("open_now");
+                for(int i=0; i<results.length();i++){
+                    JSONObject jsonPlace = results.getJSONObject(i);
+                    JSONObject geometry = jsonPlace.getJSONObject("geometry");
+                    JSONObject location = geometry.getJSONObject("location");
+                    String name = jsonPlace.getString("name");
+                    boolean openNow = false;
+                    boolean openHoursEnabled = false;
+                    if(jsonPlace.has("opening_hours")){
+                        openHoursEnabled = true;
+                        JSONObject openingHours = jsonPlace.getJSONObject("opening_hours");
+                        openNow = openingHours.getBoolean("open_now");
+                    }
+                    String placeId = jsonPlace.getString("place_id");
+                    String vicinity = jsonPlace.getString("vicinity");
+                    JSONArray jsonTypes = jsonPlace.getJSONArray("types");
+                    List<Category> categories = new ArrayList<>();
+                    for(int j=0; j<jsonTypes.length();j++)
+                        categories.add(new Category(j,jsonTypes.getString(j)));
+
+                    places.add(new Place(
+                            mMap,
+                            activity,
+                            (new LatLng(location.getDouble("lat"),location.getDouble("lng"))),
+                            name,
+                            openHoursEnabled,
+                            openNow,
+                            placeId,
+                            categories,
+                            vicinity
+                    ));
                 }
-                String placeId = jsonPlace.getString("place_id");
-                String vicinity = jsonPlace.getString("vicinity");
-                JSONArray jsonTypes = jsonPlace.getJSONArray("types");
-                List<Category> categories = new ArrayList<>();
-                for(int j=0; j<jsonTypes.length();j++)
-                    categories.add(new Category(j,jsonTypes.getString(j)));
 
-                places.add(new Place(
-                        mMap,
-                        activity,
-                        (new LatLng(location.getDouble("lat"),location.getDouble("lng"))),
-                        name,
-                        openHoursEnabled,
-                        openNow,
-                        placeId,
-                        categories,
-                        vicinity
-                ));
+                Log.d("PlacesAsyncTask", places.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-            Log.d("PlacesAsyncTask", places.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         if(places == null) {
             Snackbar snackbar = Snackbar
                     .make(activity.findViewById(R.id.main), "places = null", Snackbar.LENGTH_LONG);

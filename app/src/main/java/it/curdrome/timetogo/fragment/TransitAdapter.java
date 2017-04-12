@@ -3,9 +3,8 @@ package it.curdrome.timetogo.fragment;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +47,6 @@ class TransitAdapter extends ArrayAdapter<Transit> implements Serializable {
      * @param parent the parent view
      * @return the converted view
      */
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
@@ -147,14 +145,14 @@ class TransitAdapter extends ArrayAdapter<Transit> implements Serializable {
 
         if(transit.getIdPalina() != null){
             departureTime.setText(" "+transit.getDepartureTime());
-            departureTime.setTextColor(activity.getColor(R.color.colorAccent));
+            departureTime.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
 
         }else {
             departureTime.setText(activity.getString(R.string.departure_scheduled) + " "+transit.getDepartureTime());
         }
         if(transit.getCodLocOrig() != null && transit.getIdTrain()!= null) {
             departureTime.append(" " + transit.getDelay() + activity.getString(R.string.delay) );
-            departureTime.setTextColor(activity.getColor(R.color.colorAccent));
+            departureTime.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
         }
 
 
@@ -162,11 +160,11 @@ class TransitAdapter extends ArrayAdapter<Transit> implements Serializable {
                 (transit.getCodLocOrig() == null && transit.getIdTrain() == null))
                 || transit.getType().matches("SUBWAY")) {
             refreshButton.setImageResource(R.drawable.ic_sync_disabled);
-            refreshButton.setColorFilter(activity.getColor(R.color.SecondaryText));
+            refreshButton.setColorFilter(R.color.SecondaryText);
             refreshButton.setEnabled(false);
         } else {
             refreshButton.setImageResource(R.drawable.ic_sync_enabled);
-            refreshButton.setColorFilter(activity.getColor(R.color.colorPrimaryDark));
+            refreshButton.setColorFilter(ContextCompat.getColor(getContext(), R.color.colorAccent));
         }
 
         refreshButton.setOnClickListener(new View.OnClickListener() {
