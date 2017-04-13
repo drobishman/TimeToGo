@@ -74,7 +74,7 @@ public class RouteMiniFragment extends android.support.v4.app.Fragment {
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        route = activity.getSelectedRoute();
+        route = activity.getCurrentRoute();
 
         DateFormat df = new SimpleDateFormat("HH:mm", Locale.ITALY);
         String time= df.format(Calendar.getInstance().getTime());

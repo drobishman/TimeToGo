@@ -70,7 +70,7 @@ public class RouteFragment extends android.support.v4.app.Fragment {
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        route.add(activity.getSelectedRoute());
+        route.add(activity.getCurrentRoute());
 
         final ListView mylist = (ListView) view.findViewById(R.id.routes);
         final RouteAdapter adapter = new RouteAdapter(getActivity().getBaseContext(), R.layout.route_row, route, activity);

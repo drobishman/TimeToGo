@@ -138,9 +138,11 @@ public class MainActivity extends AppCompatActivity implements
     private FrameLayout frameLayout;
     private Handler handler = new Handler();
     // types of routes
-    private Route walkingRoute;
-    private Route transitRoute;
-    private Route selectedRoute;
+    private List<Route> walkingRoutes = new ArrayList<>();
+    private List<Route> transitRoutes = new ArrayList<>();
+    private int transitRouteNr = 0;
+    private int walkingRouteNr = 0;
+    private Route currentRoute;
     private List<Poi> pois = new ArrayList<>();
     private List<it.curdrome.timetogo.model.Place> places = new ArrayList<>();
     private Poi selectedPoi;
@@ -565,10 +567,10 @@ public class MainActivity extends AppCompatActivity implements
 
     /**
      *method containing the result of directionAsyncTask
-     *@param route contains the route calculated by Google
+     *@param routes contains the route calculated by Google
      */
     @Override
-    public void TaskResult(Route route) {
+    public void TaskResultRoutes(List<Route> routes) {
 
         animatefloatingActionMenu();
 
@@ -578,30 +580,30 @@ public class MainActivity extends AppCompatActivity implements
 
 
         // added to disable buttons if there are not one of routes found
-        if(transitRoute == null) {
+        if(transitRoutes == null) {
             transitButton.setEnabled(false);
             transitButton.setLabelVisibility(View.INVISIBLE);
         }
-        if(walkingRoute == null) {
+        if(walkingRoutes == null) {
             walkingButton.setEnabled(false);
             walkingButton.setLabelVisibility(View.INVISIBLE);
         }
 
-        if(route == null){
+        if(routes == null || routes.isEmpty()){
             Snackbar.make(activity.findViewById(R.id.main),getText(R.string.route_not_found),Snackbar.LENGTH_SHORT).show();
-        }else if(route.getMode().matches("transit")) {
-            transitRoute = route;
+        }else if(routes.get(0).getMode().matches("transit")) {
+            transitRoutes = routes;
             transitButton.show(false);
             transitButton.setVisibility(View.VISIBLE);
-            transitButton.setLabelText(route.getDuration());
+            transitButton.setLabelText(routes.get(0).getDuration());
             transitButton.setEnabled(true);
             transitButton.setLabelVisibility(View.VISIBLE);
         }
-        else if(route.getMode().matches("walking")) {
-            walkingRoute = route;
+        else if(routes.get(0).getMode().matches("walking")) {
+            walkingRoutes = routes;
             walkingButton.show(false);
             walkingButton.setVisibility(View.VISIBLE);
-            walkingButton.setLabelText(route.getDuration());
+            walkingButton.setLabelText(routes.get(0).getDuration());
             walkingButton.setEnabled(true);
             walkingButton.setLabelVisibility(View.VISIBLE);
         }
@@ -616,6 +618,8 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void taskResult(List<Poi> pois) {
 
+        reset();
+
         if(pois.isEmpty()){
             Snackbar snackbar = Snackbar
                     .make(activity.findViewById(R.id.main),activity.getString(R.string.no_personal_poi_found), Snackbar.LENGTH_LONG);
@@ -623,24 +627,11 @@ public class MainActivity extends AppCompatActivity implements
             snackbar.show();
         }
 
-        if(transitRoute!= null && transitRoute.isDraw){
-            transitRoute.erase();
-            transitRoute = null;
-        }
-
-        if(walkingRoute!=null &&walkingRoute.isDraw){
-            walkingRoute.erase();
-            walkingRoute = null;
-        }
-
         this.pois = pois;
 
         for(Poi poi :pois){
             poi.draw();
         }
-
-        transitRoute = null;
-        walkingRoute = null;
 
         setOnInfoWindowListener();
     }
@@ -661,26 +652,11 @@ public class MainActivity extends AppCompatActivity implements
 
         this.places = places;
 
-
-        if(transitRoute!= null && transitRoute.isDraw){
-            transitRoute.erase();
-            transitRoute = null;
-        }
-
-        if(walkingRoute!=null &&walkingRoute.isDraw){
-            walkingRoute.erase();
-            walkingRoute = null;
-        }
-
         for(it.curdrome.timetogo.model.Place place : places){
             place.draw();
         }
 
         mCircle = mMap.addCircle(new CircleOptions().radius(1500).center(mOrigin).strokeColor(R.color.colorPrimaryLight).fillColor(0x05689F38).strokeWidth(2));
-
-
-        transitRoute = null;
-        walkingRoute = null;
 
         setOnInfoWindowListener();
         pDialog.dismiss();
@@ -778,15 +754,15 @@ public class MainActivity extends AppCompatActivity implements
         transitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mOrigin != null && mDestination != null && transitRoute != null){
-                    if(!transitRoute.isDraw)
-                        transitRoute.draw();
-                    if (walkingRoute != null) {
-                        if (walkingRoute.isDraw)
-                            walkingRoute.erase();
+                if(mOrigin != null && mDestination != null && transitRoutes != null && !transitRoutes.isEmpty()){
+                    if(!transitRoutes.get(transitRouteNr).isDraw)
+                        transitRoutes.get(transitRouteNr).draw();
+                    if (walkingRoutes != null) {
+                        if (walkingRoutes.get(transitRouteNr).isDraw)
+                            walkingRoutes.get(transitRouteNr).erase();
                     }
                     mMap.setOnMarkerClickListener(null);
-                    selectedRoute = transitRoute;
+                    currentRoute = transitRoutes.get(transitRouteNr);
 
                     FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
                     RouteMiniFragment fragment = new RouteMiniFragment();
@@ -805,7 +781,7 @@ public class MainActivity extends AppCompatActivity implements
                     fTransaction.commit();
 
                 } else {
-                    Toast.makeText(getApplicationContext(),activity.getString(R.string.origin_or_destination_not_set),Toast.LENGTH_SHORT).show();
+                    transitButton.setClickable(false);
                 }
             }
 
@@ -815,12 +791,12 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 if(mOrigin != null && mDestination != null){
-                    if(!walkingRoute.isDraw)
-                        walkingRoute.draw();
-                    if(transitRoute!= null && transitRoute.isDraw)
-                        transitRoute.erase();
+                    if(!walkingRoutes.get(walkingRouteNr).isDraw)
+                        walkingRoutes.get(walkingRouteNr).draw();
+                    if(transitRoutes!= null  && !transitRoutes.isEmpty() && transitRoutes.get(transitRouteNr).isDraw)
+                        transitRoutes.get(transitRouteNr).erase();
                     mMap.setOnMarkerClickListener(null);
-                    selectedRoute = walkingRoute;
+                    currentRoute = walkingRoutes.get(walkingRouteNr);
 
                     FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
                     RouteMiniFragment fragment = new RouteMiniFragment();
@@ -1224,8 +1200,8 @@ public class MainActivity extends AppCompatActivity implements
                 }
 
 
-                if(transitRoute != null && transitRoute.isDraw)
-                    for(final Transit transit: transitRoute.getListTransit()){
+                if(transitRoutes != null && !transitRoutes.isEmpty() && transitRoutes.get(transitRouteNr).isDraw)
+                    for(final Transit transit: transitRoutes.get(transitRouteNr).getListTransit()){
                         if(transit.getMarker().equals(marker)){
 
                             selectedTransit = transit;
@@ -1304,14 +1280,18 @@ public class MainActivity extends AppCompatActivity implements
      */
     private void reset(){
         if(mDestination != null){
-            if(walkingRoute != null && walkingRoute.isDraw){
-                walkingRoute.erase();
-                walkingRoute = null;
-            }
-            if(transitRoute != null && transitRoute.isDraw){
-                transitRoute.erase();
-                transitRoute = null;
-            }
+            if(walkingRoutes != null)
+                for(Route walkingRoute: walkingRoutes)
+                    if(walkingRoute != null && walkingRoute.isDraw){
+                        walkingRoute.erase();
+                    }
+            walkingRoutes = null;
+            if(transitRoutes != null)
+                for(Route transitRoute: transitRoutes)
+                    if(transitRoute != null && transitRoute.isDraw){
+                        transitRoute.erase();
+                    }
+            transitRoutes = null;
 
             if(!floatingActionMenu.isMenuHidden()) {
                 floatingActionMenu.toggle(true);
@@ -1329,14 +1309,22 @@ public class MainActivity extends AppCompatActivity implements
             if(destinationMarker != null)
                 destinationMarker.remove();
         }
-        for(Poi poi: pois){
-            poi.getMarker().remove();
+
+        if(!pois.isEmpty() && pois != null) {
+            for (Poi poi : pois) {
+                if(poi.getMarker().isVisible())
+                    poi.getMarker().remove();
+            }
+            pois.clear();
         }
-        pois.clear();
-        for(it.curdrome.timetogo.model.Place place: places){
-            place.getMarker().remove();
+
+        if(!places.isEmpty() && places != null) {
+            for (it.curdrome.timetogo.model.Place place : places) {
+                if(place.getMarker().isVisible())
+                    place.getMarker().remove();
+            }
+            places.clear();
         }
-        places.clear();
         if(mOrigin!=null)
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mOrigin,11));
         else
@@ -1414,8 +1402,8 @@ public class MainActivity extends AppCompatActivity implements
         this.mDestination = mDestination;
     }
 
-    public Route getSelectedRoute() {
-        return selectedRoute;
+    public Route getCurrentRoute() {
+        return currentRoute;
     }
 
     public List<it.curdrome.timetogo.model.Place> getPlaces() {

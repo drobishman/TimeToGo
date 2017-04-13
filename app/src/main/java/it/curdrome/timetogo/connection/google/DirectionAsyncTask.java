@@ -41,7 +41,7 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
     private LatLng mOrigin;
     private LatLng mDestination;
     private List<Transit> transitList = new ArrayList<>();
-    private Route route;
+    private List<Route> routes = new ArrayList<>();
     private String mode;
 
     // bounds
@@ -135,7 +135,7 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
 
         JSONObject jsonObject;
         if(output==null){
-            response.TaskResult(null);
+            response.TaskResultRoutes(null);
         }else
             try {
                 jsonObject = new JSONObject(output);
@@ -144,13 +144,17 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
                 // routesArray contains ALL routes
                 JSONArray routesArray = jsonObject.getJSONArray("routes");
                 // Grab the first route
-                JSONObject route = routesArray.getJSONObject(0);
 
-                getBounds(route);
+                for(int i=0; i<routesArray.length();i++) {
 
-                getTransit(route);
+                    JSONObject route = routesArray.getJSONObject(i);
 
-                getRoute(route);
+                    getBounds(route);
+
+                    getTransit(route);
+
+                    getRoute(route);
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -159,7 +163,7 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
         // dismiss the progress dialog
         pDialog.dismiss();
 
-        if(route == null){
+        if(routes.isEmpty()){
             if (mode.matches("transit")) {
                 Snackbar snackbar = Snackbar
                         .make(activity.findViewById(R.id.main), activity.getString(R.string.route_not_found) + ": " +activity.getString(R.string.transit), Snackbar.LENGTH_LONG);
@@ -171,7 +175,7 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
             }
         }
         else
-            response.TaskResult(route);
+            response.TaskResultRoutes(routes);
 
     }
 
@@ -210,7 +214,7 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
         JSONObject poly = route.getJSONObject("overview_polyline");
         String points = poly.getString("points");
 
-        this.route = new Route(
+        routes.add(new Route(
                 mMap,
                 points,
                 arrivalTimeText,
@@ -221,6 +225,7 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
                 southwest,
                 northeast,
                 mode
+                )
         );
     }
 

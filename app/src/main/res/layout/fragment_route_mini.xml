@@ -1,35 +1,63 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/colorPrimaryLight"
     tools:context="it.curdrome.timetogo.fragment.RouteMiniFragment">
 
-    <TextView
-        android:id="@+id/departure_arrival_mini"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:textSize="21sp"
-        android:textAllCaps="false"
-        android:textStyle="bold"/>
-
-    <TextView
-        android:id="@+id/distance_mini"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/distance"
-        android:textAlignment="center"
-        android:textSize="21sp"
-        android:textAllCaps="false"
-        android:textStyle="bold"/>
-
     <LinearLayout
-        android:id="@+id/transit_images_mini"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal" />
+        android:orientation="vertical"
+        android:id="@+id/linearLayout"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/departure_arrival_mini"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="21sp"
+            android:textAllCaps="false"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/distance_mini"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/distance"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/transit_images_mini"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:gravity="center"
+            android:orientation="horizontal" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/right_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/linearLayout"
+        android:layout_alignParentEnd="true"
+        android:src="@android:drawable/ic_media_next"
+        android:tint="@color/colorAccent"
+        android:background="@color/colorPrimaryLight"/>
+
+    <ImageButton
+        android:id="@+id/left_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/linearLayout"
+        android:layout_alignParentStart="true"
+        android:src="@android:drawable/ic_media_previous"
+        android:tint="@color/colorAccent"
+        android:background="@color/colorPrimaryLight"/>
+
+</RelativeLayout>

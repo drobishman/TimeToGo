@@ -1,5 +1,7 @@
 package it.curdrome.timetogo.connection.google;
 
+import java.util.List;
+
 import it.curdrome.timetogo.model.Route;
 
 /**
@@ -12,5 +14,5 @@ import it.curdrome.timetogo.model.Route;
  */
 
 public interface DirectionResponse {
-    void TaskResult(Route route);
+    void TaskResultRoutes(List<Route> routes);
 }
