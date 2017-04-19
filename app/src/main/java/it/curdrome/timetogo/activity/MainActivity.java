@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements
     // types of routes
     private List<Route> walkingRoutes = new ArrayList<>();
     private List<Route> transitRoutes = new ArrayList<>();
+
     private int transitRouteNr = 0;
     private int walkingRouteNr = 0;
     private Route currentRoute;
@@ -758,11 +759,13 @@ public class MainActivity extends AppCompatActivity implements
                     if(!transitRoutes.get(transitRouteNr).isDraw)
                         transitRoutes.get(transitRouteNr).draw();
                     if (walkingRoutes != null) {
-                        if (walkingRoutes.get(transitRouteNr).isDraw)
-                            walkingRoutes.get(transitRouteNr).erase();
+                        if (walkingRoutes.get(walkingRouteNr).isDraw)
+                            walkingRoutes.get(walkingRouteNr).erase();
                     }
                     mMap.setOnMarkerClickListener(null);
                     currentRoute = transitRoutes.get(transitRouteNr);
+
+                    Log.d("MainActivity", currentRoute.toString());
 
                     FragmentTransaction fTransaction = mFragmentManager.beginTransaction();
                     RouteMiniFragment fragment = new RouteMiniFragment();
@@ -1414,4 +1417,27 @@ public class MainActivity extends AppCompatActivity implements
         return selectedMyPlace;
     }
 
+    public int getTransitRouteNr() {
+        return transitRouteNr;
+    }
+
+    public void setTransitRouteNr(int transitRouteNr) {
+        this.transitRouteNr = transitRouteNr;
+    }
+
+    public int getWalkingRouteNr() {
+        return walkingRouteNr;
+    }
+
+    public void setWalkingRouteNr(int walkingRouteNr) {
+        this.walkingRouteNr = walkingRouteNr;
+    }
+
+    public List<Route> getTransitRoutes() {
+        return transitRoutes;
+    }
+
+    public void setTransitRoutes(List<Route> transitRoutes) {
+        this.transitRoutes = transitRoutes;
+    }
 }

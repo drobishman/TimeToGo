@@ -40,7 +40,6 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
     private MainActivity activity; // caller activity
     private LatLng mOrigin;
     private LatLng mDestination;
-    private List<Transit> transitList = new ArrayList<>();
     private List<Route> routes = new ArrayList<>();
     private String mode;
 
@@ -98,9 +97,12 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
                 + "&destination="
                 + mDestination.latitude
                 + ","
-                + mDestination.longitude + "&sensor=false&mode="+mode;
+                + mDestination.longitude + "&sensor=false&mode="+mode
+                + "&alternatives=true";
         // response variable
         String output = null;
+
+        Log.d("URL ", stringUrl);
 
         StringBuilder response = new StringBuilder();
         try {
@@ -143,6 +145,8 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
 
                 // routesArray contains ALL routes
                 JSONArray routesArray = jsonObject.getJSONArray("routes");
+
+                Log.d("routes json", routesArray.length()+"");
                 // Grab the first route
 
                 for(int i=0; i<routesArray.length();i++) {
@@ -150,8 +154,6 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
                     JSONObject route = routesArray.getJSONObject(i);
 
                     getBounds(route);
-
-                    getTransit(route);
 
                     getRoute(route);
                 }
@@ -174,8 +176,13 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
                 snackbar.show();
             }
         }
-        else
+        else{
+            for (Route route: routes){
+                Log.d("ROUTE",route.toString());
+            }
             response.TaskResultRoutes(routes);
+        }
+
 
     }
 
@@ -185,10 +192,6 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
      * @throws JSONException when the json object creation fails
      */
     private void getRoute(JSONObject route) throws JSONException {
-
-        if(transitList.size() == 0 && mode.matches("transit")){
-            return;
-        }
 
         JSONArray arrayLegs = route.getJSONArray("legs");
         JSONObject legs = arrayLegs.getJSONObject(0);
@@ -221,7 +224,7 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
                 departureTimeText,
                 distanceText,
                 durationText,
-                transitList,
+                getTransit(route),
                 southwest,
                 northeast,
                 mode
@@ -234,11 +237,14 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
      * @param route a JSONObject containing the main info of the route and all transits
      * @throws JSONException when the json object creation fails
      */
-    private void getTransit(JSONObject route) throws JSONException {
+    private List<Transit> getTransit(JSONObject route) throws JSONException {
+
+        List<Transit> transits = new ArrayList<>();
 
         JSONArray arrayLegs = route.getJSONArray("legs");
         JSONObject legs = arrayLegs.getJSONObject(0);
         JSONArray stepsArray = legs.getJSONArray("steps");
+
         for(int i=0; i<stepsArray.length();i++){
             JSONObject steps = stepsArray.getJSONObject(i);
             String travelmode = steps.getString("travel_mode");
@@ -257,7 +263,7 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
                 String vehicleType = vehicle.getString("type");
                 JSONObject departureTime = transitDetails.getJSONObject("departure_time");
                 String departureTimeText = departureTime.getString("text");
-                transitList.add(new Transit(
+                transits.add(new Transit(
                         numStops,
                         departureStopName,
                         headsign,
@@ -268,6 +274,7 @@ public class DirectionAsyncTask extends AsyncTask<String, String, String> {
                         lng));
             }
         }
+        return transits;
     }
 
     /**

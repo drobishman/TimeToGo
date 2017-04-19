@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -164,6 +165,33 @@ public class RouteMiniFragment extends android.support.v4.app.Fragment {
         tv.setText("\n");
         transitImages.addView(tv);
 
+        final ImageButton nextRoute = (ImageButton) view.findViewById(R.id.right_button);
+        ImageButton previousRoute = (ImageButton) view.findViewById(R.id.left_button);
+
+        //TODO cancellare il percorso precedente dalla mappa, dal fab, resettare il minifragment, disegnare il nuovo percorso sulla mappa e aggiornalre il pempo sul fab
+
+        nextRoute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(activity.getTransitRouteNr() < activity.getTransitRoutes().size()-1)
+                    activity.setTransitRouteNr(activity.getTransitRouteNr()+1);
+                else{
+                    Snackbar.make(activity.findViewById(R.id.main),"route terminati",Snackbar.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
+        previousRoute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(activity.getTransitRouteNr() > 0)
+                    activity.setTransitRouteNr(activity.getTransitRouteNr()-1);
+                else{
+                    Snackbar.make(activity.findViewById(R.id.main),"route finite",Snackbar.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     /**
