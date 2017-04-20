@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -154,7 +154,14 @@ public class RouteMiniFragment extends android.support.v4.app.Fragment {
                     transitImages.addView(chevron4);
                     break;
                 default:
-                    Toast.makeText(activity,"type fail",Toast.LENGTH_SHORT).show();
+                    ImageView other = new ImageView(activity);
+                    other.setImageResource(android.R.drawable.ic_menu_info_details);
+                    other.setColorFilter(ContextCompat.getColor(getContext(), android.R.color.black));
+                    transitImages.addView(other);
+                    ImageView chevron5 = new ImageView(activity);
+                    chevron5.setImageResource(R.drawable.ic_chevron_right);
+                    transitImages.addView(chevron5);
+
                     break;
             }
         }

@@ -13,7 +13,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.Serializable;
 import java.util.List;
@@ -129,7 +128,14 @@ class TransitAdapter extends ArrayAdapter<Transit> implements Serializable {
                 line.addView(tv4);
                 break;
             default:
-                Toast.makeText(activity,"Fail",Toast.LENGTH_SHORT).show();
+                ImageView other = new ImageView(activity);
+                other.setImageResource(android.R.drawable.ic_menu_info_details);
+                other.setColorFilter(ContextCompat.getColor(getContext(), android.R.color.black));
+                line.addView(other);
+                TextView tv5 = new TextView(activity);
+                tv5.setText(transit.getLine());
+                tv5.setTextSize(21);
+                line.addView(tv5);
                 break;
         }
 
