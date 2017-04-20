@@ -1189,7 +1189,7 @@ public class MainActivity extends AppCompatActivity implements
                         if(fTransaction.isEmpty()){
                             frameLayout.removeAllViews();
                             fTransaction.add(R.id.frame_main, fragment);
-                            resizeMap(70);
+                            resizeMap(65);
                             detailsButton.setVisibility(View.GONE);
                             closeButton.setVisibility(View.VISIBLE);
                         }
@@ -1214,7 +1214,7 @@ public class MainActivity extends AppCompatActivity implements
                             if(fTransaction.isEmpty()){
                                 frameLayout.removeAllViews();
                                 fTransaction.add(R.id.frame_main, fragment);
-                                resizeMap(80);
+                                resizeMap(70);
                                 detailsButton.setVisibility(View.GONE);
                                 closeButton.setVisibility(View.VISIBLE);
 
