@@ -1440,4 +1440,28 @@ public class MainActivity extends AppCompatActivity implements
     public void setTransitRoutes(List<Route> transitRoutes) {
         this.transitRoutes = transitRoutes;
     }
+
+    public void setCurrentRoute(Route currentRoute) {
+        this.currentRoute = currentRoute;
+    }
+
+    public FragmentManager getmFragmentManager() {
+        return mFragmentManager;
+    }
+
+    public void setmFragmentManager(FragmentManager mFragmentManager) {
+        this.mFragmentManager = mFragmentManager;
+    }
+
+    public void setTransitButtonLabel(String label){
+        transitButton.setLabelText(label);
+    }
+
+    public FrameLayout getFrameLayout() {
+        return frameLayout;
+    }
+
+    public void setFrameLayout(FrameLayout frameLayout) {
+        this.frameLayout = frameLayout;
+    }
 }

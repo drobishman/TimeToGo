@@ -3,6 +3,7 @@ package it.curdrome.timetogo.fragment;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -166,17 +167,44 @@ public class RouteMiniFragment extends android.support.v4.app.Fragment {
         transitImages.addView(tv);
 
         final ImageButton nextRoute = (ImageButton) view.findViewById(R.id.right_button);
-        ImageButton previousRoute = (ImageButton) view.findViewById(R.id.left_button);
+        final ImageButton previousRoute = (ImageButton) view.findViewById(R.id.left_button);
 
-        //TODO cancellare il percorso precedente dalla mappa, dal fab, resettare il minifragment, disegnare il nuovo percorso sulla mappa e aggiornalre il pempo sul fab
+        if(activity.getCurrentRoute().getMode().matches("walking")){
+            nextRoute.setVisibility(View.GONE);
+            previousRoute.setVisibility(View.GONE);
+        }
 
         nextRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(activity.getTransitRouteNr() < activity.getTransitRoutes().size()-1)
-                    activity.setTransitRouteNr(activity.getTransitRouteNr()+1);
+                if(activity.getTransitRouteNr() < activity.getTransitRoutes().size()-1) {
+                    // erase old route from map
+                    activity.getTransitRoutes().get(activity.getTransitRouteNr()).erase();
+                    // update to new route
+                    activity.setTransitRouteNr(activity.getTransitRouteNr() + 1);
+                    // draw the nre route on map
+                    activity.getTransitRoutes().get(activity.getTransitRouteNr()).draw();
+                    // set new label to transit button
+                    activity.setTransitButtonLabel(activity.getTransitRoutes().get(activity.getTransitRouteNr()).getDuration());
+                    // set new current route
+                    activity.setCurrentRoute( activity.getTransitRoutes().get(activity.getTransitRouteNr()));
+                    // replace mini fragment with the one new
+                    FragmentTransaction fTransaction = activity.getmFragmentManager().beginTransaction();
+                    RouteMiniFragment fragment = new RouteMiniFragment();
+                    if(fTransaction.isEmpty()){
+                        activity.getFrameLayout().removeAllViews();
+                        fTransaction.add(R.id.frame_main, fragment);
+                    }
+
+                    else {
+                        activity.getFrameLayout().removeAllViews();
+                        fTransaction.replace(R.id.frame_main, fragment);
+                    }
+                    fTransaction.commit();
+
+                }
                 else{
-                    Snackbar.make(activity.findViewById(R.id.main),"route terminati",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(activity.findViewById(R.id.main),R.string.no_more_routes,Snackbar.LENGTH_SHORT).show();
                 }
             }
         });
@@ -185,10 +213,31 @@ public class RouteMiniFragment extends android.support.v4.app.Fragment {
         previousRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(activity.getTransitRouteNr() > 0)
-                    activity.setTransitRouteNr(activity.getTransitRouteNr()-1);
+                if(activity.getTransitRouteNr() > 0) {
+                    // erase old route from map
+                    activity.getTransitRoutes().get(activity.getTransitRouteNr()).erase();
+                    // update to new route
+                    activity.setTransitRouteNr(activity.getTransitRouteNr() - 1);
+                    // draw the nre route on map
+                    activity.getTransitRoutes().get(activity.getTransitRouteNr()).draw();
+                    // set new label to transit button
+                    activity.setTransitButtonLabel(activity.getTransitRoutes().get(activity.getTransitRouteNr()).getDuration());
+                    // set new current route
+                    activity.setCurrentRoute(activity.getTransitRoutes().get(activity.getTransitRouteNr()));
+                    // replace mini fragment with the one new
+                    FragmentTransaction fTransaction = activity.getmFragmentManager().beginTransaction();
+                    RouteMiniFragment fragment = new RouteMiniFragment();
+                    if (fTransaction.isEmpty()) {
+                        activity.getFrameLayout().removeAllViews();
+                        fTransaction.add(R.id.frame_main, fragment);
+                    } else {
+                        activity.getFrameLayout().removeAllViews();
+                        fTransaction.replace(R.id.frame_main, fragment);
+                    }
+                    fTransaction.commit();
+                }
                 else{
-                    Snackbar.make(activity.findViewById(R.id.main),"route finite",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(activity.findViewById(R.id.main),R.string.no_more_routes,Snackbar.LENGTH_SHORT).show();
                 }
             }
         });

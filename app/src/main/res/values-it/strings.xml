@@ -56,6 +56,7 @@
     <string name="banner_ad_unit_id">ca-app-pub-4009677260795454/7691723127</string>
 
     <string name="hello_blank_fragment">Ciao fragment vuoto</string>
+    <string name="no_more_routes">Percorsi terminati...</string>
 
 
 

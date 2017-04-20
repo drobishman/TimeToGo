@@ -53,6 +53,7 @@
     <string name="trip_details">\u00A0Trip details:</string>
     <string name="chose_origin">Please chose your origin to set!</string>
     <string name="delay">\' delay</string>
+    <string name="no_more_routes">No more routes...</string>
 
 
     <string-array name="categories_name">
